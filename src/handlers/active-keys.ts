@@ -11,7 +11,7 @@ export const handleActiveKeys = async (context: CallbackQueryShorthandContext<Bo
         return await context.editText('❗️ У вас нет активной подписки.\n\n✅ Чтобы приобрести подписку, вернитесь в главное меню и выберите пункт "Купить или продлить".', { reply_markup: backToMainMenuKeyboard });
     }
 
-    await context.editText('📋 Ваши подписки:', { reply_markup: await userKeysKeyboard(context.from.id) });
+    await context.editText('🔑 Доступные подписки:', { reply_markup: await userKeysKeyboard(context.from.id) });
 };
 
 export const handleActiveKey = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {
@@ -22,12 +22,18 @@ export const handleActiveKey = async (context: CallbackQueryShorthandContext<Bot
     const daysRemaining = Math.ceil((expire.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
     await context.editText(`
-📋 Подписка: <code>${dbprofile?.username}</code>
+🔑 <code>${dbprofile?.username}</code>
+
 📆 Дата истечения: <code>${expire.toLocaleDateString('ru-RU')} (${daysRemaining}д)</code>
 ${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>\n` : ''}
 <code>${user.response.subscriptionUrl}</code>
+
+ℹ️ Примечание:
+<i> - Что бы активировать подписку необходимо добавить ссылку в приложение.
+ - Список доступных приложений вы можете найти в разделе "Помощь" главного меню.
+ - Что бы скопировать ссылку нажмите на зеленую кнопку.</i>
     `, {
-        reply_markup: await userKeyKeyboard(context.queryData.k),
+        reply_markup: await userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl),
         parse_mode: 'HTML'
     });
 };

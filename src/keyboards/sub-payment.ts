@@ -56,7 +56,7 @@ export const paymentSystemKeyboard = async (key: number, months: number) => {
 
 // Меню выбора между новым ключом и продлением существующего
 export const selectNewExtendKeyboard = new InlineKeyboard()
-    .text('➕ Новый', currentKeysData.pack({ k: -1 }))
+    .text('➕ Оформить новую', currentKeysData.pack({ k: -1 }))
     .row()
     .text('🔄 Продлить', 'extend_key')
     .row()

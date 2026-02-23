@@ -15,7 +15,7 @@ export const handleBuyExtend = async (context: CallbackQueryShorthandContext<Bot
     const hasProfiles = await getProfiles(context.from.id);
 
     if (hasProfiles.length) {
-        await context.editText('🛒 Купить или продлить подписку', { reply_markup: selectNewExtendKeyboard });
+        await context.editText('🛒 Управление подпиской', { reply_markup: selectNewExtendKeyboard });
         return;
     }
 

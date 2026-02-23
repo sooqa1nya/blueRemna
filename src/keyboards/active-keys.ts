@@ -14,9 +14,11 @@ export const userKeysKeyboard = async (userId: number) => {
 };
 
 // Отдельная подписка
-export const userKeyKeyboard = async (key: number) => {
+export const userKeyKeyboard = async (key: number, subUrl: string) => {
     return new InlineKeyboard()
-        .text('🔄 Продлить', currentKeysData.pack({ k: key }))
+        .text('🔄 Продлить', currentKeysData.pack({ k: key }), { style: 'primary' })
+        .row()
+        .copy('📋 Скопировать', subUrl, { style: 'success' })
         .row()
         .combine(backToMainMenuKeyboard);
 };
