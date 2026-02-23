@@ -12,7 +12,7 @@ export const handleStart = async (context: MessageContext<Bot> & { args: string 
 <a href="tg://user?id=${context.from.id}">➕ Новый пользователь</a>
 
 - ID: <code>${context.from.id}</code>
-- Username: @${context.from.username ?? '<code>N/A</code>'}
+- Username: ${context.from.username ? `@${context.from.username}` : '<code>N/A</code>'}
 ${context.args ? `- Payload: <code>${context.args}</code>` : ''}
     `;
 
