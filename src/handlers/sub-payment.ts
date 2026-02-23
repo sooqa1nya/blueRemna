@@ -61,7 +61,7 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
         }
     });
 
-    const price = Number(amount()) * (1 - context.dbuser!.sale / 100);
+    const price = Math.round(Number(amount()) * (1 - context.dbuser!.sale / 100));
 
     if (context.queryData.p === 'cb') {
         const invoice = await cryptoBot.createInvoice({
@@ -229,7 +229,7 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
                             return '0';
                     }
                 });
-                const price = Number(amount()) * (1 - context.dbuser!.sale / 100);
+                const price = Math.round(Number(amount()) * (1 - context.dbuser!.sale / 100));
                 await updateUserRefBalance(referrer.id, referrer.ref_balance + price * (referrer.ref_proc / 100));
             }
         }

@@ -25,7 +25,7 @@ export const priceData = new CallbackData('payment_menu')
 export const priceKeyboard = async (key: number, sale: number) => {
     const price = (amount: number) => {
         const discountedPrice = amount * (1 - sale / 100);
-        return discountedPrice.toFixed(2);
+        return Math.round(discountedPrice);
     };
 
     return new InlineKeyboard()
