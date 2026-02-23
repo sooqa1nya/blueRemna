@@ -22,20 +22,24 @@ export const currentKeysKeyboard = async (userId: number) => {
 export const priceData = new CallbackData('payment_menu')
     .number('k')
     .number('m');
-export const priceKeyboard = async (key: number) => {
+export const priceKeyboard = async (key: number, sale: number) => {
+    const price = (amount: number) => {
+        const discountedPrice = amount * (1 - sale / 100);
+        return discountedPrice.toFixed(2);
+    };
+
     return new InlineKeyboard()
-        .text(`▶️ 1 месяц - ${process.env.SUB_PRICE_1_MONTH}₽`, priceData.pack({ k: key, m: 1 }))
+        .text(`▶️ 1 месяц - ${price(Number(process.env.SUB_PRICE_1_MONTH!))}₽`, priceData.pack({ k: key, m: 1 }))
         .row()
-        .text(`▶️ 3 месяца - ${process.env.SUB_PRICE_3_MONTHS}₽`, priceData.pack({ k: key, m: 3 }))
+        .text(`▶️ 3 месяца - ${price(Number(process.env.SUB_PRICE_3_MONTHS!))}₽`, priceData.pack({ k: key, m: 3 }))
         .row()
-        .text(`▶️ 6 месяцев - ${process.env.SUB_PRICE_6_MONTHS}₽`, priceData.pack({ k: key, m: 6 }))
+        .text(`▶️ 6 месяцев - ${price(Number(process.env.SUB_PRICE_6_MONTHS!))}₽`, priceData.pack({ k: key, m: 6 }))
         .row()
-        .text(`▶️ 12 месяцев - ${process.env.SUB_PRICE_12_MONTHS}₽`, priceData.pack({ k: key, m: 12 }))
+        .text(`▶️ 12 месяцев - ${price(Number(process.env.SUB_PRICE_12_MONTHS!))}₽`, priceData.pack({ k: key, m: 12 }))
         .row()
         .combine(backToMainMenuKeyboard);
 };
 
-// Пока нет платежной системы, заглушка
 // Меню выбора платежной системы для оплаты
 export const paymentSystemData = new CallbackData('payment_system')
     .string('p')

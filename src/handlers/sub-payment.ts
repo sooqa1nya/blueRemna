@@ -31,8 +31,9 @@ export const handleExtendKey = async (context: CallbackQueryShorthandContext<Bot
 
 // Кнопка выбора длительности подписки
 export const handleSelectDuration = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {
-    await context.editText('⏳ Выберите срок действия подписки', {
-        reply_markup: await priceKeyboard(context.queryData.k)
+    await context.editText(`⏳ Выберите срок действия подписки${context.dbuser!.sale > 0 ? `\n💸 Скидка: <code>${context.dbuser?.sale}%</code>` : ''}`, {
+        reply_markup: await priceKeyboard(context.queryData.k, context.dbuser?.sale || 0),
+        parse_mode: 'HTML'
     });
 };
 
@@ -60,11 +61,13 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
         }
     });
 
+    const price = Number(amount()) * (1 - context.dbuser!.sale / 100);
+
     if (context.queryData.p === 'cb') {
         const invoice = await cryptoBot.createInvoice({
             currency_type: 'fiat',
             fiat: 'RUB',
-            amount: amount(),
+            amount: price.toString(),
             expires_in: 1800
         });
 
@@ -77,7 +80,7 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
             context.from.id,
             'CryptoBot',
             invoice.result.invoice_id.toString(),
-            Number(amount()),
+            Number(price),
             context.dbuser?.payload || null
         );
 
@@ -99,7 +102,7 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
         const transaction = await platega.createTransaction({
             paymentMethod: 2,
             paymentDetails: {
-                amount: Number(amount()),
+                amount: price,
                 currency: 'RUB',
             },
             description: `Покупка подписки на ${context.queryData.m} мес.\nПользователь: ${context.from.id}`,
@@ -115,7 +118,7 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
             context.from.id,
             'Platega',
             transaction.transactionId,
-            Number(amount()),
+            price,
             context.dbuser?.payload || null
         );
 
@@ -226,8 +229,8 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
                             return '0';
                     }
                 });
-
-                await updateUserRefBalance(referrer.id, referrer.ref_balance + Number(amount()) * (referrer.ref_proc / 100));
+                const price = Number(amount()) * (1 - context.dbuser!.sale / 100);
+                await updateUserRefBalance(referrer.id, referrer.ref_balance + price * (referrer.ref_proc / 100));
             }
         }
     }
