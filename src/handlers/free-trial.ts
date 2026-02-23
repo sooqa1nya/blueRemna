@@ -42,5 +42,12 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
         return;
     }
 
+    try {
+        await context.send(`🆓 Пробный период\n\n- Пользователь: <code>${context.from.id}</code>`, {
+            chat_id: process.env.LOG_CHAT_ID!,
+            parse_mode: 'HTML'
+        });
+    } catch { }
+
     await context.editText(`✅ Ваша пробная подписка.\n⏳ Длительность: <code>${process.env.FREE_TRIAL_DAYS}д</code>\n<code>${user.response.subscriptionUrl}</code>`, { parse_mode: 'HTML', reply_markup: backToMainMenuKeyboard });
 };
