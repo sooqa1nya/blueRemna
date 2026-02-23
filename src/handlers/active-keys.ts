@@ -19,10 +19,11 @@ export const handleActiveKey = async (context: CallbackQueryShorthandContext<Bot
 
     const user = await remnawave.getUserByUUID(dbprofile!.uuid);
     const expire = new Date(user.response.expireAt);
+    const daysRemaining = Math.ceil((expire.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
     await context.editText(`
 📋 Подписка: <code>${dbprofile?.username}</code>
-📆 Дата истечения: <code>${expire.toLocaleDateString('ru-RU')} (${expire.getDay()}д)</code>
+📆 Дата истечения: <code>${expire.toLocaleDateString('ru-RU')} (${daysRemaining}д)</code>
 
 <code>${user.response.subscriptionUrl}</code>
     `, {
