@@ -24,8 +24,7 @@ export const handleActiveKey = async (context: CallbackQueryShorthandContext<Bot
     await context.editText(`
 📋 Подписка: <code>${dbprofile?.username}</code>
 📆 Дата истечения: <code>${expire.toLocaleDateString('ru-RU')} (${daysRemaining}д)</code>
-${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>` : ''}
-
+${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>\n` : ''}
 <code>${user.response.subscriptionUrl}</code>
     `, {
         reply_markup: await userKeyKeyboard(context.queryData.k),
