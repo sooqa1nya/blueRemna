@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres
+    container_name: vpn-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    networks:
+      - vpnNetwork
+
+  vpn:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vpn-bot
+    restart: unless-stopped
+    networks:
+      - vpnNetwork
+    depends_on:
+      - db
+
+networks:
+  vpnNetwork:

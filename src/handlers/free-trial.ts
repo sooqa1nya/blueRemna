@@ -1,0 +1,46 @@
+import type { Bot, CallbackQueryShorthandContext } from 'gramio';
+import { backToMainMenuKeyboard } from '../keyboards/main.js';
+import { addProfile } from '../database/user_profiles.js';
+import { useFreeTrial } from '../database/users.js';
+import { remnawave } from '../services/remnawave/index.js';
+
+export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot, 'free_trial'>) => {
+    const date = new Date();
+    const days = Number(process.env.FREE_TRIAL_DAYS);
+    const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
+    const squadId = await remnawave.getSquadForVPN();
+
+    if (!squadId) {
+        await context.answerCallbackQuery('❌ Ошибка при добавлении в сквад. Обратитесь в поддержку.');
+        return;
+    }
+
+    date.setDate(date.getDate() + days);
+    const user = await remnawave.createUser({
+        username: profile,
+        expireAt: date.toISOString(),
+        telegramId: context.from.id,
+        hwidDeviceLimit: 5,
+        activeInternalSquads: [squadId]
+    });
+
+    if (!user) {
+        await context.answerCallbackQuery('❌ Ошибка при создании пользователя. Обратитесь в поддержку.');
+        return;
+    }
+
+    try {
+        await useFreeTrial(context.from.id);
+        await addProfile(
+            context.from.id,
+            user.response.uuid,
+            profile
+        );
+    } catch (error) {
+        await context.answerCallbackQuery('❌ Ошибка при добавлении профиля в БД. Обратитесь в поддержку.');
+        await remnawave.deleteUser(user.response.uuid);
+        return;
+    }
+
+    await context.editText(`✅ Ваша пробная подписка.\n⏳ Длительность: <code>${process.env.FREE_TRIAL_DAYS}д</code>\n<code>${user.response.subscriptionUrl}</code>`, { parse_mode: 'HTML', reply_markup: backToMainMenuKeyboard });
+};
