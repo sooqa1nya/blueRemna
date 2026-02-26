@@ -38,36 +38,19 @@ export const handleSelectDuration = async (context: CallbackQueryShorthandContex
 };
 
 // Кнопка выбора способа оплаты
-export const handlePaymentMethod = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number, m: number; }>>) => {
+export const handlePaymentMethod = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number, m: number; p: number; }>>) => {
     await context.editText('💳 Выберите способ оплаты:', {
-        reply_markup: await paymentSystemKeyboard(context.queryData.k, context.queryData.m)
+        reply_markup: await paymentSystemKeyboard(context.queryData.k, context.queryData.m, context.queryData.p)
     });
 };
 
 // Оплата выбранным способом
-export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ p: string, k: number, m: number; }>>) => {
-    const amount = (() => {
-        switch (context.queryData.m) {
-            case 1:
-                return process.env.SUB_PRICE_1_MONTH!;
-            case 3:
-                return process.env.SUB_PRICE_3_MONTHS!;
-            case 6:
-                return process.env.SUB_PRICE_6_MONTHS!;
-            case 12:
-                return process.env.SUB_PRICE_12_MONTHS!;
-            default:
-                return '0';
-        }
-    });
-
-    const price = Math.round(Number(amount()) * (1 - context.dbuser!.sale / 100));
-
-    if (context.queryData.p === 'cb') {
+export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ s: string, k: number, m: number; p: number; }>>) => {
+    if (context.queryData.s === 'cb') {
         const invoice = await cryptoBot.createInvoice({
             currency_type: 'fiat',
             fiat: 'RUB',
-            amount: price.toString(),
+            amount: context.queryData.p.toString(),
             expires_in: 1800
         });
 
@@ -80,7 +63,7 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
             context.from.id,
             'CryptoBot',
             invoice.result.invoice_id.toString(),
-            Number(price),
+            context.queryData.p,
             context.dbuser?.payload || null
         );
 
@@ -91,18 +74,18 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
 
         await context.editText(`⏳ Для оплаты нажмите кнопку ниже`, {
             reply_markup: await paymentInvoiceKeyboard(
-                payment.id,
                 context.queryData.k,
                 context.queryData.m,
+                context.queryData.p,
                 invoice.result.pay_url
             )
         });
 
-    } else if (context.queryData.p === 'pl') {
+    } else if (context.queryData.s === 'pl') {
         const transaction = await platega.createTransaction({
             paymentMethod: 2,
             paymentDetails: {
-                amount: price,
+                amount: context.queryData.p,
                 currency: 'RUB',
             },
             description: `Покупка подписки на ${context.queryData.m} мес.\nПользователь: ${context.from.id}`,
@@ -118,7 +101,7 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
             context.from.id,
             'Platega',
             transaction.transactionId,
-            price,
+            context.queryData.p,
             context.dbuser?.payload || null
         );
 
@@ -129,9 +112,9 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
 
         await context.editText(`⏳ Для оплаты нажмите кнопку ниже`, {
             reply_markup: await paymentInvoiceKeyboard(
-                payment.id,
                 context.queryData.k,
                 context.queryData.m,
+                context.queryData.p,
                 transaction.redirect!
             )
         });
@@ -140,7 +123,7 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
 
 
 // Проверка оплаты + редирект на продление или выдачу нового ключа
-export const handleCheckPayment = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number, m: number; }>>) => {
+export const handleCheckPayment = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number, m: number; p: number; }>>) => {
     // Проверка оплаты
     const payments = await getPayments(context.from.id);
     if (!payments.length) {
@@ -215,22 +198,7 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
 
             const referrer = await findUser(Number(referrerId));
             if (referrer) {
-                const amount = (() => {
-                    switch (context.queryData.m) {
-                        case 1:
-                            return process.env.SUB_PRICE_1_MONTH!;
-                        case 3:
-                            return process.env.SUB_PRICE_3_MONTHS!;
-                        case 6:
-                            return process.env.SUB_PRICE_6_MONTHS!;
-                        case 12:
-                            return process.env.SUB_PRICE_12_MONTHS!;
-                        default:
-                            return '0';
-                    }
-                });
-                const price = Math.round(Number(amount()) * (1 - context.dbuser!.sale / 100));
-                await updateUserRefBalance(referrer.id, referrer.ref_balance + price * (referrer.ref_proc / 100));
+                await updateUserRefBalance(referrer.id, referrer.ref_balance + context.queryData.p * (referrer.ref_proc / 100));
             }
         }
     }

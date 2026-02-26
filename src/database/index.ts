@@ -44,7 +44,7 @@ export const initDatabase = async () => {
                 register TIMESTAMP DEFAULT NOW(),
                 trial_key BOOLEAN DEFAULT FALSE,
                 last_activity TIMESTAMP DEFAULT NOW(),
-                ref_balance INT DEFAULT 0,
+                ref_balance NUMERIC(10, 2) DEFAULT 0.00,
                 ref_proc INT DEFAULT 15,
                 sale INT DEFAULT 0,
                 is_admin BOOLEAN DEFAULT FALSE,
@@ -67,7 +67,7 @@ export const initDatabase = async () => {
                 service VARCHAR(32),
                 payment_id TEXT,
                 payment_time TIMESTAMP DEFAULT NOW(),
-                amount FLOAT,
+                amount NUMERIC(10, 2),
                 status VARCHAR(32) DEFAULT 'pending',
                 payload TEXT
             )

@@ -1,6 +1,7 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
 import { getProfiles } from '../database/user_profiles.js';
 import { backToMainMenuKeyboard } from './main.js';
+import { getSubPlans } from '../database/settings.js';
 
 
 // Меню выбора ключа для продления
@@ -21,35 +22,44 @@ export const currentKeysKeyboard = async (userId: number) => {
 // Меню выбора длительности подписки
 export const priceData = new CallbackData('payment_menu')
     .number('k')
-    .number('m');
+    .number('m')
+    .number('p');
 export const priceKeyboard = async (key: number, sale: number) => {
-    const price = (amount: number) => {
-        const discountedPrice = amount * (1 - sale / 100);
-        return Math.round(discountedPrice);
+    let prices: { months: number, price: number; }[] = await getSubPlans();
+    prices.forEach(x => x.price = Math.round(x.price * (1 - sale / 100)));
+    const getPrice = (months: number) => {
+        return prices.find(x => x.months == months)!.price;
     };
+    enum price {
+        'm1' = getPrice(1),
+        'm3' = getPrice(3),
+        'm6' = getPrice(6),
+        'm12' = getPrice(12)
+    }
 
     return new InlineKeyboard()
-        .text(`▶️ 1 месяц - ${price(Number(process.env.SUB_PRICE_1_MONTH!))}₽`, priceData.pack({ k: key, m: 1 }))
+        .text(`▶️ 1 месяц - ${price.m1}₽`, priceData.pack({ k: key, m: 1, p: price.m1 }))
         .row()
-        .text(`▶️ 3 месяца - ${price(Number(process.env.SUB_PRICE_3_MONTHS!))}₽`, priceData.pack({ k: key, m: 3 }))
+        .text(`▶️ 3 месяца - ${price.m3}₽`, priceData.pack({ k: key, m: 3, p: price.m3 }))
         .row()
-        .text(`▶️ 6 месяцев - ${price(Number(process.env.SUB_PRICE_6_MONTHS!))}₽`, priceData.pack({ k: key, m: 6 }))
+        .text(`▶️ 6 месяцев - ${price.m6}₽`, priceData.pack({ k: key, m: 6, p: price.m6 }))
         .row()
-        .text(`▶️ 12 месяцев - ${price(Number(process.env.SUB_PRICE_12_MONTHS!))}₽`, priceData.pack({ k: key, m: 12 }))
+        .text(`▶️ 12 месяцев - ${price.m12}₽`, priceData.pack({ k: key, m: 12, p: price.m12 }))
         .row()
         .combine(backToMainMenuKeyboard);
 };
 
 // Меню выбора платежной системы для оплаты
 export const paymentSystemData = new CallbackData('payment_system')
-    .string('p')
+    .string('s')
     .number('k')
-    .number('m');
-export const paymentSystemKeyboard = async (key: number, months: number) => {
+    .number('m')
+    .number('p');
+export const paymentSystemKeyboard = async (key: number, months: number, price: number) => {
     return new InlineKeyboard()
-        .text('СБП', paymentSystemData.pack({ p: 'pl', k: key, m: months }), { icon_custom_emoji_id: '5447186509029452373' })
+        .text('СБП', paymentSystemData.pack({ s: 'pl', k: key, m: months, p: price }), { icon_custom_emoji_id: '5447186509029452373' })
         .row()
-        .text('CryptoBot', paymentSystemData.pack({ p: 'cb', k: key, m: months }), { icon_custom_emoji_id: '5361914370068613491' })
+        .text('CryptoBot', paymentSystemData.pack({ s: 'cb', k: key, m: months, p: price }), { icon_custom_emoji_id: '5361914370068613491' })
         .row()
         .combine(backToMainMenuKeyboard);
 };
@@ -65,12 +75,13 @@ export const selectNewExtendKeyboard = new InlineKeyboard()
 // Кнопки оплаты и проверки оплаты после создания счета
 export const checkPaymentData = new CallbackData('check_payment')
     .number('k')
-    .number('m');
-export const paymentInvoiceKeyboard = async (paymentId: number, key: number, months: number, invoiceUrl: string) => {
+    .number('m')
+    .number('p');
+export const paymentInvoiceKeyboard = async (key: number, months: number, price: number, invoiceUrl: string) => {
     return new InlineKeyboard()
         .url('💳 Оплатить', invoiceUrl, { style: 'primary' })
         .row()
-        .text('✅ Проверить оплату', checkPaymentData.pack({ k: key, m: months }), { style: 'success' })
+        .text('✅ Проверить оплату', checkPaymentData.pack({ k: key, m: months, p: price }), { style: 'success' })
         .row()
         .combine(backToMainMenuKeyboard);
 };
