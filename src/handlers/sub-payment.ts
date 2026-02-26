@@ -272,9 +272,9 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
 
 
     const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
-    const squadId = await remnawave.getSquadForVPN();
+    const squads = await remnawave.getSquadForVPN();
 
-    if (!squadId) {
+    if (!squads) {
         await context.answerCallbackQuery('❌ Ошибка при добавлении в сквад. Обратитесь в поддержку.');
         return;
     }
@@ -285,7 +285,8 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
         expireAt: date.toISOString(),
         telegramId: context.from.id,
         hwidDeviceLimit: 5,
-        activeInternalSquads: [squadId]
+        activeInternalSquads: [squads.internal],
+        externalSquadUuid: squads.external
     });
 
     if (!user) {

@@ -8,9 +8,9 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
     const date = new Date();
     const days = Number(process.env.FREE_TRIAL_DAYS);
     const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
-    const squadId = await remnawave.getSquadForVPN();
+    const squads = await remnawave.getSquadForVPN();
 
-    if (!squadId) {
+    if (!squads) {
         await context.answerCallbackQuery('❌ Ошибка при добавлении в сквад. Обратитесь в поддержку.');
         return;
     }
@@ -21,7 +21,8 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
         expireAt: date.toISOString(),
         telegramId: context.from.id,
         hwidDeviceLimit: 5,
-        activeInternalSquads: [squadId]
+        activeInternalSquads: [squads.internal],
+        externalSquadUuid: squads.external
     });
 
     if (!user) {

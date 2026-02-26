@@ -559,3 +559,216 @@ export interface CreateUserResponseDto {
 export interface GetUserByUuidResponseDto {
     response: UserResponseDto;
 }
+
+/**
+ * Тип шаблона подписки
+ */
+export enum TemplateType {
+    XRAY_JSON = 'XRAY_JSON',
+    XRAY_BASE64 = 'XRAY_BASE64',
+    MIHOMO = 'MIHOMO',
+    STASH = 'STASH',
+    CLASH = 'CLASH',
+    SINGBOX = 'SINGBOX',
+}
+
+/**
+ * Шаблон внешнего сквода
+ */
+export interface ExternalSquadTemplateDto {
+    /**
+     * @format uuid
+     */
+    templateUuid: string;
+
+    templateType: TemplateType;
+}
+
+/**
+ * Настройки подписки внешнего сквода
+ */
+export interface ExternalSquadSubscriptionSettingsDto {
+    profileTitle?: string;
+
+    supportLink?: string;
+
+    /**
+     * @minimum 1
+     */
+    profileUpdateInterval?: number;
+
+    isProfileWebpageUrlEnabled?: boolean;
+
+    serveJsonAtBaseSubscription?: boolean;
+
+    isShowCustomRemarks?: boolean;
+
+    /**
+     * @nullable
+     */
+    happAnnounce?: string | null;
+
+    /**
+     * @nullable
+     */
+    happRouting?: string | null;
+
+    randomizeHosts?: boolean;
+}
+
+/**
+ * Переопределения хоста
+ */
+export interface ExternalSquadHostOverridesDto {
+    /**
+     * @maxLength 30
+     * @nullable
+     */
+    serverDescription?: string | null;
+
+    /**
+     * @minimum 0
+     * @maximum 65535
+     * @nullable
+     */
+    vlessRouteId?: number | null;
+}
+
+/**
+ * Настройки HWID внешнего сквода
+ */
+export interface ExternalSquadHwidSettingsDto {
+    enabled: boolean;
+
+    fallbackDeviceLimit: number;
+
+    /**
+     * @maxLength 200
+     * @nullable
+     */
+    maxDevicesAnnounce: string | null;
+}
+
+/**
+ * Кастомные ремарки для различных состояний пользователей
+ */
+export interface ExternalSquadCustomRemarksDto {
+    /**
+     * @minItems 1
+     */
+    expiredUsers: string[];
+
+    /**
+     * @minItems 1
+     */
+    limitedUsers: string[];
+
+    /**
+     * @minItems 1
+     */
+    disabledUsers: string[];
+
+    /**
+     * @minItems 1
+     */
+    emptyHosts: string[];
+
+    /**
+     * @minItems 1
+     */
+    HWIDMaxDevicesExceeded: string[];
+
+    /**
+     * @minItems 1
+     */
+    HWIDNotSupported: string[];
+}
+
+/**
+ * Заголовки ответа (произвольные ключ-значение)
+ */
+export interface ExternalSquadResponseHeadersDto {
+    [key: string]: string;
+}
+
+/**
+ * Информация о внешнем скводе
+ */
+export interface ExternalSquadInfoDto {
+    membersCount: number;
+}
+
+/**
+ * Детальная информация о внешнем скводе
+ */
+export interface ExternalSquadDetailDto {
+    /**
+     * @format uuid
+     */
+    uuid: string;
+
+    viewPosition: number;
+
+    name: string;
+
+    info: ExternalSquadInfoDto;
+
+    templates: ExternalSquadTemplateDto[];
+
+    /**
+     * @nullable
+     */
+    subscriptionSettings: ExternalSquadSubscriptionSettingsDto | null;
+
+    /**
+     * @nullable
+     */
+    hostOverrides: ExternalSquadHostOverridesDto | null;
+
+    /**
+     * @nullable
+     */
+    responseHeaders: ExternalSquadResponseHeadersDto | null;
+
+    /**
+     * @nullable
+     */
+    hwidSettings: ExternalSquadHwidSettingsDto | null;
+
+    /**
+     * @nullable
+     */
+    customRemarks: ExternalSquadCustomRemarksDto | null;
+
+    /**
+     * @format uuid
+     * @nullable
+     */
+    subpageConfigUuid: string | null;
+
+    /**
+     * @format date-time
+     */
+    createdAt: string;
+
+    /**
+     * @format date-time
+     */
+    updatedAt: string;
+}
+
+/**
+ * Тело ответа со списком внешних скводов
+ */
+export interface ExternalSquadsResponseData {
+    total: number;
+
+    externalSquads: ExternalSquadDetailDto[];
+}
+
+/**
+ * DTO ответа на запрос получения списка внешних скводов
+ */
+export interface GetExternalSquadsResponseDto {
+    response: ExternalSquadsResponseData;
+}

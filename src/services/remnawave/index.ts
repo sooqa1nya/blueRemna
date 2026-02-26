@@ -1,9 +1,9 @@
-import type { CreateUserRequestDto, CreateUserResponseDto, GetInternalSquadsResponseDto, GetUserByUuidResponseDto, UpdateUserRequestDto } from './types.js';
+import type { CreateUserRequestDto, CreateUserResponseDto, GetExternalSquadsResponseDto, GetInternalSquadsResponseDto, GetUserByUuidResponseDto, UpdateUserRequestDto } from './types.js';
 
 class RemnaWaveService {
     private JWT: string;
     private baseURL: string;
-    private squadUUID: string | null = null;
+    private squads: { internal: string; external: string; } | null = null;
 
     constructor(JWT: string, baseURL: string) {
         this.JWT = JWT;
@@ -67,19 +67,30 @@ class RemnaWaveService {
         });
     };
 
+    public async getExternalSquads() {
+        return this.request<GetExternalSquadsResponseDto>('/api/external-squads', {
+            method: 'GET'
+        });
+    };
+
     public async getSquadForVPN() {
-        if (this.squadUUID) {
-            return this.squadUUID;
+        if (this.squads) {
+            return this.squads;
         }
 
-        const uuid = await this.getInternalSquads().then(res => res.response.internalSquads.filter(x => x.name === 'blueVPN')[0]?.uuid);
-        if (!uuid) {
+        const internal = await this.getInternalSquads().then(res => res.response.internalSquads.filter(x => x.name === process.env.REMNAWAVE_INTERNAL_SQUAD)[0]?.uuid);
+        const external = await this.getExternalSquads().then(res => res.response.externalSquads.filter(x => x.name === process.env.REMNAWAVE_EXTERNAL_SQUAD)[0]?.uuid);
+        if (!internal || !external) {
             console.error('Ошибка получения сквада');
-            return;
+            return undefined;
         }
 
-        this.squadUUID = uuid;
-        return uuid;
+        this.squads = {
+            internal,
+            external
+        };
+
+        return this.squads;
     };
 }
 
