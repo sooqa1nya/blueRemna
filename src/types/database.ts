@@ -38,6 +38,12 @@ export interface IPayment {
     payload: string | null;
 }
 
+export interface ISetting {
+    id: number;
+    key: string;
+    data: any;
+}
+
 // еще под вопросом
 declare module 'gramio' {
     interface Context<Bot> {

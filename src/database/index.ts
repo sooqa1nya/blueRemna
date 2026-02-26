@@ -10,6 +10,30 @@ const sql = postgres({
     max_lifetime: 60 * 30
 });
 
+const freeTrial = { duration: process.env.FREE_TRIAL_DAYS! };
+
+const plans = {
+    plans:
+        [
+            {
+                months: 1,
+                price: process.env.SUB_PRICE_1_MONTH!
+            },
+            {
+                months: 3,
+                price: process.env.SUB_PRICE_3_MONTHS!
+            },
+            {
+                months: 6,
+                price: process.env.SUB_PRICE_6_MONTHS!
+            },
+            {
+                months: 12,
+                price: process.env.SUB_PRICE_12_MONTHS!
+            }
+        ]
+};
+
 export const initDatabase = async () => {
     try {
         await sql`
@@ -47,6 +71,20 @@ export const initDatabase = async () => {
                 status VARCHAR(32) DEFAULT 'pending',
                 payload TEXT
             )
+        `;
+        await sql`
+            CREATE TABLE IF NOT EXISTS settings (
+                id SERIAL PRIMARY KEY,
+                key VARCHAR(64) UNIQUE,
+                data JSONB
+            )
+        `;
+        await sql`
+            INSERT INTO settings (key, data)
+            VALUES
+                ('free_trial', ${JSON.stringify(freeTrial)}),
+                ('plans', ${JSON.stringify(plans)})
+            ON CONFLICT (key) DO NOTHING
         `;
         console.log('✅ База данных инициализирована');
     } catch (error) {

@@ -3,10 +3,10 @@ import { backToMainMenuKeyboard } from '../keyboards/main.js';
 import { addProfile } from '../database/user_profiles.js';
 import { useFreeTrial } from '../database/users.js';
 import { remnawave } from '../services/remnawave/index.js';
+import { getFreeTrial } from '../database/settings.js';
 
 export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot, 'free_trial'>) => {
     const date = new Date();
-    const days = Number(process.env.FREE_TRIAL_DAYS);
     const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
     const squads = await remnawave.getSquadForVPN();
 
@@ -15,6 +15,7 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
         return;
     }
 
+    const days = await getFreeTrial();
     date.setDate(date.getDate() + days);
     const user = await remnawave.createUser({
         username: profile,

@@ -14,7 +14,7 @@ export const mainMenuKeyboard = async (free_trial: boolean) => {
         .text('ℹ️ Информация', 'about_us')
         .text('💬 Помощь', 'help')
         .row()
-        .addIf(!free_trial, InlineKeyboard.text('🔑 Пробный период', 'free_trial'))
+        .addIf(!free_trial, InlineKeyboard.text('🎁 Пробный период', 'free_trial'))
         .row()
         .text('💰 Партнерская программа', 'affiliate_program');
 };
