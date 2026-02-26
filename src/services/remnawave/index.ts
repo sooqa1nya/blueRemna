@@ -122,11 +122,13 @@ class RemnaWaveService {
 
     public async getHostsForVPN() {
         const profile = await this.getConfigForVPN();
+        console.log(profile);
         if (!profile) {
             return undefined;
         }
 
-        const hosts = await this.getHosts().then(res => res.response.filter(x => x.uuid === profile).map(x => x.remark));
+        const hosts = await this.getHosts().then(res => res.response.filter(x => x.inbound.configProfileUuid === profile).map(x => x.remark));
+        console.log(hosts);
         if (!hosts.length) {
             console.error('Ошибка получения хостов для профиля');
             return undefined;

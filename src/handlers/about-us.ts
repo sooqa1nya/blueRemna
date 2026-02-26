@@ -11,7 +11,8 @@ export const handleAboutUs = async (context: CallbackQueryShorthandContext<Bot, 
 ℹ️ *Информация*
 
 🌏 Доступные локации:
-${!!hosts ? hosts.map(x => `  ${x}\n`) : '    Нет доступных локаций\n'}
+    _${!!hosts ? hosts.join('\n    ') : 'Нет доступных локаций'}_
+
 ✅ Нет нужной локации? Свяжитесь с поддержкой, и мы постараемся добавить её в ближайшее время!
 
 [📜 Пользовательское соглашение (кликабельно)](${process.env.USER_AGREEMENT_URL!})
