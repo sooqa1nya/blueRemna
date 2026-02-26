@@ -772,3 +772,307 @@ export interface ExternalSquadsResponseData {
 export interface GetExternalSquadsResponseDto {
     response: ExternalSquadsResponseData;
 }
+
+/**
+ * Конфигурация профиля (произвольная структура)
+ */
+export interface ConfigProfileConfigDto {
+    [key: string]: unknown;
+}
+
+/**
+ * Сырой инбаунд (произвольная структура)
+ */
+export interface RawInboundDto {
+    [key: string]: unknown;
+}
+
+/**
+ * Инбаунд конфигурационного профиля
+ */
+export interface ConfigProfileInboundDto {
+    /**
+     * @format uuid
+     */
+    uuid: string;
+
+    /**
+     * @format uuid
+     */
+    profileUuid: string;
+
+    tag: string;
+
+    type: string;
+
+    /**
+     * @nullable
+     */
+    network: string | null;
+
+    /**
+     * @nullable
+     */
+    security: string | null;
+
+    /**
+     * @nullable
+     */
+    port: number | null;
+
+    /**
+     * @nullable
+     */
+    rawInbound: RawInboundDto | null;
+}
+
+/**
+ * Нода конфигурационного профиля
+ */
+export interface ConfigProfileNodeDto {
+    /**
+     * @format uuid
+     */
+    uuid: string;
+
+    name: string;
+
+    countryCode: string;
+}
+
+/**
+ * Детальная информация о конфигурационном профиле
+ */
+export interface ConfigProfileDetailDto {
+    /**
+     * @format uuid
+     */
+    uuid: string;
+
+    viewPosition: number;
+
+    name: string;
+
+    config: ConfigProfileConfigDto;
+
+    inbounds: ConfigProfileInboundDto[];
+
+    nodes: ConfigProfileNodeDto[];
+
+    /**
+     * @format date-time
+     */
+    createdAt: string;
+
+    /**
+     * @format date-time
+     */
+    updatedAt: string;
+}
+
+/**
+ * Тело ответа со списком конфигурационных профилей
+ */
+export interface ConfigProfilesResponseData {
+    total: number;
+
+    configProfiles: ConfigProfileDetailDto[];
+}
+
+/**
+ * DTO ответа на запрос получения списка конфигурационных профилей
+ */
+export interface GetConfigProfilesResponseDto {
+    response: ConfigProfilesResponseData;
+}
+
+/**
+ * Уровень безопасности хоста
+ */
+export enum SecurityLayer {
+    DEFAULT = 'DEFAULT',
+    TLS = 'TLS',
+    NONE = 'NONE',
+}
+
+/**
+ * Параметры xHTTP (произвольная структура)
+ */
+export interface XHttpExtraParamsDto {
+    [key: string]: unknown;
+}
+
+/**
+ * Параметры мультиплексирования (произвольная структура)
+ */
+export interface MuxParamsDto {
+    [key: string]: unknown;
+}
+
+/**
+ * Параметры сокета (произвольная структура)
+ */
+export interface SockoptParamsDto {
+    [key: string]: unknown;
+}
+
+/**
+ * Информация об инбаунде хоста
+ */
+export interface HostInboundDto {
+    /**
+     * @format uuid
+     * @nullable
+     */
+    configProfileUuid: string | null;
+
+    /**
+     * @format uuid
+     * @nullable
+     */
+    configProfileInboundUuid: string | null;
+}
+
+/**
+ * Детальная информация о хосте
+ */
+export interface HostDetailDto {
+    /**
+     * @format uuid
+     */
+    uuid: string;
+
+    viewPosition: number;
+
+    remark: string;
+
+    address: string;
+
+    port: number;
+
+    /**
+     * @nullable
+     */
+    path: string | null;
+
+    /**
+     * @nullable
+     */
+    sni: string | null;
+
+    /**
+     * @nullable
+     */
+    host: string | null;
+
+    /**
+     * @nullable
+     */
+    alpn: string | null;
+
+    /**
+     * @nullable
+     */
+    fingerprint: string | null;
+
+    /**
+     * @default false
+     */
+    isDisabled?: boolean;
+
+    /**
+     * @default 'DEFAULT'
+     */
+    securityLayer?: SecurityLayer;
+
+    /**
+     * @nullable
+     */
+    xHttpExtraParams: XHttpExtraParamsDto | null;
+
+    /**
+     * @nullable
+     */
+    muxParams: MuxParamsDto | null;
+
+    /**
+     * @nullable
+     */
+    sockoptParams: SockoptParamsDto | null;
+
+    inbound: HostInboundDto;
+
+    /**
+     * @maxLength 30
+     * @nullable
+     */
+    serverDescription: string | null;
+
+    /**
+     * @nullable
+     */
+    tag: string | null;
+
+    /**
+     * @default false
+     */
+    isHidden?: boolean;
+
+    /**
+     * @default false
+     */
+    overrideSniFromAddress?: boolean;
+
+    /**
+     * @default false
+     */
+    keepSniBlank?: boolean;
+
+    /**
+     * @minimum 0
+     * @maximum 65535
+     * @nullable
+     */
+    vlessRouteId: number | null;
+
+    /**
+     * @default false
+     */
+    allowInsecure?: boolean;
+
+    shuffleHost: boolean;
+
+    mihomoX25519: boolean;
+
+    /**
+     * Список UUID нод, привязанных к хосту
+     *
+     * @items format: uuid
+     */
+    nodes: string[];
+
+    /**
+     * @format uuid
+     * @nullable
+     */
+    xrayJsonTemplateUuid: string | null;
+
+    /**
+     * Список UUID внутренних скводов, исключённых из хоста
+     *
+     * @items format: uuid
+     */
+    excludedInternalSquads: string[];
+
+    /**
+     * Типы подписок, из которых хост исключён
+     */
+    excludeFromSubscriptionTypes?: TemplateType[];
+}
+
+/**
+ * DTO ответа на запрос получения всех хостов
+ */
+export interface GetAllHostsResponseDto {
+    response: HostDetailDto[];
+}

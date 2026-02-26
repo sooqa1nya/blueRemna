@@ -1,9 +1,10 @@
-import type { CreateUserRequestDto, CreateUserResponseDto, GetExternalSquadsResponseDto, GetInternalSquadsResponseDto, GetUserByUuidResponseDto, UpdateUserRequestDto } from './types.js';
+import type { CreateUserRequestDto, CreateUserResponseDto, GetAllHostsResponseDto, GetConfigProfilesResponseDto, GetExternalSquadsResponseDto, GetInternalSquadsResponseDto, GetUserByUuidResponseDto, UpdateUserRequestDto } from './types.js';
 
 class RemnaWaveService {
     private JWT: string;
     private baseURL: string;
     private squads: { internal: string; external: string; } | null = null;
+    private configProfile: string | null = null;
 
     constructor(JWT: string, baseURL: string) {
         this.JWT = JWT;
@@ -89,9 +90,49 @@ class RemnaWaveService {
             internal,
             external
         };
-
         return this.squads;
     };
+
+    public async getConfigProfiles() {
+        return this.request<GetConfigProfilesResponseDto>('/api/config-profiles', {
+            method: 'GET'
+        });
+    };
+
+    public async getConfigForVPN() {
+        if (this.configProfile) {
+            return this.configProfile;
+        }
+
+        const profile = await this.getConfigProfiles().then(res => res.response.configProfiles.filter(x => x.name === process.env.REMNAWAVE_PROFILE)[0]?.uuid);
+        if (!profile) {
+            console.error('Ошибка получения конфига профиля');
+            return undefined;
+        }
+
+        this.configProfile = profile;
+        return profile;
+    }
+
+    public async getHosts() {
+        return this.request<GetAllHostsResponseDto>('/api/hosts', {
+            method: 'GET'
+        });
+    };
+
+    public async getHostsForVPN() {
+        const profile = await this.getConfigForVPN();
+        if (!profile) {
+            return undefined;
+        }
+
+        const hosts = await this.getHosts().then(res => res.response.filter(x => x.uuid === profile).map(x => x.remark));
+        if (!hosts.length) {
+            console.error('Ошибка получения хостов для профиля');
+            return undefined;
+        }
+        return hosts;
+    }
 }
 
 export const remnawave = new RemnaWaveService(
