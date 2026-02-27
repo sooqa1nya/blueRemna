@@ -37,7 +37,7 @@ ${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${u
  - Список доступных приложений вы можете найти в разделе "Помощь" главного меню.
  - Что бы скопировать ссылку нажмите на зеленую кнопку.</i>
     `, {
-        reply_markup: await userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl),
+        reply_markup: await userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!user.response.hwidDeviceLimit),
         parse_mode: 'HTML'
     });
 };

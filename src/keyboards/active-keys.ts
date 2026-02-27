@@ -16,13 +16,13 @@ export const userKeysKeyboard = async (userId: number) => {
 // Отдельная подписка
 export const extendDeviceLimitData = new CallbackData('extend_limit')
     .number('k');
-export const userKeyKeyboard = async (key: number, subUrl: string) => {
+export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit: boolean) => {
     return new InlineKeyboard()
         .copy('📋 Скопировать', subUrl, { style: 'success' })
         .row()
         .text('🔄 Продлить', currentKeysData.pack({ k: key }), { style: 'primary' })
         .row()
-        .text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key }), { style: 'primary' })
+        .addIf(isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key }), { style: 'primary' }))
         .row()
         .combine(backToMainMenuKeyboard);
 };
