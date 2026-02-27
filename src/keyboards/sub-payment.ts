@@ -30,7 +30,7 @@ export const priceKeyboard = async (key: number, sale: number) => {
     const getPrice = (months: number) => {
         return prices.find(x => x.months == months)!.price;
     };
-    enum price {
+    enum Price {
         'm1' = getPrice(1),
         'm3' = getPrice(3),
         'm6' = getPrice(6),
@@ -38,13 +38,13 @@ export const priceKeyboard = async (key: number, sale: number) => {
     }
 
     return new InlineKeyboard()
-        .text(`▶️ 1 месяц - ${price.m1}₽`, priceData.pack({ k: key, m: 1, p: price.m1 }))
+        .text(`▶️ 1 месяц - ${Price.m1}₽`, priceData.pack({ k: key, m: 1, p: Number(Price.m1) }))
         .row()
-        .text(`▶️ 3 месяца - ${price.m3}₽`, priceData.pack({ k: key, m: 3, p: price.m3 }))
+        .text(`▶️ 3 месяца - ${Price.m3}₽`, priceData.pack({ k: key, m: 3, p: Number(Price.m3) }))
         .row()
-        .text(`▶️ 6 месяцев - ${price.m6}₽`, priceData.pack({ k: key, m: 6, p: price.m6 }))
+        .text(`▶️ 6 месяцев - ${Price.m6}₽`, priceData.pack({ k: key, m: 6, p: Number(Price.m6) }))
         .row()
-        .text(`▶️ 12 месяцев - ${price.m12}₽`, priceData.pack({ k: key, m: 12, p: price.m12 }))
+        .text(`▶️ 12 месяцев - ${Price.m12}₽`, priceData.pack({ k: key, m: 12, p: Number(Price.m12) }))
         .row()
         .combine(backToMainMenuKeyboard);
 };
