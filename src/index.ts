@@ -35,6 +35,9 @@ bot.callbackQuery(keyboard.checkPaymentData, handler.handleCheckPayment);
 // active keys
 bot.callbackQuery('active_keys', handler.handleActiveKeys);
 bot.callbackQuery(keyboard.userKeyData, handler.handleActiveKey);
+bot.callbackQuery(keyboard.extendDeviceLimitData, handler.handleExtendDeviceLimit);
+bot.callbackQuery(keyboard.extendPaymentData, handler.handleExtendPayment);
+bot.callbackQuery(keyboard.extendCheckPaymentData, handler.handleExtendCheckPayment);
 
 // about us
 bot.callbackQuery('about_us', handler.handleAboutUs);

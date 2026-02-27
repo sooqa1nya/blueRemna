@@ -9,19 +9,28 @@ export const getKey = async (key: string) => {
 };
 
 export const getFreeTrial = async () => {
-    const [freeTrial] = await sql<ISetting[]>`
+    const [result] = await sql<ISetting[]>`
         SELECT * FROM settings
         WHERE key = 'free_trial'
     `;
 
-    return JSON.parse(freeTrial?.data).duration || undefined;
+    return JSON.parse(result?.data).duration || undefined;
 };
 
 export const getSubPlans = async () => {
-    const [plans] = await sql<ISetting[]>`
+    const [result] = await sql<ISetting[]>`
         SELECT * FROM settings
         WHERE key = 'plans'
     `;
 
-    return JSON.parse(plans?.data).plans || undefined;
+    return JSON.parse(result?.data).plans || undefined;
+};
+
+export const getLimitExtend = async () => {
+    const [result] = await sql<ISetting[]>`
+        SELECT * FROM settings
+        WHERE key = 'limit_extend'
+    `;
+
+    return JSON.parse(result?.data) || undefined;
 };

@@ -11,7 +11,6 @@ const sql = postgres({
 });
 
 const freeTrial = { duration: process.env.FREE_TRIAL_DAYS! };
-
 const plans = {
     plans:
         [
@@ -32,6 +31,10 @@ const plans = {
                 price: process.env.SUB_PRICE_12_MONTHS!
             }
         ]
+};
+const limitExtend = {
+    devices: process.env.EXTEND_DEVICE_COUNT!,
+    price: process.env.EXTEND_DEVICE_PRICE!
 };
 
 export const initDatabase = async () => {
@@ -57,7 +60,8 @@ export const initDatabase = async () => {
                 id SERIAL PRIMARY KEY,
                 user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
                 uuid TEXT,
-                username TEXT
+                username TEXT,
+                is_limit_extended BOOLEAN DEFAULT FALSE
             )
         `;
         await sql`
@@ -83,7 +87,8 @@ export const initDatabase = async () => {
             INSERT INTO settings (key, data)
             VALUES
                 ('free_trial', ${JSON.stringify(freeTrial)}),
-                ('plans', ${JSON.stringify(plans)})
+                ('plans', ${JSON.stringify(plans)}),
+                ('limit_extend', ${JSON.stringify(limitExtend)})
             ON CONFLICT (key) DO NOTHING
         `;
         console.log('✅ База данных инициализирована');

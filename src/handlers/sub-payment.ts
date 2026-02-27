@@ -1,12 +1,10 @@
 import { type Bot, type CallbackData, type CallbackQueryShorthandContext } from 'gramio';
 import { backToMainMenuKeyboard, currentKeysKeyboard, paymentInvoiceKeyboard, paymentSystemKeyboard, priceKeyboard, selectNewExtendKeyboard } from '../keyboards/index.js';
 import { addProfile, getProfileByID, getProfiles } from '../database/user_profiles.js';
-import { cryptoBot } from '../services/crypto-bot/index.js';
-import { addPayment, changeStatus, getPayment, getPayments } from '../database/payment.js';
 import { findUser, updateUserRefBalance } from '../database/users.js';
-import { platega } from '../services/platega/index.js';
-import type { IPayment } from '../types/database.js';
 import { remnawave } from '../services/remnawave/index.js';
+import { createPayment } from '../utils/create-payment.js';
+import { checkPayment } from '../utils/check-payment.js';
 
 
 // Кнопка купить или продлить ключ
@@ -46,139 +44,31 @@ export const handlePaymentMethod = async (context: CallbackQueryShorthandContext
 
 // Оплата выбранным способом
 export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ s: string, k: number, m: number; p: number; }>>) => {
-    if (context.queryData.s === 'cb') {
-        const invoice = await cryptoBot.createInvoice({
-            currency_type: 'fiat',
-            fiat: 'RUB',
-            amount: context.queryData.p.toString(),
-            expires_in: 1800
-        });
+    const url = await createPayment(context, context.queryData.p);
 
-        if (!invoice || !invoice.ok) {
-            await context.answerCallbackQuery('❌ Ошибка при создании счета (#1). Попробуйте позже.');
-            return;
-        }
-
-        const [payment] = await addPayment(
-            context.from.id,
-            'CryptoBot',
-            invoice.result.invoice_id.toString(),
-            context.queryData.p,
-            context.dbuser?.payload || null
-        );
-
-        if (!payment) {
-            await context.answerCallbackQuery('❌ Ошибка при создании счета (#2). Попробуйте позже.');
-            return;
-        }
-
-        await context.editText(`⏳ Для оплаты нажмите кнопку ниже`, {
-            reply_markup: await paymentInvoiceKeyboard(
-                context.queryData.k,
-                context.queryData.m,
-                context.queryData.p,
-                invoice.result.pay_url
-            )
-        });
-
-    } else if (context.queryData.s === 'pl') {
-        const transaction = await platega.createTransaction({
-            paymentMethod: 2,
-            paymentDetails: {
-                amount: context.queryData.p,
-                currency: 'RUB',
-            },
-            description: `Покупка подписки на ${context.queryData.m} мес.\nПользователь: ${context.from.id}`,
-            payload: context.from.id.toString()
-        });
-
-        if (!transaction) {
-            await context.answerCallbackQuery('❌ Ошибка при создании счета (#1). Попробуйте позже.');
-            return;
-        }
-
-        const [payment] = await addPayment(
-            context.from.id,
-            'Platega',
-            transaction.transactionId,
-            context.queryData.p,
-            context.dbuser?.payload || null
-        );
-
-        if (!payment) {
-            await context.answerCallbackQuery('❌ Ошибка при создании счета (#2). Попробуйте позже.');
-            return;
-        }
-
-        await context.editText(`⏳ Для оплаты нажмите кнопку ниже`, {
-            reply_markup: await paymentInvoiceKeyboard(
-                context.queryData.k,
-                context.queryData.m,
-                context.queryData.p,
-                transaction.redirect!
-            )
-        });
+    if (!url) {
+        await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
+        return;
     }
+
+    await context.editText(`⏳ Для оплаты нажмите кнопку ниже`, {
+        reply_markup: await paymentInvoiceKeyboard(
+            context.queryData.k,
+            context.queryData.m,
+            context.queryData.p,
+            url
+        )
+    });
 };
 
 
 // Проверка оплаты + редирект на продление или выдачу нового ключа
 export const handleCheckPayment = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number, m: number; p: number; }>>) => {
-    // Проверка оплаты
-    const payments = await getPayments(context.from.id);
-    if (!payments.length) {
-        await context.answerCallbackQuery('❌ Время оплаты истекло или счет не найден. Пожалуйста, создайте новый счет и оплатите его.');
+    const paymentInfo = await checkPayment(context);
+    if (!paymentInfo) {
         return;
     }
 
-    type PaymentInfo =
-        | { found: false; payment: null; }
-        | { found: true; payment: IPayment; };
-
-    let paymentInfo: PaymentInfo = {
-        payment: null,
-        found: false
-    };
-
-    for (const payment of payments) {
-        if (payment.service == 'CryptoBot') {
-            const invoices = await cryptoBot.getInvoices({ invoice_ids: payment.payment_id });
-            const invoice = invoices.result.items[0];
-            if (!invoice) {
-                continue;
-            }
-
-            if (invoice.status == 'paid') {
-                paymentInfo = {
-                    payment: payment,
-                    found: true
-                };
-                break;
-            }
-        } else if (payment.service == 'Platega') {
-            const transaction = await platega.getTransactionStatus(payment.payment_id);
-            if (!transaction) {
-                continue;
-            }
-
-            if (transaction.status == 'CONFIRMED') {
-                paymentInfo = {
-                    payment: payment,
-                    found: true
-                };
-                break;
-            }
-        }
-    }
-
-    if (!paymentInfo.found) {
-        await context.answerCallbackQuery('❌ Счет не оплачен. Пожалуйста, оплатите счет и попробуйте снова.');
-        return;
-    }
-
-    // Выдача или продление ключа при успешной оплате
-    await changeStatus(paymentInfo.payment!.id, 'paid');
-    await context.answerCallbackQuery('✅ Оплата прошла!');
     try {
         await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Срок: <code>${context.queryData.m} мес.</code>`, {
             chat_id: process.env.LOG_CHAT_ID!,
