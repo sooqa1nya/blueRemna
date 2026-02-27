@@ -5,6 +5,7 @@ import { findUser, updateUserRefBalance } from '../database/users.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { createPayment } from '../utils/create-payment.js';
 import { checkPayment } from '../utils/check-payment.js';
+import { copyAndMenuKeyboard } from '../keyboards/other.js';
 
 
 // Кнопка купить или продлить ключ
@@ -164,5 +165,5 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
         return;
     }
 
-    await context.editText(`✅ Ваша подписка:\n<code>${user.response.subscriptionUrl}</code>`, { parse_mode: 'HTML', reply_markup: backToMainMenuKeyboard });
+    await context.editText(`✅ Ваша подписка:\n<code>${user.response.subscriptionUrl}</code>`, { parse_mode: 'HTML', reply_markup: copyAndMenuKeyboard(user.response.subscriptionUrl) });
 };

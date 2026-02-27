@@ -4,6 +4,7 @@ import { addProfile } from '../database/user_profiles.js';
 import { useFreeTrial } from '../database/users.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getFreeTrial } from '../database/settings.js';
+import { copyAndMenuKeyboard } from '../keyboards/other.js';
 
 export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot, 'free_trial'>) => {
     const date = new Date();
@@ -51,5 +52,5 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
         });
     } catch { }
 
-    await context.editText(`✅ Ваша пробная подписка.\n⏳ Длительность: <code>${process.env.FREE_TRIAL_DAYS}д</code>\n<code>${user.response.subscriptionUrl}</code>`, { parse_mode: 'HTML', reply_markup: backToMainMenuKeyboard });
+    await context.editText(`✅ Ваша пробная подписка.\n⏳ Длительность: <code>${process.env.FREE_TRIAL_DAYS}д</code>\n<code>${user.response.subscriptionUrl}</code>`, { parse_mode: 'HTML', reply_markup: copyAndMenuKeyboard(user.response.subscriptionUrl) });
 };
