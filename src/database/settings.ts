@@ -9,12 +9,13 @@ export const getKey = async (key: string) => {
 };
 
 export const getFreeTrial = async () => {
-    const [result] = await sql<ISetting[]>`
-        SELECT * FROM settings
+    const [result] = await sql`
+        SELECT data->>'duration' AS duration 
+        FROM settings 
         WHERE key = 'free_trial'
     `;
 
-    return Number(JSON.parse(result?.data).duration) || undefined;
+    return Number(result!.duration) || undefined;
 };
 
 export const getSubPlans = async () => {

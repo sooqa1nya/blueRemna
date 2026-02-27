@@ -86,9 +86,9 @@ export const initDatabase = async () => {
         await sql`
             INSERT INTO settings (key, data)
             VALUES
-                ('free_trial', ${JSON.stringify(freeTrial)}),
-                ('plans', ${JSON.stringify(plans)}),
-                ('limit_extend', ${JSON.stringify(limitExtend)})
+                ('free_trial', ${sql.json(freeTrial)}),
+                ('plans', ${sql.json(plans)}),
+                ('limit_extend', ${sql.json(limitExtend)})
             ON CONFLICT (key) DO NOTHING
         `;
         console.log('✅ База данных инициализирована');
