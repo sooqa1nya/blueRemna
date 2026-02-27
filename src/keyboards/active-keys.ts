@@ -22,7 +22,7 @@ export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit
         .row()
         .text('🔄 Продлить', currentKeysData.pack({ k: key }), { style: 'primary' })
         .row()
-        .addIf(isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key }), { style: 'primary' }))
+        .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key }), { style: 'primary' }))
         .row()
         .combine(backToMainMenuKeyboard);
 };

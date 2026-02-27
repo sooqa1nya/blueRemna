@@ -25,6 +25,7 @@ export interface IUserProfiles {
     user_id: number;
     uuid: string;
     username: string;
+    is_limit_extended: boolean;
 }
 
 export interface IPayment {
