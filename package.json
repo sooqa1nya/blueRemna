@@ -12,12 +12,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^17.2.3",
-    "gramio": "^0.4.11",
-    "postgres": "^3.4.7",
+    "dotenv": "^17.3.1",
+    "gramio": "^0.6.0",
+    "postgres": "^3.4.8",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1"
+    "@types/node": "^25.3.2"
   }
 }
