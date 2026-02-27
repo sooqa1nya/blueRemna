@@ -65,7 +65,7 @@ export const handleExtendDeviceLimit = async (context: CallbackQueryShorthandCon
 
 export const handleExtendPayment = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ s: string, k: number; }>>) => {
     const limit = await getLimitExtend();
-    const price = limit.price;
+    const price = (Number(limit.price));
 
     const url = await createPayment(context, price);
 
@@ -109,7 +109,7 @@ export const handleExtendCheckPayment = async (context: CallbackQueryShorthandCo
 
             const referrer = await findUser(Number(referrerId));
             if (referrer) {
-                await updateUserRefBalance(referrer.id, referrer.ref_balance + limit.price * (referrer.ref_proc / 100));
+                await updateUserRefBalance(referrer.id, referrer.ref_balance + Number(limit.price) * (referrer.ref_proc / 100));
             }
         }
     }

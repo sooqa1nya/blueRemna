@@ -10,31 +10,31 @@ const sql = postgres({
     max_lifetime: 60 * 30
 });
 
-const freeTrial = { duration: process.env.FREE_TRIAL_DAYS! };
+const freeTrial = { duration: Number(process.env.FREE_TRIAL_DAYS!) };
 const plans = {
     plans:
         [
             {
                 months: 1,
-                price: process.env.SUB_PRICE_1_MONTH!
+                price: Number(process.env.SUB_PRICE_1_MONTH!)
             },
             {
                 months: 3,
-                price: process.env.SUB_PRICE_3_MONTHS!
+                price: Number(process.env.SUB_PRICE_3_MONTHS!)
             },
             {
                 months: 6,
-                price: process.env.SUB_PRICE_6_MONTHS!
+                price: Number(process.env.SUB_PRICE_6_MONTHS!)
             },
             {
                 months: 12,
-                price: process.env.SUB_PRICE_12_MONTHS!
+                price: Number(process.env.SUB_PRICE_12_MONTHS!)
             }
         ]
 };
 const limitExtend = {
-    devices: process.env.EXTEND_DEVICE_COUNT!,
-    price: process.env.EXTEND_DEVICE_PRICE!
+    devices: Number(process.env.EXTEND_DEVICE_COUNT!),
+    price: Number(process.env.EXTEND_DEVICE_PRICE!)
 };
 
 export const initDatabase = async () => {
