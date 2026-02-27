@@ -4,9 +4,8 @@ import { backToMainMenuKeyboard } from '../keyboards/main.js';
 import { extendPaymentInvoiceKeyboard, extendPaymentMethodKeyboard, userKeyKeyboard, userKeysKeyboard } from '../keyboards/active-keys.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getLimitExtend } from '../database/settings.js';
-import { checkPayment } from '../utils/check-payment.js';
 import { findUser, updateUserRefBalance } from '../database/users.js';
-import { createPayment } from '../utils/create-payment.js';
+import { addRefBalance, checkPayment, createPayment } from '../utils/index.js';
 
 
 export const handleActiveKeys = async (context: CallbackQueryShorthandContext<Bot, 'active_keys'>) => {
@@ -98,20 +97,11 @@ export const handleExtendCheckPayment = async (context: CallbackQueryShorthandCo
     const user = await remnawave.getUserByUUID((await getProfileByID(context.queryData.k))[0]!.uuid);
     const limit = await getLimitExtend();
 
-    if (context.dbuser?.payload) {
-        const regex = /id([?<id>0-9]+)/;
-        if (regex.test(context.dbuser.payload)) {
-            const match = context.dbuser.payload.match(regex)!;
-            const referrerId = match[1];
-            if (!referrerId) {
-                return;
-            }
-
-            const referrer = await findUser(Number(referrerId));
-            if (referrer) {
-                await updateUserRefBalance(referrer.id, referrer.ref_balance + Number(limit.price) * (referrer.ref_proc / 100));
-            }
-        }
+    // Бонуска
+    try {
+        await addRefBalance(context, Number(limit.price));
+    } catch (e) {
+        console.error('Ошибка выдачи рефки (active-keys):', e);
     }
 
     try {

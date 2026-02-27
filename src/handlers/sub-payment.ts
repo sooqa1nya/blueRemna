@@ -1,11 +1,8 @@
 import { type Bot, type CallbackData, type CallbackQueryShorthandContext } from 'gramio';
-import { backToMainMenuKeyboard, currentKeysKeyboard, paymentInvoiceKeyboard, paymentSystemKeyboard, priceKeyboard, selectNewExtendKeyboard } from '../keyboards/index.js';
-import { addProfile, getProfileByID, getProfiles } from '../database/user_profiles.js';
+import { currentKeysKeyboard, paymentInvoiceKeyboard, paymentSystemKeyboard, priceKeyboard, selectNewExtendKeyboard } from '../keyboards/index.js';
+import { getProfiles } from '../database/user_profiles.js';
 import { findUser, updateUserRefBalance } from '../database/users.js';
-import { remnawave } from '../services/remnawave/index.js';
-import { createPayment } from '../utils/create-payment.js';
-import { checkPayment } from '../utils/check-payment.js';
-import { copyAndMenuKeyboard } from '../keyboards/other.js';
+import { createPayment, checkPayment, updateProfile, newProfile, addRefBalance } from '../utils/index.js';
 
 
 // Кнопка купить или продлить ключ
@@ -77,93 +74,18 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
         });
     } catch { }
 
-
-    if (context.dbuser?.payload) {
-        const regex = /id([?<id>0-9]+)/;
-        if (regex.test(context.dbuser.payload)) {
-            const match = context.dbuser.payload.match(regex)!;
-            const referrerId = match[1];
-            if (!referrerId) {
-                return;
-            }
-
-            const referrer = await findUser(Number(referrerId));
-            if (referrer) {
-                await updateUserRefBalance(referrer.id, referrer.ref_balance + context.queryData.p * (referrer.ref_proc / 100));
-            }
-        }
-    }
-
-
-    const days = context.queryData.m * 30;
-    const date = new Date();
-
-    if (context.queryData.k != -1) {
-        const [profile] = await getProfileByID(context.queryData.k);
-        if (!profile) {
-            await context.answerCallbackQuery('❌ Ошибка #1 при продлении подписки. Обратитесь в поддержку.');
-            return;
-        }
-
-        const sub = await remnawave.getUserByUUID(profile.uuid);
-        if (!sub) {
-            await context.answerCallbackQuery('❌ Ошибка #2 при продлении подписки. Обратитесь в поддержку.');
-            return;
-        }
-
-        const user = await remnawave.getUserByUUID(profile.uuid);
-        if (!user) {
-            await context.answerCallbackQuery('❌ Ошибка #3 при продлении подписки. Обратитесь в поддержку.');
-            return;
-        }
-        const expiteDate = new Date(user.response.expireAt);
-
-        expiteDate < date ? date.setDate(date.getDate() + days) : date.setDate(expiteDate.getDate() + days);
-
-        await remnawave.updateUser({
-            uuid: profile.uuid,
-            expireAt: date.toISOString()
-        });
-
-        await context.editText('✅ Подписка продлена!', { reply_markup: backToMainMenuKeyboard });
-        return;
-    }
-
-
-    const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
-    const squads = await remnawave.getSquadForVPN();
-
-    if (!squads) {
-        await context.answerCallbackQuery('❌ Ошибка при добавлении в сквад. Обратитесь в поддержку.');
-        return;
-    }
-
-    date.setDate(date.getDate() + Number(days));
-    const user = await remnawave.createUser({
-        username: profile,
-        expireAt: date.toISOString(),
-        telegramId: context.from.id,
-        hwidDeviceLimit: 5,
-        activeInternalSquads: [squads.internal],
-        externalSquadUuid: squads.external
-    });
-
-    if (!user) {
-        await context.answerCallbackQuery('❌ Ошибка при создании пользователя. Обратитесь в поддержку.');
-        return;
-    }
-
+    // Бонуска
     try {
-        await addProfile(
-            context.from.id,
-            user.response.uuid,
-            profile
-        );
-    } catch (error) {
-        await context.answerCallbackQuery('❌ Ошибка при добавлении профиля в БД. Обратитесь в поддержку.');
-        await remnawave.deleteUser(user.response.uuid);
+        await addRefBalance(context, context.queryData.p);
+    } catch (e) {
+        console.error('Ошибка выдачи рефки (sub-payment):', e);
+    }
+
+    // Продление или создание новой подписки
+    if (context.queryData.k != -1) {
+        await newProfile(context);
         return;
     }
 
-    await context.editText(`✅ Ваша подписка:\n<code>${user.response.subscriptionUrl}</code>`, { parse_mode: 'HTML', reply_markup: copyAndMenuKeyboard(user.response.subscriptionUrl) });
+    await updateProfile(context);
 };
