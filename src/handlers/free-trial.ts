@@ -17,7 +17,7 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
     }
 
     const days = await getFreeTrial();
-    date.setDate(date.getDate() + days);
+    date.setDate(date.getDate() + Number(days));
     const user = await remnawave.createUser({
         username: profile,
         expireAt: date.toISOString(),

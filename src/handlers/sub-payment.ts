@@ -138,7 +138,7 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
         return;
     }
 
-    date.setDate(date.getDate() + days);
+    date.setDate(date.getDate() + Number(days));
     const user = await remnawave.createUser({
         username: profile,
         expireAt: date.toISOString(),

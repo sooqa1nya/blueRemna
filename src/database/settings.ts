@@ -14,7 +14,7 @@ export const getFreeTrial = async () => {
         WHERE key = 'free_trial'
     `;
 
-    return JSON.parse(result?.data).duration || undefined;
+    return Number(JSON.parse(result?.data).duration) || undefined;
 };
 
 export const getSubPlans = async () => {
