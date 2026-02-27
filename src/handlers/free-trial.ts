@@ -1,5 +1,4 @@
 import type { Bot, CallbackQueryShorthandContext } from 'gramio';
-import { backToMainMenuKeyboard } from '../keyboards/main.js';
 import { addProfile } from '../database/user_profiles.js';
 import { useFreeTrial } from '../database/users.js';
 import { remnawave } from '../services/remnawave/index.js';
