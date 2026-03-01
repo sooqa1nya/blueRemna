@@ -13,11 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^17.3.1",
-    "gramio": "^0.6.0",
+    "gramio": "^0.7.0",
     "postgres": "^3.4.8",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@types/node": "^25.3.2"
+    "@types/node": "^25.3.3"
   }
 }
