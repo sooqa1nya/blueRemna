@@ -2,8 +2,7 @@ import { InlineKeyboard } from 'gramio';
 import { backToMainMenuKeyboard } from './main.js';
 
 export const refKeyboard = (url: string) => {
-    const text = `https://t.me/share/url?url=
-💙 blueVPN — моя защита в сети  
+    const text = `https://t.me/share/url?url=💙 blueVPN — моя защита в сети  
 бесплатный пробный период по моей ссылке
 ${url}
 
