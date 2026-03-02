@@ -27,15 +27,18 @@ export const handleActiveKey = async (context: CallbackQueryShorthandContext<Bot
 🔑 <code>${dbprofile?.username}</code>
 
 📆 Дата истечения: <code>${expire.toLocaleDateString('ru-RU')} (${daysRemaining}д)</code>
-${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>\n` : ''}
+${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>` : ''}
 
 ℹ️ Примечание:
 <i> - Что бы активировать подписку необходимо добавить ссылку в приложение.
- - Список доступных приложений вы можете найти в разделе "Помощь" главного меню.
- - Что бы скопировать ссылку нажмите на зеленую кнопку.</i>
+- Список доступных приложений вы можете найти в разделе "Помощь" главного меню.
+- Что бы скопировать ссылку нажмите на зеленую кнопку.</i>
+
+<a href="${user.response.subscriptionUrl}">🔗 Перейти на страницу подписки</a>
     `, {
         reply_markup: await userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!dbprofile?.is_limit_extended),
-        parse_mode: 'HTML'
+        parse_mode: 'HTML',
+        link_preview_options: { is_disabled: true }
     });
 };
 
