@@ -6,7 +6,7 @@ import { mainMenu } from './composer/main-menu.js';
 import { subPayment } from './composer/sub-payment.js';
 import { activeKeys } from './composer/active-keys.js';
 import { freeTrial } from './composer/free-trial.js';
-import { affilianteProgram } from './composer/affiliante-program.js';
+import { affilianteProgram } from './composer/affiliate-program.js';
 import { help } from './composer/help.js';
 import { aboutUs } from './composer/about-us.js';
 import { dbUser } from './middlewares/db-user.js';
