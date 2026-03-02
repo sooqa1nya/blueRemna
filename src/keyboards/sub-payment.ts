@@ -11,7 +11,7 @@ export const currentKeysKeyboard = async (userId: number) => {
     const profiles: any = await getProfiles(userId);
 
     profiles.forEach((x: any) => {
-        keyboard.text('🔑 ' + x.username, currentKeysData.pack({ k: x.id })).row();
+        keyboard.text('⏺️ ' + x.username, currentKeysData.pack({ k: x.id })).row();
     });
 
     keyboard.combine(backToMainMenuKeyboard);
