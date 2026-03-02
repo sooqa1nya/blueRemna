@@ -2,6 +2,7 @@ import { CallbackData, InlineKeyboard } from 'gramio';
 import { getProfiles } from '../database/user_profiles.js';
 import { backToMainMenuKeyboard } from './main.js';
 import { currentKeysData } from './sub-payment.js';
+import { copyLinkKeyboard } from './other.js';
 
 // Список всех подписок
 export const userKeyData = new CallbackData('active_key')
@@ -18,7 +19,7 @@ export const extendDeviceLimitData = new CallbackData('extend_limit')
     .number('k');
 export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit: boolean) => {
     return new InlineKeyboard()
-        .copy('📋 Скопировать', subUrl, { style: 'success' })
+        .combine(copyLinkKeyboard(subUrl))
         .row()
         .text('🔄 Продлить', currentKeysData.pack({ k: key }), { style: 'primary' })
         .row()
