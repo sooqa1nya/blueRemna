@@ -4,7 +4,6 @@ import { backToMainMenuKeyboard } from '../keyboards/main.js';
 import { extendPaymentInvoiceKeyboard, extendPaymentMethodKeyboard, userKeyKeyboard, userKeysKeyboard } from '../keyboards/active-keys.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getLimitExtend } from '../database/settings.js';
-import { findUser, updateUserRefBalance } from '../database/users.js';
 import { addRefBalance, checkPayment, createPayment } from '../utils/index.js';
 
 

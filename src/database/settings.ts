@@ -24,7 +24,7 @@ export const getSubPlans = async () => {
         WHERE key = 'plans'
     `;
 
-    return JSON.parse(result?.data).plans || undefined;
+    return result?.data.plans || undefined;
 };
 
 export const getLimitExtend = async () => {
@@ -33,5 +33,5 @@ export const getLimitExtend = async () => {
         WHERE key = 'limit_extend'
     `;
 
-    return JSON.parse(result?.data) || undefined;
+    return result?.data || undefined;
 };

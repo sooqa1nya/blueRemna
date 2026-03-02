@@ -1,7 +1,6 @@
 import { type Bot, type CallbackData, type CallbackQueryShorthandContext } from 'gramio';
 import { currentKeysKeyboard, paymentInvoiceKeyboard, paymentSystemKeyboard, priceKeyboard, selectNewExtendKeyboard } from '../keyboards/index.js';
 import { getProfiles } from '../database/user_profiles.js';
-import { findUser, updateUserRefBalance } from '../database/users.js';
 import { createPayment, checkPayment, updateProfile, newProfile, addRefBalance } from '../utils/index.js';
 
 

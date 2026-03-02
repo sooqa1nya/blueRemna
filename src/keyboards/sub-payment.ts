@@ -5,7 +5,8 @@ import { getSubPlans } from '../database/settings.js';
 
 
 // Меню выбора ключа для продления
-export const currentKeysData = new CallbackData('sub_duration').number('k');
+export const currentKeysData = new CallbackData('sub_duration')
+    .number('k');
 export const currentKeysKeyboard = async (userId: number) => {
     const keyboard = new InlineKeyboard();
     const profiles: any = await getProfiles(userId);
