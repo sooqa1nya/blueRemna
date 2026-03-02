@@ -33,5 +33,11 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
         expireAt: date.toISOString()
     });
 
-    await context.editText('✅ Подписка продлена!', { reply_markup: backToMainMenuKeyboard });
+    const text = `
+✅ Подписка продлена
+
+⏳ Дата окончания: <code>${date.toLocaleDateString('ru-RU')}</code>
+    `;
+
+    await context.editText('✅ Подписка продлена', { reply_markup: backToMainMenuKeyboard });
 };

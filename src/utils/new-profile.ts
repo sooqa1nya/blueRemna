@@ -42,7 +42,17 @@ export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any
         return;
     }
 
-    await context.editText(`✅ Ваша подписка:\n<code>${user.response.subscriptionUrl}</code>`, { parse_mode: 'HTML', reply_markup: copyAndMenuKeyboard(user.response.subscriptionUrl) });
+    const text = `
+✅ Подписка активирована
+
+⏳ Дата окончания: <code>${date.toLocaleDateString('ru-RU')}</code>
+
+ℹ️ Инструкция по использованию:
+1. Нажмите кнопку "Скопировать" что бы скопировать ссылку на подписку
+2. Установите любое поддерживаемое приложение для работы с подписками <i>(доступные приложения можно найти в меню "Помощь")</i>
+3. Вставьте скопированную ссылку в приложение и наслаждайтесь использованием blueVPN 💙`;
+
+    await context.editText(text, { parse_mode: 'HTML', reply_markup: copyAndMenuKeyboard(user.response.subscriptionUrl) });
 };
 
 
