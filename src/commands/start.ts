@@ -7,7 +7,6 @@ export const handleStart = async (context: MessageContext<Bot> & { args: string 
         return;
     }
 
-    const existingUser = await findUser(context.from.id);
     const text = `
 <a href="tg://user?id=${context.from.id}">➕ Новый пользователь</a>
 
@@ -16,7 +15,7 @@ export const handleStart = async (context: MessageContext<Bot> & { args: string 
 ${context.args ? `- Payload: <code>${context.args}</code>` : ''}
     `;
 
-    if (!existingUser) {
+    if (!context.dbuser) {
         try {
             await context.send(text, {
                 chat_id: process.env.LOG_CHAT_ID!,
@@ -40,7 +39,6 @@ ${context.args ? `- Payload: <code>${context.args}</code>` : ''}
                 }
             }
         }
-
     };
 
     const user = await upsertUser(context.from.id, context.from.username ?? null, context.from.firstName, context.args);

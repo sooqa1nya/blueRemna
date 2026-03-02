@@ -4,7 +4,6 @@ import { remnawave } from '../services/remnawave/index.js';
 
 
 export const handleAboutUs = async (context: CallbackQueryShorthandContext<Bot, 'about_us'>) => {
-
     const hosts = await remnawave.getHostsForVPN();
 
     const text = `
