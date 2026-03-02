@@ -7,7 +7,7 @@ import type { IPayment } from '../types/database.js';
 export const checkPayment = async (context: CallbackQueryShorthandContext<Bot, any>) => {
     const payments = await getPayments(context.from.id);
     if (!payments.length) {
-        await context.answerCallbackQuery('❌ Время оплаты истекло или счет не найден. Пожалуйста, создайте новый счет и оплатите его.');
+        await context.answerCallbackQuery('❌ Время оплаты истекло. Создайте новый счет');
         return;
     }
 
@@ -52,7 +52,7 @@ export const checkPayment = async (context: CallbackQueryShorthandContext<Bot, a
     }
 
     if (!paymentInfo?.found) {
-        await context.answerCallbackQuery('❌ Счет не оплачен. Пожалуйста, оплатите счет и попробуйте снова.');
+        await context.answerCallbackQuery('❌ Счет не оплачен');
         return null;
     }
 
