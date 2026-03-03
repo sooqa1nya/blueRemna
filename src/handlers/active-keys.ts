@@ -31,10 +31,8 @@ ${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${u
 
 ℹ️ Примечание:
 <i> - Что бы активировать подписку необходимо добавить ссылку в приложение.
-- Список доступных приложений вы можете найти в разделе "Помощь" главного меню.
+- Список доступных приложений вы можете найти в разделе "Помощь" главного меню или перейдя по кнопке "Профиль".
 - Что бы скопировать ссылку нажмите на зеленую кнопку.</i>
-
-<a href="${user.response.subscriptionUrl}">🔗 Перейти на страницу подписки</a>
     `, {
         reply_markup: await userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!dbprofile?.is_limit_extended),
         parse_mode: 'HTML',
