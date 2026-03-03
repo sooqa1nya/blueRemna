@@ -3,7 +3,7 @@ import { addProfile } from '../database/user_profiles.js';
 import { useFreeTrial } from '../database/users.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getFreeTrial } from '../database/settings.js';
-import { copyAndMenuKeyboard } from '../keyboards/other.js';
+import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 
 export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot, 'free_trial'>) => {
     const date = new Date();
@@ -65,5 +65,5 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
 3. Вставьте скопированную ссылку в приложение и наслаждайтесь использованием blueVPN 💙
     `;
 
-    await context.editText(text, { parse_mode: 'HTML', reply_markup: copyAndMenuKeyboard(user.response.subscriptionUrl) });
+    await context.editText(text, { parse_mode: 'HTML', reply_markup: copyWebappMenuKeyboard('👤 Профиль', user.response.subscriptionUrl) });
 };
