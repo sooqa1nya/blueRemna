@@ -13,6 +13,11 @@ export const handleAffiliateProgram = async (context: CallbackQueryShorthandCont
 💳 Баланс: <code>${context.dbuser?.ref_balance}₽</code>
 🔄 Процент: <code>${context.dbuser?.ref_proc}%</code>
 
+ℹ️ Инфоримация:
+<i> - Приводи друзей и получай бонусы
+ - За каждого реферала ты получаешь ${context.dbuser?.ref_proc}% от его пополнения
+ - Накопленные средства можно потратить на любую транзацию в боте</i> 
+
 ▶️ Реферальная ссылка:
 <code>${refUrl}</code>
 `;
