@@ -13,7 +13,7 @@ export const handleActiveKeys = async (context: CallbackQueryShorthandContext<Bo
         return await context.editText('❗️ У вас нет активной подписки.\n\n✅ Чтобы приобрести подписку, вернитесь в главное меню и выберите пункт "Купить или продлить".', { reply_markup: backToMainMenuKeyboard });
     }
 
-    await context.editText('🔑 Доступные подписки:', { reply_markup: await userKeysKeyboard(context.from.id) });
+    await context.editText('🔑 Доступные подписки', { reply_markup: await userKeysKeyboard(context.from.id) });
 };
 
 export const handleActiveKey = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {

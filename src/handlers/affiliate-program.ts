@@ -7,7 +7,7 @@ export const handleAffiliateProgram = async (context: CallbackQueryShorthandCont
     const refUrl = `https://t.me/lightbluevpn_bot?start=id${context.from.id}`;
 
     const text = `
-<b>⏺️ Партнерская программа:</b>
+<b>⏺️ Партнерская программа</b>
 
 👤 Рефералы: <code>${referals!.count}</code>
 💳 Баланс: <code>${context.dbuser?.ref_balance}₽</code>

@@ -34,7 +34,7 @@ export const handleSelectDuration = async (context: CallbackQueryShorthandContex
 
 // Кнопка выбора способа оплаты
 export const handlePaymentMethod = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number, m: number; p: number; }>>) => {
-    await context.editText('💳 Выберите способ оплаты:', {
+    await context.editText('💳 Выберите способ оплаты', {
         reply_markup: await paymentSystemKeyboard(context.queryData.k, context.queryData.m, context.queryData.p)
     });
 };
