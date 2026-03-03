@@ -20,5 +20,5 @@ export const handleAcceptPolicy = async (context: CallbackQueryShorthandContext<
 };
 
 export const handleMainMenu = async (context: CallbackQueryShorthandContext<Bot, 'main_menu'>) => {
-    await context.editText(`🌐 Главное меню`, { reply_markup: await mainMenuKeyboard(Boolean(context.dbuser?.trial_key)) });
+    await context.editText(`🌐 Главное меню`, { reply_markup: await mainMenuKeyboard(Boolean(context.dbuser?.trial_key), context.from.id) });
 };

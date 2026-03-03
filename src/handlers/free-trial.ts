@@ -12,6 +12,7 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
 
     if (!squads) {
         await context.answerCallbackQuery('❌ Ошибка при добавлении в сквад. Обратитесь в поддержку.');
+        console.error('[free-trial]: ❌ Ошибка при добавлении в сквад: ' + squads);
         return;
     }
 
@@ -28,6 +29,7 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
 
     if (!user) {
         await context.answerCallbackQuery('❌ Ошибка при создании пользователя. Обратитесь в поддержку.');
+        console.error('[free-trial]: ❌ Ошибка при создании пользователя: ' + user);
         return;
     }
 
@@ -41,6 +43,7 @@ export const handleFreeTrial = async (context: CallbackQueryShorthandContext<Bot
     } catch (error) {
         await context.answerCallbackQuery('❌ Ошибка при добавлении профиля в БД. Обратитесь в поддержку.');
         await remnawave.deleteUser(user.response.uuid);
+        console.error('[free-trial]: ❌ Ошибка при добавлении профиля в БД. UUID: ' + error);
         return;
     }
 

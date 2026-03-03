@@ -55,6 +55,6 @@ ${context.args ? `- Payload: <code>${context.args}</code>` : ''}
             parse_mode: 'Markdown'
         });
     } else {
-        await context.send('💮 Навигация', { reply_markup: await mainMenuKeyboard(user.trial_key) });
+        await context.send('💮 Навигация', { reply_markup: await mainMenuKeyboard(user.trial_key, context.from.id) });
     }
 };
