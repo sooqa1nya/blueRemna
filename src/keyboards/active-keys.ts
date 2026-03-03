@@ -23,9 +23,9 @@ export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit
         .row()
         .webApp('👤 Профиль', subUrl, { style: 'primary' })
         .row()
-        .text('🔄 Продлить', currentKeysData.pack({ k: key }))
+        .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key })))
         .row()
-        .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key }), { style: 'primary' }))
+        .text('🔄 Продлить', currentKeysData.pack({ k: key }))
         .row()
         .combine(backToMainMenuKeyboard);
 };

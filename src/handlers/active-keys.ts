@@ -27,8 +27,7 @@ export const handleActiveKey = async (context: CallbackQueryShorthandContext<Bot
 🔑 <code>${dbprofile?.username}</code>
 
 📆 Дата истечения: <code>${expire.toLocaleDateString('ru-RU')} (${daysRemaining}д)</code>
-${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>` : ''}
-
+${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>\n` : ''}
 ℹ️ Примечание:
 <i> - Что бы активировать подписку необходимо добавить ссылку в приложение.
 - Список доступных приложений вы можете найти в разделе "Помощь" главного меню или перейдя по кнопке "Профиль".
