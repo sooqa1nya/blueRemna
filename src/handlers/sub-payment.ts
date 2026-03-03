@@ -2,6 +2,8 @@ import { type Bot, type CallbackData, type CallbackQueryShorthandContext } from 
 import { currentKeysKeyboard, paymentInvoiceKeyboard, paymentSystemKeyboard, priceKeyboard, selectNewExtendKeyboard } from '../keyboards/index.js';
 import { getProfiles } from '../database/user_profiles.js';
 import { createPayment, checkPayment, updateProfile, newProfile, addRefBalance } from '../utils/index.js';
+import { getGlobalSale } from '../database/settings.js';
+import { calcSale } from '../utils/final-price.js';
 
 
 // Кнопка купить или продлить ключ
@@ -26,7 +28,11 @@ export const handleExtendKey = async (context: CallbackQueryShorthandContext<Bot
 
 // Кнопка выбора длительности подписки
 export const handleSelectDuration = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {
-    await context.editText(`⏳ Выберите срок действия подписки${context.dbuser!.sale > 0 ? `\n💸 Скидка: <code>${context.dbuser?.sale}%</code>` : ''}`, {
+    const globalSale = await getGlobalSale();
+    const userSale = context.dbuser?.sale || 0;
+    const finalSale = await calcSale(globalSale, userSale);
+
+    await context.editText(`⏳ Выберите срок действия подписки${finalSale > 0 ? `\n💸 Скидка: <code>${finalSale}%</code>` : ''}`, {
         reply_markup: await priceKeyboard(context.queryData.k, context.dbuser?.sale || 0),
         parse_mode: 'HTML'
     });

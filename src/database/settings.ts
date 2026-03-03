@@ -15,7 +15,7 @@ export const getFreeTrial = async () => {
         WHERE key = 'free_trial'
     `;
 
-    return Number(result!.duration) || undefined;
+    return Number(result?.duration) || undefined;
 };
 
 export const getSubPlans = async () => {
@@ -34,4 +34,13 @@ export const getLimitExtend = async () => {
     `;
 
     return result?.data || undefined;
+};
+
+export const getGlobalSale = async () => {
+    const [result] = await sql`
+        SELECT data->>'sale' AS sale FROM settings
+        WHERE key = 'global_sale'
+    `;
+
+    return Number(result?.sale) || 0;
 };

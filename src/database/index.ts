@@ -36,6 +36,9 @@ const limitExtend = {
     devices: Number(process.env.EXTEND_DEVICE_COUNT!),
     price: Number(process.env.EXTEND_DEVICE_PRICE!)
 };
+const globalSale = {
+    sale: 0
+};
 
 export const initDatabase = async () => {
     try {
@@ -88,7 +91,8 @@ export const initDatabase = async () => {
             VALUES
                 ('free_trial', ${sql.json(freeTrial)}),
                 ('plans', ${sql.json(plans)}),
-                ('limit_extend', ${sql.json(limitExtend)})
+                ('limit_extend', ${sql.json(limitExtend)}),
+                ('global_sale', ${sql.json(globalSale)})
             ON CONFLICT (key) DO NOTHING
         `;
         console.log('✅ База данных инициализирована');

@@ -2,6 +2,7 @@ import { CallbackData, InlineKeyboard } from 'gramio';
 import { getProfiles } from '../database/user_profiles.js';
 import { backToMainMenuKeyboard } from './main.js';
 import { getSubPlans } from '../database/settings.js';
+import { finalPrice } from '../utils/final-price.js';
 
 
 // Меню выбора ключа для продления
@@ -27,25 +28,27 @@ export const priceData = new CallbackData('payment_menu')
     .number('p');
 export const priceKeyboard = async (key: number, sale: number) => {
     let prices: { months: number, price: number; }[] = await getSubPlans();
-    prices.forEach(x => x.price = Math.round(x.price * (1 - sale / 100)));
-    const getPrice = (months: number) => {
+    for (const element of prices) {
+        element.price = await finalPrice(element.price, sale);
+    }
+    const getPrice = async (months: number) => {
         return prices.find(x => x.months == months)!.price;
     };
-    enum Price {
-        'm1' = getPrice(1),
-        'm3' = getPrice(3),
-        'm6' = getPrice(6),
-        'm12' = getPrice(12)
-    }
+    const price = {
+        m1: await getPrice(1),
+        m3: await getPrice(3),
+        m6: await getPrice(6),
+        m12: await getPrice(12)
+    };
 
     return new InlineKeyboard()
-        .text(`▶️ 1 месяц - ${Price.m1}₽`, priceData.pack({ k: key, m: 1, p: Number(Price.m1) }))
+        .text(`▶️ 1 месяц - ${price.m1}₽`, priceData.pack({ k: key, m: 1, p: Number(price.m1) }))
         .row()
-        .text(`▶️ 3 месяца - ${Price.m3}₽`, priceData.pack({ k: key, m: 3, p: Number(Price.m3) }))
+        .text(`▶️ 3 месяца - ${price.m3}₽`, priceData.pack({ k: key, m: 3, p: Number(price.m3) }))
         .row()
-        .text(`▶️ 6 месяцев - ${Price.m6}₽`, priceData.pack({ k: key, m: 6, p: Number(Price.m6) }))
+        .text(`▶️ 6 месяцев - ${price.m6}₽`, priceData.pack({ k: key, m: 6, p: Number(price.m6) }))
         .row()
-        .text(`▶️ 12 месяцев - ${Price.m12}₽`, priceData.pack({ k: key, m: 12, p: Number(Price.m12) }))
+        .text(`▶️ 12 месяцев - ${price.m12}₽`, priceData.pack({ k: key, m: 12, p: Number(price.m12) }))
         .row()
         .combine(backToMainMenuKeyboard);
 };
