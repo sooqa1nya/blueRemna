@@ -13,6 +13,7 @@ export const mainMenuKeyboard = async (free_trial: boolean, id: number) => {
         .addIf(!free_trial, InlineKeyboard.text('🎁 Пробный период', 'free_trial', { style: 'success' }))
         .row()
         .text('🛒 Оформить подписку', mainMenuData.pack({ k: -1 }))
+        .row()
         .addIf(profiles.length > 0, InlineKeyboard.text('🔑 Мои подписки', 'active_keys'))
         .row()
         .text('ℹ️ Информация', 'about_us')
