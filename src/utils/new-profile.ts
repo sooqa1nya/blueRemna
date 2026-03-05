@@ -12,6 +12,7 @@ export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any
 
     if (!squads) {
         await context.answerCallbackQuery('❌ Ошибка при добавлении в сквад. Обратитесь в поддержку.');
+        console.error('Ошибка при получении сквада для VPN', squads);
         return;
     }
 
@@ -27,6 +28,7 @@ export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any
 
     if (!user) {
         await context.answerCallbackQuery('❌ Ошибка при создании пользователя. Обратитесь в поддержку.');
+        console.error('Ошибка при создании пользователя', user);
         return;
     }
 
@@ -38,6 +40,7 @@ export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any
         );
     } catch (error) {
         await context.answerCallbackQuery('❌ Ошибка при добавлении профиля в БД. Обратитесь в поддержку.');
+        console.error('Ошибка при добавлении профиля в БД', error);
         await remnawave.deleteUser(user.response.uuid);
         return;
     }

@@ -10,18 +10,14 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
     const [profile] = await getProfileByID(context.queryData.k);
     if (!profile) {
         await context.answerCallbackQuery('❌ Ошибка #1 при продлении подписки. Обратитесь в поддержку.');
-        return;
-    }
-
-    const sub = await remnawave.getUserByUUID(profile.uuid);
-    if (!sub) {
-        await context.answerCallbackQuery('❌ Ошибка #2 при продлении подписки. Обратитесь в поддержку.');
+        console.error('Ошибка #1 при продлении подписки', profile);
         return;
     }
 
     const user = await remnawave.getUserByUUID(profile.uuid);
     if (!user) {
-        await context.answerCallbackQuery('❌ Ошибка #3 при продлении подписки. Обратитесь в поддержку.');
+        await context.answerCallbackQuery('❌ Ошибка #2 при продлении подписки. Обратитесь в поддержку.');
+        console.error('Ошибка #2 при продлении подписки', user);
         return;
     }
     const expiteDate = new Date(user.response.expireAt);

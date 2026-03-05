@@ -87,7 +87,7 @@ export const handleCheckPayment = async (context: CallbackQueryShorthandContext<
     }
 
     // Продление или создание новой подписки
-    if (context.queryData.k != -1) {
+    if (context.queryData.k == -1) {
         await newProfile(context);
         return;
     }
