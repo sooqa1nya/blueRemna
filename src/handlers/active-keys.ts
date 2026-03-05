@@ -71,7 +71,17 @@ export const handleExtendPayment = async (context: CallbackQueryShorthandContext
         return;
     }
 
-    await context.editText(`⏳ Для оплаты нажмите кнопку ниже`, {
+    const text = `
+⏳ Покупка
+
+ℹ️ Примечание:
+ <i>- Для перехода на страницу оплаты нажмите кнопку "Оплатить"
+ - После оплаты нажмите кнопку "Проверить оплату"
+ - Если оплата не прошла, попробуйте снова или обратитесь в поддержку</i>
+    `;
+
+    await context.editText(text, {
+        parse_mode: 'HTML',
         reply_markup: await extendPaymentInvoiceKeyboard(
             context.queryData.k,
             url

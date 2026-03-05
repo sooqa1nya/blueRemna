@@ -53,8 +53,17 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
         await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
         return;
     }
+    const text = `
+⏳ Покупка
+    
+ℹ️ Примечание:
+ <i>- Для перехода на страницу оплаты нажмите кнопку "Оплатить"
+ - После оплаты нажмите кнопку "Проверить оплату"
+ - Если оплата не прошла, попробуйте снова или обратитесь в поддержку</i>
+`;
 
-    await context.editText(`⏳ Для оплаты нажмите кнопку ниже`, {
+    await context.editText(text, {
+        parse_mode: 'HTML',
         reply_markup: await paymentInvoiceKeyboard(
             context.queryData.k,
             context.queryData.m,
