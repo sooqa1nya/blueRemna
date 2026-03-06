@@ -1,12 +1,12 @@
-import type { Bot, CallbackQueryShorthandContext } from 'gramio';
-import { supportMenuKeyboard } from '../keyboards/main.js';
+import { Composer } from 'gramio';
 import { remnawave } from '../services/remnawave/index.js';
+import { supportMenuKeyboard } from '../keyboards/main.js';
 
+export const aboutUs = new Composer({ name: 'aboutUs' })
+    .callbackQuery('about_us', async context => {
+        const hosts = await remnawave.getHostsForVPN();
 
-export const handleAboutUs = async (context: CallbackQueryShorthandContext<Bot, 'about_us'>) => {
-    const hosts = await remnawave.getHostsForVPN();
-
-    const text = `
+        const text = `
 ℹ️ *Информация*
 
 🌏 Доступные локации:
@@ -18,9 +18,9 @@ export const handleAboutUs = async (context: CallbackQueryShorthandContext<Bot, 
 [🔒 Политика конфиденциальности (кликабельно)](${process.env.PRIVACY_POLICY_URL!})
 `;
 
-    await context.editText(text, {
-        reply_markup: supportMenuKeyboard,
-        link_preview_options: { is_disabled: true },
-        parse_mode: 'Markdown'
+        await context.editText(text, {
+            reply_markup: supportMenuKeyboard,
+            link_preview_options: { is_disabled: true },
+            parse_mode: 'Markdown'
+        });
     });
-};

@@ -1,29 +1,30 @@
-import type { Bot, CallbackData, CallbackQueryShorthandContext } from 'gramio';
+import { Composer } from 'gramio';
+import * as keyboard from '../keyboards/index.js';
 import { getProfileByID, getProfiles } from '../database/user_profiles.js';
-import { backToMainMenuKeyboard } from '../keyboards/main.js';
-import { extendPaymentInvoiceKeyboard, extendPaymentMethodKeyboard, userKeyKeyboard, userKeysKeyboard } from '../keyboards/active-keys.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getLimitExtend } from '../database/settings.js';
-import { addRefBalance, checkPayment, createPayment } from '../utils/index.js';
+import { createPayment } from '../utils/create-payment.js';
+import { checkPayment } from '../utils/check-payment.js';
+import { addRefBalance } from '../utils/add-ref-balance.js';
 
+export const activeKeys = new Composer({ name: 'activeKeys' })
+    .callbackQuery('active_keys', async context => {
+        const profiles = await getProfiles(context.from.id);
+        if (!profiles.length) {
+            return await context.editText('❗️ У вас нет активной подписки.\n\n✅ Чтобы приобрести подписку, вернитесь в главное меню и выберите пункт "Купить или продлить".', { reply_markup: keyboard.backToMainMenuKeyboard });
+        }
 
-export const handleActiveKeys = async (context: CallbackQueryShorthandContext<Bot, 'active_keys'>) => {
-    const profiles = await getProfiles(context.from.id);
-    if (!profiles.length) {
-        return await context.editText('❗️ У вас нет активной подписки.\n\n✅ Чтобы приобрести подписку, вернитесь в главное меню и выберите пункт "Купить или продлить".', { reply_markup: backToMainMenuKeyboard });
-    }
+        await context.editText('🔑 Доступные подписки', { reply_markup: await keyboard.userKeysKeyboard(context.from.id) });
+    })
 
-    await context.editText('🔑 Доступные подписки', { reply_markup: await userKeysKeyboard(context.from.id) });
-};
+    .callbackQuery(keyboard.userKeyData, async context => {
+        const [dbprofile] = (await getProfileByID(context.queryData.k));
 
-export const handleActiveKey = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {
-    const [dbprofile] = (await getProfileByID(context.queryData.k));
+        const user = await remnawave.getUserByUUID(dbprofile!.uuid);
+        const expire = new Date(user.response.expireAt);
+        const daysRemaining = Math.ceil((expire.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
-    const user = await remnawave.getUserByUUID(dbprofile!.uuid);
-    const expire = new Date(user.response.expireAt);
-    const daysRemaining = Math.ceil((expire.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-
-    await context.editText(`
+        await context.editText(`
 🔑 <code>${dbprofile?.username}</code>
 
 📆 Дата истечения: <code>${expire.toLocaleDateString('ru-RU')} (${daysRemaining}д)</code>
@@ -33,16 +34,16 @@ ${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${u
 - Список доступных приложений вы можете найти в разделе "Помощь" главного меню или перейдя по кнопке "Профиль".
 - Что бы скопировать ссылку нажмите на зеленую кнопку.</i>
     `, {
-        reply_markup: await userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!dbprofile?.is_limit_extended),
-        parse_mode: 'HTML',
-        link_preview_options: { is_disabled: true }
-    });
-};
+            reply_markup: await keyboard.userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!dbprofile?.is_limit_extended),
+            parse_mode: 'HTML',
+            link_preview_options: { is_disabled: true }
+        });
+    })
 
-export const handleExtendDeviceLimit = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {
-    const limit = await getLimitExtend();
+    .callbackQuery(keyboard.extendDeviceLimitData, async context => {
+        const limit = await getLimitExtend();
 
-    const text = `
+        const text = `
 <b>🔼 Расширение лимита устройств</b>
 
 📱 Дополнительные устройства: <code>${limit.devices}</code>
@@ -54,72 +55,72 @@ export const handleExtendDeviceLimit = async (context: CallbackQueryShorthandCon
  - После окончания подписки лимит <u>не сбрасывается</u></i>
 `;
 
-    await context.editText(text, {
-        parse_mode: 'HTML',
-        reply_markup: await extendPaymentMethodKeyboard(context.queryData.k)
-    });
-};
-
-export const handleExtendPayment = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ s: string, k: number; }>>) => {
-    const limit = await getLimitExtend();
-    const price = (Number(limit.price));
-
-    const url = await createPayment(context, price);
-
-    if (!url) {
-        await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
-        return;
-    }
-
-    const text = `
-⏳ Покупка
-
-ℹ️ Примечание:
- <i>- Для перехода на страницу оплаты нажмите кнопку "Оплатить"
- - После оплаты нажмите кнопку "Проверить оплату"
- - Если оплата не прошла, попробуйте снова или обратитесь в поддержку</i>
-    `;
-
-    await context.editText(text, {
-        parse_mode: 'HTML',
-        reply_markup: await extendPaymentInvoiceKeyboard(
-            context.queryData.k,
-            url
-        )
-    });
-};
-
-export const handleExtendCheckPayment = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {
-    const paymentInfo = await checkPayment(context);
-    if (!paymentInfo) {
-        return;
-    }
-
-    try {
-        await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>`, {
-            chat_id: process.env.LOG_CHAT_ID!,
-            parse_mode: 'HTML'
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.extendPaymentMethodKeyboard(context.queryData.k)
         });
-    } catch { }
+    })
 
-    const user = await remnawave.getUserByUUID((await getProfileByID(context.queryData.k))[0]!.uuid);
-    const limit = await getLimitExtend();
+    .callbackQuery(keyboard.extendPaymentData, async context => {
+        const limit = await getLimitExtend();
+        const price = (Number(limit.price));
 
-    // Бонуска
-    try {
-        await addRefBalance(context, Number(limit.price));
-    } catch (e) {
-        console.error('Ошибка выдачи рефки (active-keys):', e);
-    }
+        const url = await createPayment(context, price);
 
-    try {
-        await remnawave.updateUser({
-            uuid: user.response.uuid,
-            hwidDeviceLimit: Number(user.response.hwidDeviceLimit!) + Number(limit.devices)
+        if (!url) {
+            await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
+            return;
+        }
+
+        const text = `
+        ⏳ Покупка
+        
+        ℹ️ Примечание:
+         <i>- Для перехода на страницу оплаты нажмите кнопку "Оплатить"
+         - После оплаты нажмите кнопку "Проверить оплату"
+         - Если оплата не прошла, попробуйте снова или обратитесь в поддержку</i>
+            `;
+
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.extendPaymentInvoiceKeyboard(
+                context.queryData.k,
+                url
+            )
         });
-    } catch (e) {
-        console.error('Ошибка при расширении лимита устройств:', e);
-    }
+    })
 
-    await context.editText(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: backToMainMenuKeyboard });
-};
+    .callbackQuery(keyboard.extendCheckPaymentData, async context => {
+        const paymentInfo = await checkPayment(context);
+        if (!paymentInfo) {
+            return;
+        }
+
+        try {
+            await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>`, {
+                chat_id: process.env.LOG_CHAT_ID!,
+                parse_mode: 'HTML'
+            });
+        } catch { }
+
+        const user = await remnawave.getUserByUUID((await getProfileByID(context.queryData.k))[0]!.uuid);
+        const limit = await getLimitExtend();
+
+        // Бонуска
+        try {
+            await addRefBalance(context, Number(limit.price));
+        } catch (e) {
+            console.error('Ошибка выдачи рефки (active-keys):', e);
+        }
+
+        try {
+            await remnawave.updateUser({
+                uuid: user.response.uuid,
+                hwidDeviceLimit: Number(user.response.hwidDeviceLimit!) + Number(limit.devices)
+            });
+        } catch (e) {
+            console.error('Ошибка при расширении лимита устройств:', e);
+        }
+
+        await context.editText(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: keyboard.backToMainMenuKeyboard });
+    });

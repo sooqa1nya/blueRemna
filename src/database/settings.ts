@@ -44,3 +44,11 @@ export const getGlobalSale = async () => {
 
     return Number(result?.sale) || 0;
 };
+
+export const updateGlobalSale = async (sale: number) => {
+    await sql`
+        UPDATE settings
+        SET data = jsonb_set(data, '{sale}', ${sale})
+        WHERE key = 'global_sale';
+    `;
+};

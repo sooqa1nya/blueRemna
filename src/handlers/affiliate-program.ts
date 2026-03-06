@@ -1,12 +1,13 @@
-import type { Bot, CallbackQueryShorthandContext } from 'gramio';
+import { Composer } from 'gramio';
 import { findPayloadCount } from '../database/users.js';
-import { refKeyboard } from '../keyboards/index.js';
+import { refKeyboard } from '../keyboards/affiliate-program.js';
 
-export const handleAffiliateProgram = async (context: CallbackQueryShorthandContext<Bot, 'affiliate_program'>) => {
-    const [referals] = await findPayloadCount(`id${context.from.id}`);
-    const refUrl = `https://t.me/lightbluevpn_bot?start=id${context.from.id}`;
+export const affilianteProgram = new Composer({ name: 'affilianteProgram' })
+    .callbackQuery('affiliate_program', async context => {
+        const [referals] = await findPayloadCount(`id${context.from.id}`);
+        const refUrl = `https://t.me/lightbluevpn_bot?start=id${context.from.id}`;
 
-    const text = `
+        const text = `
 <b>⏺️ Партнерская программа</b>
 
 👤 Рефералы: <code>${referals!.count}</code>
@@ -22,8 +23,8 @@ export const handleAffiliateProgram = async (context: CallbackQueryShorthandCont
 <code>${refUrl}</code>
 `;
 
-    await context.editText(text, {
-        reply_markup: refKeyboard(refUrl),
-        parse_mode: 'HTML'
+        await context.editText(text, {
+            reply_markup: refKeyboard(refUrl),
+            parse_mode: 'HTML'
+        });
     });
-};

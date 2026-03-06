@@ -1,59 +1,64 @@
-import { type Bot, type CallbackData, type CallbackQueryShorthandContext } from 'gramio';
-import { currentKeysKeyboard, paymentInvoiceKeyboard, paymentSystemKeyboard, priceKeyboard, selectNewExtendKeyboard } from '../keyboards/index.js';
-import { getProfiles } from '../database/user_profiles.js';
-import { createPayment, checkPayment, updateProfile, newProfile, addRefBalance } from '../utils/index.js';
+import { Composer } from 'gramio';
+import * as keyboard from '../keyboards/index.js';
 import { getGlobalSale } from '../database/settings.js';
 import { calcSale } from '../utils/final-price.js';
+import { checkPayment } from '../utils/check-payment.js';
+import { addRefBalance } from '../utils/add-ref-balance.js';
+import { newProfile } from '../utils/new-profile.js';
+import { updateProfile } from '../utils/update-profile.js';
+import { createPayment } from '../utils/create-payment.js';
+import { getProfiles } from '../database/user_profiles.js';
 
+export const subPayment = new Composer({ name: 'subPayment' })
+    .callbackQuery(keyboard.mainMenuData, async context => {
+        const hasProfiles = await getProfiles(context.from.id);
 
-// Кнопка купить или продлить ключ
-export const handleBuyExtend = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {
+        if (hasProfiles.length) {
+            await context.editText('🛒 Управление подпиской', { reply_markup: keyboard.selectNewExtendKeyboard });
+            return;
+        }
 
-    const hasProfiles = await getProfiles(context.from.id);
+        const globalSale = await getGlobalSale();
+        const userSale = context.dbuser?.sale || 0;
+        const finalSale = await calcSale(globalSale, userSale);
 
-    if (hasProfiles.length) {
-        await context.editText('🛒 Управление подпиской', { reply_markup: selectNewExtendKeyboard });
-        return;
-    }
+        await context.editText(`⏳ Выберите срок действия подписки${finalSale > 0 ? `\n💸 Скидка: <code>${finalSale}%</code>` : ''}`, {
+            reply_markup: await keyboard.priceKeyboard(context.queryData.k, context.dbuser?.sale || 0),
+            parse_mode: 'HTML'
+        });
+    })
 
-    await handleSelectDuration(context);
-};
+    .callbackQuery('extend_key', async context => {
+        await context.editText('📋 Выберите подписку для продления', {
+            reply_markup: await keyboard.currentKeysKeyboard(context.from.id)
+        });
+    })
 
-// Кнопка продлить ключ
-export const handleExtendKey = async (context: CallbackQueryShorthandContext<Bot, 'extend_key'>) => {
-    await context.editText('📋 Выберите подписку для продления', {
-        reply_markup: await currentKeysKeyboard(context.from.id)
-    });
-};
+    .callbackQuery(keyboard.currentKeysData, async context => {
+        const globalSale = await getGlobalSale();
+        const userSale = context.dbuser?.sale || 0;
+        const finalSale = await calcSale(globalSale, userSale);
 
-// Кнопка выбора длительности подписки
-export const handleSelectDuration = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number; }>>) => {
-    const globalSale = await getGlobalSale();
-    const userSale = context.dbuser?.sale || 0;
-    const finalSale = await calcSale(globalSale, userSale);
+        await context.editText(`⏳ Выберите срок действия подписки${finalSale > 0 ? `\n💸 Скидка: <code>${finalSale}%</code>` : ''}`, {
+            reply_markup: await keyboard.priceKeyboard(context.queryData.k, context.dbuser?.sale || 0),
+            parse_mode: 'HTML'
+        });
+    })
 
-    await context.editText(`⏳ Выберите срок действия подписки${finalSale > 0 ? `\n💸 Скидка: <code>${finalSale}%</code>` : ''}`, {
-        reply_markup: await priceKeyboard(context.queryData.k, context.dbuser?.sale || 0),
-        parse_mode: 'HTML'
-    });
-};
+    .callbackQuery(keyboard.priceData, async context => {
+        await context.editText('💳 Выберите способ оплаты', {
+            reply_markup: await keyboard.paymentSystemKeyboard(context.queryData.k, context.queryData.m, context.queryData.p)
+        });
+    })
 
-// Кнопка выбора способа оплаты
-export const handlePaymentMethod = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number, m: number; p: number; }>>) => {
-    await context.editText('💳 Выберите способ оплаты', {
-        reply_markup: await paymentSystemKeyboard(context.queryData.k, context.queryData.m, context.queryData.p)
-    });
-};
+    .callbackQuery(keyboard.paymentSystemData, async context => {
+        const url = await createPayment(context, context.queryData.p);
 
-// Оплата выбранным способом
-export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ s: string, k: number, m: number; p: number; }>>) => {
-    const url = await createPayment(context, context.queryData.p);
-
-    if (!url) {
-        await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
-        return;
-    }
-    const text = `
+        if (!url) {
+            await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
+            return;
+        }
+        const text = `
 ⏳ Покупка
     
 ℹ️ Примечание:
@@ -62,44 +67,42 @@ export const handlePaymentNew = async (context: CallbackQueryShorthandContext<Bo
  - Если оплата не прошла, попробуйте снова или обратитесь в поддержку</i>
 `;
 
-    await context.editText(text, {
-        parse_mode: 'HTML',
-        reply_markup: await paymentInvoiceKeyboard(
-            context.queryData.k,
-            context.queryData.m,
-            context.queryData.p,
-            url
-        )
-    });
-};
-
-
-// Проверка оплаты + редирект на продление или выдачу нового ключа
-export const handleCheckPayment = async (context: CallbackQueryShorthandContext<Bot, CallbackData<{ k: number, m: number; p: number; }>>) => {
-    const paymentInfo = await checkPayment(context);
-    if (!paymentInfo) {
-        return;
-    }
-
-    try {
-        await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Срок: <code>${context.queryData.m} мес.</code>`, {
-            chat_id: process.env.LOG_CHAT_ID!,
-            parse_mode: 'HTML'
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.paymentInvoiceKeyboard(
+                context.queryData.k,
+                context.queryData.m,
+                context.queryData.p,
+                url
+            )
         });
-    } catch { }
+    })
 
-    // Бонуска
-    try {
-        await addRefBalance(context, context.queryData.p);
-    } catch (e) {
-        console.error('Ошибка выдачи рефки (sub-payment):', e);
-    }
+    .callbackQuery(keyboard.checkPaymentData, async context => {
+        const paymentInfo = await checkPayment(context);
+        if (!paymentInfo) {
+            return;
+        }
 
-    // Продление или создание новой подписки
-    if (context.queryData.k == -1) {
-        await newProfile(context);
-        return;
-    }
+        try {
+            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Срок: <code>${context.queryData.m} мес.</code>`, {
+                chat_id: process.env.LOG_CHAT_ID!,
+                parse_mode: 'HTML'
+            });
+        } catch { }
 
-    await updateProfile(context);
-};
+        // Бонуска
+        try {
+            await addRefBalance(context, context.queryData.p);
+        } catch (e) {
+            console.error('Ошибка выдачи рефки (sub-payment):', e);
+        }
+
+        // Продление или создание новой подписки
+        if (context.queryData.k == -1) {
+            await newProfile(context);
+            return;
+        }
+
+        await updateProfile(context);
+    });

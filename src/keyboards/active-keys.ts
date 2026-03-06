@@ -1,8 +1,8 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
 import { getProfiles } from '../database/user_profiles.js';
 import { backToMainMenuKeyboard } from './main.js';
-import { currentKeysData } from './sub-payment.js';
 import { copyLinkKeyboard } from './other.js';
+import { currentKeysData } from './sub-payment.js';
 
 // Список всех подписок
 export const userKeyData = new CallbackData('active_key')
