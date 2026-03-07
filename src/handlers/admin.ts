@@ -74,15 +74,22 @@ export const admin = new Composer()
 
             const lastMailing: boolean = (success + failed) == users.length;
 
-            if (!((success + failed) % 25) || lastMailing) {
-                const text = `
+            const text = `
 ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка завершена'}
 
 👤 Всего: <code>${success + failed}</code>
 🟢 Успешно: <code>${success}</code>
 🔴 С ошибкой: <code>${failed}</code>
-                `;
-                await context.editText(text, { parse_mode: 'HTML' });
+            `;
+
+            try {
+                if (!((success + failed) % 25) || lastMailing) {
+                    await context.editText(text, { parse_mode: 'HTML' });
+                }
+            } catch {
+                if (lastMailing) {
+                    await context.send(text, { parse_mode: 'HTML' });
+                }
             }
 
             await scheduler.wait(100);
