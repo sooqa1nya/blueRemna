@@ -13,11 +13,12 @@ import { dbUser } from './middlewares/db-user.js';
 import { authMiddleware } from './middlewares/auth-middleware.js';
 import { start } from './handlers/start.js';
 import { admin } from './handlers/admin.js';
+import { sceneCancel } from './handlers/scene-cancel.js';
 
 initDatabase();
 
 
-const bot = new Bot(process.env.BOT_TOKEN as string)
+export const bot = new Bot(process.env.BOT_TOKEN as string)
     .onStart(() => console.log('🤖 Бот запущен'))
     .derive(dbUser)
     .use(authMiddleware)
@@ -29,6 +30,7 @@ const bot = new Bot(process.env.BOT_TOKEN as string)
     .extend(affilianteProgram)
     .extend(help)
     .extend(aboutUs)
-    .extend(admin);
+    .extend(admin)
+    .extend(sceneCancel);
 
 bot.start();

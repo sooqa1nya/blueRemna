@@ -1,6 +1,7 @@
 import { Scene } from '@gramio/scenes';
-import { adminMenuKeyboard, sceneCancelKeyboard } from '../keyboards/admin.js';
+import { adminMenuKeyboard } from '../keyboards/admin.js';
 import { updateGlobalSale } from '../database/settings.js';
+import { sceneCancelKeyboard } from '../keyboards/scene-cancel.js';
 
 
 export const globalDiscountScene = new Scene('change_global_discount')
@@ -10,10 +11,10 @@ export const globalDiscountScene = new Scene('change_global_discount')
         }
 
         if (context.is("callback_query")) {
-            await context.answerCallbackQuery();
             await context.send('💮 Админ-панель', {
                 reply_markup: await adminMenuKeyboard()
             });
+            await context.answerCallbackQuery();
             return context.scene.exit();
         }
 

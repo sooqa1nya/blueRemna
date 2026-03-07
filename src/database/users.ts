@@ -61,3 +61,9 @@ export const updateUserRefBalance = async (id: number, amount: number) => {
         WHERE id = ${id}
     `;
 };
+
+export const getUsers = async () => {
+    return await sql<IUser[]>`
+        SELECT * FROM users
+    `;
+};
