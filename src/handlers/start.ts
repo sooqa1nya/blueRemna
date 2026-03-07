@@ -33,7 +33,7 @@ ${context.args ? `- Payload: <code>${context.args}</code>` : ''}
                         const referrer = await findUser(Number(referrerId));
                         if (referrer) {
                             try {
-                                await context.send(`🎉 У вас новый реферал! (@${context.from.username ?? context.from.firstName})`, { chat_id: referrerId });
+                                await context.send(`🎉 У вас новый реферал! (@${context.from.username ? '@' + context.from.username : context.from.firstName})`, { chat_id: referrerId });
                             }
                             catch { }
                         }
