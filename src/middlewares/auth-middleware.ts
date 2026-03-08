@@ -1,5 +1,6 @@
 import { Bot, Context } from 'gramio';
 import { policyKeyboard } from '../keyboards/index.js';
+import { updateUserActivity } from '../database/users.js';
 
 export const authMiddleware = async (context: Context<Bot>, next: () => Promise<unknown>) => {
     if (context.is('message') || context.is('callback_query')) {
@@ -15,6 +16,8 @@ export const authMiddleware = async (context: Context<Bot>, next: () => Promise<
             await context.send('❗️ Пожалуйста, сначала отправьте /start');
             return;
         }
+
+        await updateUserActivity(context.from.id);
 
         if (!context.dbuser?.agreed_policy) {
             if (context.is('callback_query')) await context.answerCallbackQuery();

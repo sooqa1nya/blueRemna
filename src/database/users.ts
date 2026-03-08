@@ -30,7 +30,7 @@ export const findUser = async (id: string | number) => {
     return user || null;
 };
 
-export const acceptPolicy = async (id: number): Promise<void> => {
+export const acceptPolicy = async (id: string | number): Promise<void> => {
     await sql`
         UPDATE users
         SET agreed_policy = true
@@ -46,7 +46,7 @@ export const findPayloadCount = async (payload: string) => {
     `;
 };
 
-export const useFreeTrial = async (id: number) => {
+export const useFreeTrial = async (id: string | number) => {
     await sql`
         UPDATE users
         SET trial_key = TRUE
@@ -54,7 +54,7 @@ export const useFreeTrial = async (id: number) => {
     `;
 };
 
-export const updateUserRefBalance = async (id: number, amount: number) => {
+export const updateUserRefBalance = async (id: string | number, amount: number) => {
     await sql`
         UPDATE users
         SET ref_balance = ${amount}
@@ -65,5 +65,13 @@ export const updateUserRefBalance = async (id: number, amount: number) => {
 export const getUsers = async () => {
     return await sql<IUser[]>`
         SELECT * FROM users
+    `;
+};
+
+export const updateUserActivity = async (id: string | number) => {
+    return await sql`
+        UPDATE users
+        SET last_activity = NOW()
+        WHERE id = ${id}
     `;
 };
