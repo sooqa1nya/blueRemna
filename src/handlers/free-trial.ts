@@ -7,6 +7,8 @@ import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 
 export const freeTrial = new Composer({ name: 'freeTrial' })
     .callbackQuery('free_trial', async context => {
+        await useFreeTrial(context.from.id);
+
         const date = new Date();
         const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
         const squads = await remnawave.getSquadForVPN();
@@ -35,7 +37,6 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
         }
 
         try {
-            await useFreeTrial(context.from.id);
             await addProfile(
                 context.from.id,
                 user.response.uuid,
@@ -47,13 +48,6 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
             console.error('[free-trial]: ❌ Ошибка при добавлении профиля в БД. UUID: ' + error);
             return;
         }
-
-        try {
-            await context.send(`🆓 Пробный период\n\n- Пользователь: <code>${context.from.id}</code>`, {
-                chat_id: process.env.LOG_CHAT_ID!,
-                parse_mode: 'HTML'
-            });
-        } catch { }
 
         const text = `
 ✅ Ваша пробная подписка активирована
@@ -67,4 +61,11 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
     `;
 
         await context.editText(text, { parse_mode: 'HTML', reply_markup: copyWebappMenuKeyboard('👤 Профиль', user.response.subscriptionUrl) });
+
+        try {
+            await context.send(`🆓 Пробный период\n\n- Пользователь: <code>${context.from.id}</code>`, {
+                chat_id: process.env.LOG_CHAT_ID!,
+                parse_mode: 'HTML'
+            });
+        } catch { }
     });
