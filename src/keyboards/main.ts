@@ -10,7 +10,7 @@ export const mainMenuData = new CallbackData('buy_extend')
 export const mainMenuKeyboard = async (free_trial: boolean, id: number) => {
     const profiles = await getProfiles(id);
     return new InlineKeyboard()
-        .addIf(!free_trial, InlineKeyboard.text('🎁 Пробный период', 'free_trial', { style: 'success' }))
+        .addIf(!free_trial, InlineKeyboard.text('🎁 Пробный период', 'free_trial_info', { style: 'success' }))
         .row()
         .text('🛒 Оформить подписку', mainMenuData.pack({ k: -1 }))
         .row()

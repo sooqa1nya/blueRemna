@@ -96,13 +96,6 @@ ${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${u
             return;
         }
 
-        try {
-            await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>`, {
-                chat_id: process.env.LOG_CHAT_ID!,
-                parse_mode: 'HTML'
-            });
-        } catch { }
-
         const user = await remnawave.getUserByUUID((await getProfileByID(context.queryData.k))[0]!.uuid);
         const limit = await getLimitExtend();
 
@@ -121,6 +114,13 @@ ${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${u
         } catch (e) {
             console.error('Ошибка при расширении лимита устройств:', e);
         }
+
+        try {
+            await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n - Цена: ${limit.price}`, {
+                chat_id: process.env.LOG_CHAT_ID!,
+                parse_mode: 'HTML'
+            });
+        } catch { }
 
         await context.editText(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: keyboard.backToMainMenuKeyboard });
     });

@@ -10,7 +10,7 @@ import { scheduler } from 'node:timers/promises';
 import { refStats } from '../scenes/ref-stats.js';
 
 
-export const admin = new Composer()
+export const admin = new Composer({ name: 'admin' })
     .guard(context => !!context.dbuser?.is_admin)
     .extend(sceneInit)
     .command('a', async context => {

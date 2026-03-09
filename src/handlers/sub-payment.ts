@@ -85,7 +85,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
         }
 
         try {
-            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Срок: <code>${context.queryData.m} мес.</code>`, {
+            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Цена: ${context.queryData.p}`, {
                 chat_id: process.env.LOG_CHAT_ID!,
                 parse_mode: 'HTML'
             });
