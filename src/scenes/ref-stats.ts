@@ -41,6 +41,7 @@ export const refStats = new Scene('refStats')
             for (const element of remnaUser.response) {
                 if (element.userTraffic.onlineAt) {
                     onlineAt++;
+                    continue;
                 }
             }
         }
