@@ -54,6 +54,7 @@ export const initDatabase = async () => {
                 ref_proc INT DEFAULT 15,
                 sale INT DEFAULT 0,
                 is_admin BOOLEAN DEFAULT FALSE,
+                is_active BOOLEAN DEFAULT TRUE,
                 agreed_policy BOOLEAN DEFAULT FALSE,
                 payload TEXT
             )

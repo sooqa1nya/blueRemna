@@ -7,7 +7,7 @@ import { sceneCancelKeyboard } from '../keyboards/scene-cancel.js';
 export const globalDiscountScene = new Scene('change_global_discount')
     .step(['message', 'callback_query'], async (context) => {
         if (context.scene.step.firstTime) {
-            return await context.editText('Введите новую глобальную скидку в процентах (число от 0 до 100):', { reply_markup: sceneCancelKeyboard });
+            return await context.editText('Введите новую глобальную скидку в процентах (число от 0 до 100)', { reply_markup: sceneCancelKeyboard });
         }
 
         if (context.is("callback_query")) {

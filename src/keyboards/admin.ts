@@ -4,6 +4,7 @@ export const adminMenuKeyboard = async () => {
     return new InlineKeyboard()
         .columns(1)
         .text('Рассылка', 'broadcast_settings')
+        .text('Статистика', 'admin_stats')
         .text('Изменить глобальную скидку', 'change_discount');
 };
 
@@ -22,3 +23,9 @@ export const broadcastMenuKeyboard = (copyMessageId: number = 0) => {
         .addIf(!!copyMessageId, InlineKeyboard.text('🟢 Начать рассылку', startMailingData.pack({ id: copyMessageId })))
         .combine(backAdminMenuKeyboard);
 };
+
+export const statsKeyboard = new InlineKeyboard()
+    .columns(1)
+    // .text('Общая', 'general_stats') не придумал
+    .text('По рефке', 'ref_stats')
+    .combine(backAdminMenuKeyboard);

@@ -1076,3 +1076,7 @@ export interface HostDetailDto {
 export interface GetAllHostsResponseDto {
     response: HostDetailDto[];
 }
+
+export interface GetUserByTelegramIdResponseDto {
+    response: UserResponseDto[];
+}

@@ -9,6 +9,7 @@ export interface IUser {
     ref_proc: number;
     sale: number;
     is_admin: boolean;
+    is_active: boolean;
     agreed_policy: boolean;
     payload: string | null;
 }

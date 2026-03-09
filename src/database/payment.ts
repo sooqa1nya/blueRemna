@@ -32,3 +32,12 @@ export const changeStatus = async (id: number, status: 'paid' | 'pending'): Prom
         WHERE id = ${id}
     `;
 };
+
+export const getPaymentPayload = async (payload: string) => {
+    return await sql<IPayment[]>`
+        SELECT * FROM payments
+        WHERE 
+            payload = ${payload} AND
+            status = 'paid'
+    `;
+};

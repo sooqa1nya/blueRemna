@@ -68,10 +68,34 @@ export const getUsers = async () => {
     `;
 };
 
+export const getActiveUsers = async () => {
+    return await sql<IUser[]>`
+        SELECT * FROM users
+        WHERE is_active = TRUE
+    `;
+};
+
 export const updateUserActivity = async (id: string | number) => {
     return await sql`
         UPDATE users
-        SET last_activity = NOW()
+        SET
+            last_activity = NOW(),
+            is_active = TRUE
         WHERE id = ${id}
+    `;
+};
+
+export const setActive = async (id: string | number, active: boolean) => {
+    return await sql`
+        UPDATE users
+        SET is_active = ${active}
+        WHERE id = ${id}
+    `;
+};
+
+export const getUsersPayload = async (payload: string) => {
+    return await sql<IUser[]>`
+        SELECT * FROM users
+        WHERE payload = ${payload}
     `;
 };

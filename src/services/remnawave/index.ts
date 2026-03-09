@@ -1,4 +1,4 @@
-import type { CreateUserRequestDto, CreateUserResponseDto, GetAllHostsResponseDto, GetConfigProfilesResponseDto, GetExternalSquadsResponseDto, GetInternalSquadsResponseDto, GetUserByUuidResponseDto, UpdateUserRequestDto } from './types.js';
+import type { CreateUserRequestDto, CreateUserResponseDto, GetAllHostsResponseDto, GetConfigProfilesResponseDto, GetExternalSquadsResponseDto, GetInternalSquadsResponseDto, GetUserByTelegramIdResponseDto, GetUserByUuidResponseDto, UpdateUserRequestDto } from './types.js';
 
 class RemnaWaveService {
     private JWT: string;
@@ -52,6 +52,12 @@ class RemnaWaveService {
 
     public async getUserByUUID(uuid: string) {
         return this.request<GetUserByUuidResponseDto>(`/api/users/${uuid}`, {
+            method: 'GET'
+        });
+    };
+
+    public async getUserByTelegramId(tg: string) {
+        return this.request<GetUserByTelegramIdResponseDto>(`/api/users/by-telegram-id/${tg}`, {
             method: 'GET'
         });
     };

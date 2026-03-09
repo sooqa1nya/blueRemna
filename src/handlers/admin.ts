@@ -1,12 +1,13 @@
 import { Composer } from 'gramio';
 import { globalDiscountScene } from '../scenes/global-discount.js';
-import { adminMenuKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData } from '../keyboards/admin.js';
+import { adminMenuKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
 import { sceneInit } from '../plugins/scenes.js';
 import { broadcastScene } from '../scenes/broadcast.js';
-import { getUsers } from '../database/users.js';
+import { getActiveUsers, setActive } from '../database/users.js';
 import { withRetries } from 'gramio/utils';
 import { bot } from '../index.js';
 import { scheduler } from 'node:timers/promises';
+import { refStats } from '../scenes/ref-stats.js';
 
 
 export const admin = new Composer()
@@ -55,7 +56,7 @@ export const admin = new Composer()
 
         await context.editText('✅ Рассылка запущена');
 
-        const users = await getUsers();
+        const users = await getActiveUsers();
         let success = 0;
         let failed = 0;
         for (const user of users) {
@@ -69,6 +70,7 @@ export const admin = new Composer()
                     success += 1;
                 } catch {
                     failed += 1;
+                    await setActive(user.id, false);
                 }
             });
 
@@ -94,4 +96,15 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 
             await scheduler.wait(100);
         }
+    })
+
+    .callbackQuery('admin_stats', async context => {
+        await context.editText('📋 Статистика', {
+            reply_markup: statsKeyboard
+        });
+        await context.answerCallbackQuery();
+    })
+
+    .callbackQuery('ref_stats', async context => {
+        await context.scene.enter(refStats);
     });
