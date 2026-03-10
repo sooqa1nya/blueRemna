@@ -1,6 +1,6 @@
 import { Composer } from 'gramio';
 import { globalDiscountScene } from '../scenes/global-discount.js';
-import { adminMenuKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
+import { adminMenuKeyboard, backAdminMenuKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
 import { sceneInit } from '../plugins/scenes.js';
 import { broadcastScene } from '../scenes/broadcast.js';
 import { getActiveUsers, setActive } from '../database/users.js';
@@ -8,6 +8,7 @@ import { withRetries } from 'gramio/utils';
 import { bot } from '../index.js';
 import { scheduler } from 'node:timers/promises';
 import { refStats } from '../scenes/ref-stats.js';
+import { refGenerate } from '../utils/ref-generate.js';
 
 
 export const admin = new Composer({ name: 'admin' })
@@ -107,4 +108,21 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 
     .callbackQuery('ref_stats', async context => {
         await context.scene.enter(refStats);
+    })
+
+    .callbackQuery('ref_generate', async context => {
+        const ref = refGenerate();
+
+        const text = `
+<b>✅ Реферальная ссылка создана</b>
+
+📌 Реф: <code>${ref}</code>
+🔗 Ссылка: <code>https://t.me/lightbluevpn_bot?start=${ref}</code>
+        `;
+
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            link_preview_options: { is_disabled: true },
+            reply_markup: backAdminMenuKeyboard
+        });
     });

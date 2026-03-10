@@ -5,6 +5,7 @@ export const adminMenuKeyboard = async () => {
         .columns(1)
         .text('Рассылка', 'broadcast_settings')
         .text('Статистика', 'admin_stats')
+        .text('Создать рефку', 'ref_generate')
         .text('Изменить глобальную скидку', 'change_discount');
 };
 
