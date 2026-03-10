@@ -49,7 +49,7 @@ export const refStats = new Scene('refStats')
 
         for (const user of users) {
             const remnaUser = await remnawave.getUserByTelegramId(user.id.toString());
-            if (!remnaUser || remnaUser.response.length)
+            if (!remnaUser || !remnaUser.response.length)
                 continue;
 
             for (const element of remnaUser.response) {
