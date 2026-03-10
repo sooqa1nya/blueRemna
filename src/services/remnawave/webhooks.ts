@@ -3,7 +3,7 @@ import fastify from 'fastify';
 export const serverFastify = () => {
     const server = fastify();
 
-    server.post('/rwwebhooks', async (request, reply) => {
+    server.post('/rwwebhook', async (request, reply) => {
         const body = request.body;
         console.log(body);
         console.log('--------------------------------');
