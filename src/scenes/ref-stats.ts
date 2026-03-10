@@ -25,7 +25,7 @@ export const refStats = new Scene('refStats')
             return await context.send('Пользователи с такой реф. ссылкой не найдены, попробуйте снова', { reply_markup: sceneCancelKeyboard });
         }
 
-        const getRef = context.text.match(/^https:\/\/t.me\/\w+\?start=(?<ref>\w+)$/);
+        const getRef = context.text.match(/https:\/\/t.me\/\w+\?start=(?<ref>\w+)/);
         const ref = getRef ? getRef[1] : context.text;
 
         const users = await getUsersPayload(ref);
