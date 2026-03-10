@@ -4,10 +4,11 @@ import { sceneCancelKeyboard } from '../keyboards/scene-cancel.js';
 import { getUsersPayload } from '../database/users.js';
 import { getPaymentPayload } from '../database/payment.js';
 import { remnawave } from '../services/remnawave/index.js';
+import { IUser } from '../types/database.js';
 
 
 export const refStats = new Scene('refStats')
-    .step(['message', 'callback_query'], async (context) => {
+    .step(['message', 'callback_query'], async context => {
         if (context.scene.step.firstTime) {
             return await context.editText('Отправьте реферальную ссылку', { reply_markup: sceneCancelKeyboard });
         }
@@ -21,14 +22,25 @@ export const refStats = new Scene('refStats')
         }
 
         if (!context.text) {
-            return await context.send('Отправьте реферальную ссылку', { reply_markup: sceneCancelKeyboard });
+            return await context.send('Пользователи с такой реф. ссылкой не найдены, попробуйте снова', { reply_markup: sceneCancelKeyboard });
         }
 
-        const users = await getUsersPayload(context.text);
+        const getRef = context.text.match(/^https:\/\/t.me\/\w+\?start=(?<ref>\w+)$/);
+        const ref = getRef ? getRef[1] : context.text;
 
+        const users = await getUsersPayload(ref);
         if (!users.length) {
             return await context.send('Пользователи с такой реф. ссылкой не найдены, попробуйте снова', { reply_markup: sceneCancelKeyboard });
         }
+
+        await context.scene.update({
+            ref,
+            users
+        });
+    })
+
+    .step(['message', 'callback_query'], async context => {
+        const users: IUser[] = context.scene.state.users;
 
         const liveUsers = users.filter(x => x.is_active).length;
         const deathUsers = users.length - liveUsers;
@@ -50,7 +62,7 @@ export const refStats = new Scene('refStats')
 
 
         const text = `
-🔗 Реферальная ссылка: <code>${context.text}</code>
+🔗 Реферальная ссылка: <code>${context.scene.state.ref}</code>
 
 👤 Всего: <code>${users.length}</code>
 🟢 Живых: <code>${liveUsers}</code>
@@ -58,7 +70,7 @@ export const refStats = new Scene('refStats')
 
 🆓 Пробных подписок: <code>${freeTrials}</code>
 🌐 Подключений: <code>${onlineAt}</code>
-💳 Оплачено подписок: <code>${(await getPaymentPayload(context.text)).length}</code>
+💳 Оплачено подписок: <code>${(await getPaymentPayload(context.scene.state.ref)).length}</code>
         `;
 
         await context.send(text, {
