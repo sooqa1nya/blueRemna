@@ -24,14 +24,14 @@ export const serverFastify = () => {
                 if (body.event == 'user.expired') {
                     await bot.api.sendMessage({
                         chat_id: body.data.telegramId,
-                        text: `🛑 Доступ ограничен! Срок вашей подписки <code>${body.data.username}</code> истек. Продлите её сейчас, чтобы оставаться в безопасности и сохранить анонимность. 🔐⚡️`,
+                        text: `🛑 Доступ ограничен!\n\nСрок вашей подписки <code>${body.data.username}</code> истек. Продлите её сейчас, чтобы оставаться в безопасности и сохранить анонимность. 🔐⚡️`,
                         parse_mode: 'HTML',
                         reply_markup: await extendSubKeyboard(sub.id)
                     });
                 } else if (body.event == 'user.expires_in_24_hours') {
                     await bot.api.sendMessage({
                         chat_id: body.data.telegramId,
-                        text: `⏳ Внимание! Ваша подписка <code>${body.data.username}</code> истекает через 1 день. Продлите её заранее, чтобы не потерять защиту и сохранить анонимность. 🔐⚡️`,
+                        text: `⏳ Внимание!\n\nВаша подписка <code>${body.data.username}</code> истекает через 1 день. Продлите её заранее, чтобы не потерять защиту и сохранить анонимность. 🔐⚡️`,
                         parse_mode: 'HTML',
                         reply_markup: await extendSubKeyboard(sub.id)
                     });
