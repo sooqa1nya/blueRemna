@@ -21,6 +21,11 @@ export const currentKeysKeyboard = async (userId: number) => {
     return keyboard;
 };
 
+export const extendSubKeyboard = async (key: number) => {
+    return new InlineKeyboard()
+        .text('🔄 Продлить', currentKeysData.pack({ k: key }));
+};
+
 // Меню выбора длительности подписки
 export const priceData = new CallbackData('payment_menu')
     .number('k')

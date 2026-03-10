@@ -1080,3 +1080,15 @@ export interface GetAllHostsResponseDto {
 export interface GetUserByTelegramIdResponseDto {
     response: UserResponseDto[];
 }
+
+export interface RemnawaveWebhookUserEventsDto {
+    scope: 'user';
+    event: 'user.created' | 'user.modified' | 'user.deleted' | 'user.revoked' | 'user.disabled'
+    | 'user.enabled' | 'user.limited' | 'user.expired' | 'user.traffic_reset' | 'user.expires_in_72_hours' | 'user.expires_in_48_hours'
+    | 'user.expires_in_24_hours' | 'user.expired_24_hours_ago' | 'user.first_connected' | 'user.bandwidth_usage_threshold_reached' | 'user.not_connected';
+    timestamp: string;
+    data: UserResponseDto;
+    meta: {
+        notConnectedAfterHours: number | null;
+    } | null;
+}
