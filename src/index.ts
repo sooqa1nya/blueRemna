@@ -14,8 +14,10 @@ import { authMiddleware } from './middlewares/auth-middleware.js';
 import { start } from './handlers/start.js';
 import { admin } from './handlers/admin.js';
 import { sceneCancel } from './handlers/scene-cancel.js';
+import { serverFastify } from './services/remnawave/webhooks.js';
 
 initDatabase();
+serverFastify();
 
 
 export const bot = new Bot(process.env.BOT_TOKEN as string)

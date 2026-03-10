@@ -20,6 +20,8 @@ services:
     restart: unless-stopped
     networks:
       - vpnNetwork
+    ports:
+      - "6663:6663"
     depends_on:
       - db
 
