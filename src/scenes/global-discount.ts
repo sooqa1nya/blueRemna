@@ -20,7 +20,7 @@ export const globalDiscountScene = new Scene('change_global_discount')
 
         const sale = Number(context.text);
 
-        if (!Number(sale)) {
+        if (!Number.isFinite(sale)) {
             return await context.send('Пожалуйста, введите число от 0 до 100', { reply_markup: sceneCancelKeyboard });
         }
 
