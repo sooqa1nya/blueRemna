@@ -1,14 +1,15 @@
 import fastify from 'fastify';
-import { RemnawaveWebhookUserEventsDto } from './types.js';
+import { RemnawaveWebhookCrmEventsDto, RemnawaveWebhookUserEventsDto } from './types.js';
 import { bot } from '../../index.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
 import { getProfile } from '../../database/user_profiles.js';
+import { urlKeyboard } from '../../keyboards/other.js';
 
 export const serverFastify = () => {
     const server = fastify();
 
     server.post('/rwwebhook', async (request, reply) => {
-        const body = request.body as RemnawaveWebhookUserEventsDto;
+        const body = request.body as RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto;
         if (!body.scope) {
             return 'ok';
         }
@@ -34,6 +35,17 @@ export const serverFastify = () => {
                         text: `⏳ Внимание!\n\nВаша подписка <code>${body.data.username}</code> истекает через 1 день. Продлите её заранее, чтобы не потерять защиту и сохранить анонимность. 🔐⚡️`,
                         parse_mode: 'HTML',
                         reply_markup: await extendSubKeyboard(sub.id)
+                    });
+                }
+            } catch { }
+        } else if (body.scope == 'crm') {
+            try {
+                if (body.event == 'crm.infra_billing_node_payment_in_48hrs') {
+                    await bot.api.sendMessage({
+                        chat_id: process.env.LOG_NODE_CRM_ID!,
+                        text: `⏳ Срок действия ноды истекает\n\nНода: ${body.data.nodeName}\n\nПровайдер: ${body.data.providerName}`,
+                        parse_mode: 'HTML',
+                        reply_markup: urlKeyboard('💳 Оплатить', body.data.loginUrl)
                     });
                 }
             } catch { }

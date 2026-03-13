@@ -1092,3 +1092,218 @@ export interface RemnawaveWebhookUserEventsDto {
         notConnectedAfterHours: number | null;
     } | null;
 }
+
+
+/**
+ * Провайдер ноды
+ */
+export interface NodeProviderDto {
+    /**
+     * @format uuid
+     */
+    uuid: string;
+
+    name: string;
+
+    /**
+     * @nullable
+     */
+    faviconLink: string | null;
+
+    /**
+     * @nullable
+     */
+    loginUrl: string | null;
+
+    /**
+     * @format date-time
+     */
+    createdAt: string;
+
+    /**
+     * @format date-time
+     */
+    updatedAt: string;
+}
+
+/**
+ * Конфигурационный профиль ноды
+ */
+export interface NodeConfigProfileDto {
+    /**
+     * @format uuid
+     * @nullable
+     */
+    activeConfigProfileUuid: string | null;
+
+    activeInbounds: ConfigProfileInboundDto[];
+}
+
+/**
+ * Данные ноды в вебхук-событии
+ */
+export interface NodeWebhookDataDto {
+    /**
+     * @format uuid
+     */
+    uuid: string;
+
+    name: string;
+
+    address: string;
+
+    /**
+     * @nullable
+     */
+    port: number | null;
+
+    isConnected: boolean;
+
+    isDisabled: boolean;
+
+    isConnecting: boolean;
+
+    /**
+     * @format date-time
+     * @nullable
+     */
+    lastStatusChange: string | null;
+
+    /**
+     * @nullable
+     */
+    lastStatusMessage: string | null;
+
+    /**
+     * @nullable
+     */
+    xrayVersion: string | null;
+
+    /**
+     * @nullable
+     */
+    nodeVersion: string | null;
+
+    xrayUptime: string;
+
+    isTrafficTrackingActive: boolean;
+
+    /**
+     * @nullable
+     */
+    trafficResetDay: number | null;
+
+    /**
+     * @nullable
+     */
+    trafficLimitBytes: number | null;
+
+    /**
+     * @nullable
+     */
+    trafficUsedBytes: number | null;
+
+    /**
+     * @nullable
+     */
+    notifyPercent: number | null;
+
+    /**
+     * @nullable
+     */
+    usersOnline: number | null;
+
+    viewPosition: number;
+
+    countryCode: string;
+
+    consumptionMultiplier: number;
+
+    tags: string[];
+
+    /**
+     * @nullable
+     */
+    cpuCount: number | null;
+
+    /**
+     * @nullable
+     */
+    cpuModel: string | null;
+
+    /**
+     * @nullable
+     */
+    totalRam: string | null;
+
+    /**
+     * @format date-time
+     */
+    createdAt: string;
+
+    /**
+     * @format date-time
+     */
+    updatedAt: string;
+
+    configProfile: NodeConfigProfileDto;
+
+    /**
+     * @format uuid
+     * @nullable
+     */
+    providerUuid: string | null;
+
+    /**
+     * @nullable
+     */
+    provider: NodeProviderDto | null;
+}
+
+/**
+ * DTO вебхука для событий нод
+ */
+export interface RemnawaveWebhookNodeEventsDto {
+    scope: 'node';
+
+    event: 'node.created' | 'node.modified' | 'node.modified' | 'node.disabled' | 'node.enabled' | 'node.deleted' | 'node.connection_lost' | 'node.connection_restored' | 'node.traffic_notify';
+
+    /**
+     * @format date-time
+     */
+    timestamp: string;
+
+    data: NodeWebhookDataDto;
+}
+
+/**
+ * Данные CRM вебхук-события
+ */
+export interface CrmWebhookDataDto {
+    providerName: string;
+
+    nodeName: string;
+
+    /**
+     * @format date-time
+     */
+    nextBillingAt: string;
+
+    loginUrl: string;
+}
+
+/**
+ * DTO вебхука для CRM-событий
+ */
+export interface RemnawaveWebhookCrmEventsDto {
+    scope: 'crm';
+
+    event: 'crm.infra_billing_node_payment_in_7_days' | 'crm.infra_billing_node_payment_in_48hrs' | 'crm.infra_billing_node_payment_in_24hrs' | 'crm.infra_billing_node_payment_due_today' | 'crm.infra_billing_node_payment_overdue_24hrs' | 'crm.infra_billing_node_payment_overdue_48hrs' | 'crm.infra_billing_node_payment_overdue_7_days';
+
+    /**
+     * @format date-time
+     */
+    timestamp: string;
+
+    data: CrmWebhookDataDto;
+}

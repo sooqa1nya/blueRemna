@@ -26,3 +26,8 @@ export const copyWebappMenuKeyboard = (text: string, url: string) => {
         .row()
         .combine(backToMainMenuKeyboard);
 };
+
+export const urlKeyboard = (text: string, url: string) => {
+    return new InlineKeyboard()
+        .url(text, url);
+}; 
