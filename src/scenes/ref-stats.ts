@@ -1,5 +1,5 @@
 import { Scene } from '@gramio/scenes';
-import { adminMenuKeyboard, backAdminMenuKeyboard } from '../keyboards/admin.js';
+import { adminMenuKeyboard, retryRefStatsKeyboard } from '../keyboards/admin.js';
 import { sceneCancelKeyboard } from '../keyboards/scene-cancel.js';
 import { getUsersPayload, setActive } from '../database/users.js';
 import { getPaymentPayload } from '../database/payment.js';
@@ -50,7 +50,6 @@ export const refStats = new Scene('refStats')
         let onlineAt = 0;
 
         for (const user of users) {
-
             try {
                 await bot.api.sendChatAction({
                     chat_id: user.id,
@@ -89,7 +88,7 @@ export const refStats = new Scene('refStats')
 
         await context.send(text, {
             parse_mode: 'HTML',
-            reply_markup: backAdminMenuKeyboard
+            reply_markup: retryRefStatsKeyboard
         });
 
         return context.scene.exit();

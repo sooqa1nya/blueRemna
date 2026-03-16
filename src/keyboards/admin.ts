@@ -27,6 +27,16 @@ export const broadcastMenuKeyboard = (copyMessageId: number = 0) => {
 
 export const statsKeyboard = new InlineKeyboard()
     .columns(1)
-    // .text('Общая', 'general_stats') не придумал
+    .text('Общая', 'general_stats')
     .text('По рефке', 'ref_stats')
+    .combine(backAdminMenuKeyboard);
+
+export const retryRefStatsKeyboard = new InlineKeyboard()
+    .columns(1)
+    .text('🔄 Ввести реф. ссылку', 'ref_stats')
+    .combine(backAdminMenuKeyboard);
+
+export const backRefKeyboard = new InlineKeyboard()
+    .columns(1)
+    .text('Статистика', 'admin_stats')
     .combine(backAdminMenuKeyboard);

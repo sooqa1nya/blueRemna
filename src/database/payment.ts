@@ -41,3 +41,19 @@ export const getPaymentPayload = async (payload: string) => {
             status = 'paid'
     `;
 };
+
+export const getPaid = async () => {
+    return await sql<IPayment[]>`
+        SELECT * FROM payments
+        WHERE status = 'paid'
+    `;
+};
+
+export const getPaidSubs = async () => {
+    const [result] = await sql`
+        SELECT SUM(amount) FROM payments
+        WHERE status = 'paid'
+    `;
+
+    return result.sum || 0;
+};

@@ -1,14 +1,16 @@
 import { Composer } from 'gramio';
 import { globalDiscountScene } from '../scenes/global-discount.js';
-import { adminMenuKeyboard, backAdminMenuKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
+import { adminMenuKeyboard, backAdminMenuKeyboard, backRefKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
 import { sceneInit } from '../plugins/scenes.js';
 import { broadcastScene } from '../scenes/broadcast.js';
-import { getActiveUsers, setActive } from '../database/users.js';
+import { getActiveUsers, getUsers, setActive } from '../database/users.js';
 import { withRetries } from 'gramio/utils';
 import { bot } from '../index.js';
 import { scheduler } from 'node:timers/promises';
 import { refStats } from '../scenes/ref-stats.js';
 import { refGenerate } from '../utils/ref-generate.js';
+import { remnawave } from '../services/remnawave/index.js';
+import { getPaid, getPaidSubs } from '../database/payment.js';
 
 
 export const admin = new Composer({ name: 'admin' })
@@ -125,4 +127,55 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
             link_preview_options: { is_disabled: true },
             reply_markup: backAdminMenuKeyboard
         });
-    });
+    })
+
+    .callbackQuery('general_stats', async context => {
+        const users = await getUsers();
+
+        let liveUsers = 0;
+        let deathUsers = 0;
+        const freeTrials = users.filter(x => x.trial_key).length;
+        let onlineAt = 0;
+
+        for (const user of users) {
+            try {
+                await bot.api.sendChatAction({
+                    chat_id: user.id,
+                    action: 'typing'
+                });
+                liveUsers++;
+            } catch {
+                await setActive(user.id, false);
+                deathUsers++;
+            }
+
+            const remnaUser = await remnawave.getUserByTelegramId(user.id.toString());
+            if (!remnaUser || !remnaUser.response.length)
+                continue;
+
+            for (const element of remnaUser.response) {
+                if (element.userTraffic.onlineAt) {
+                    onlineAt++;
+                    continue;
+                }
+            }
+        }
+
+
+        const text = `
+👤 Всего: <code>${users.length}</code>
+🟢 Живых: <code>${liveUsers}</code>
+🔴 Мертвых: <code>${deathUsers}</code>
+
+🆓 Пробных подписок: <code>${freeTrials}</code>
+🌐 Подключений: <code>${onlineAt}</code>
+💳 Оплачено подписок: <code>${(await getPaid()).length}</code>
+💰 Получено: <code>${await getPaidSubs()}</code>
+    `;
+
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            reply_markup: backRefKeyboard
+        });
+
+    });;;;
