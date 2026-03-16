@@ -130,39 +130,44 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
     })
 
     .callbackQuery('general_stats', async context => {
-        const users = await getUsers();
+        await context.editText('⏳ Обработка запроса');
 
-        let liveUsers = 0;
-        let deathUsers = 0;
-        const freeTrials = users.filter(x => x.trial_key).length;
-        let onlineAt = 0;
+        try {
+            const users = await getUsers();
 
-        for (const user of users) {
-            try {
-                await bot.api.sendChatAction({
-                    chat_id: user.id,
-                    action: 'typing'
-                });
-                liveUsers++;
-            } catch {
-                await setActive(user.id, false);
-                deathUsers++;
-            }
+            let liveUsers = 0;
+            let deathUsers = 0;
+            const freeTrials = users.filter(x => x.trial_key).length;
+            let onlineAt = 0;
 
-            const remnaUser = await remnawave.getUserByTelegramId(user.id.toString());
-            if (!remnaUser || !remnaUser.response.length)
-                continue;
-
-            for (const element of remnaUser.response) {
-                if (element.userTraffic.onlineAt) {
-                    onlineAt++;
-                    continue;
+            for (const user of users) {
+                try {
+                    await bot.api.sendChatAction({
+                        chat_id: user.id,
+                        action: 'typing'
+                    });
+                    liveUsers++;
+                } catch {
+                    await setActive(user.id, false);
+                    deathUsers++;
                 }
+
+                const remnaUser = await remnawave.getUserByTelegramId(user.id.toString());
+                if (!remnaUser || !remnaUser.response.length)
+                    continue;
+
+                for (const element of remnaUser.response) {
+                    if (element.userTraffic.onlineAt) {
+                        onlineAt++;
+                        continue;
+                    }
+                }
+
+                await scheduler.wait(100);
             }
-        }
 
 
-        const text = `
+            const text = `
 👤 Всего: <code>${users.length}</code>
 🟢 Живых: <code>${liveUsers}</code>
 🔴 Мертвых: <code>${deathUsers}</code>
@@ -173,9 +178,11 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 💰 Получено: <code>${await getPaidSubs()}</code>
     `;
 
-        await context.editText(text, {
-            parse_mode: 'HTML',
-            reply_markup: backRefKeyboard
-        });
-
-    });;;;
+            await context.editText(text, {
+                parse_mode: 'HTML',
+                reply_markup: backRefKeyboard
+            });
+        } catch {
+            await context.editText('🚫 Ошибка получения статистики', { reply_markup: backRefKeyboard });
+        }
+    });
