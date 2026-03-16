@@ -137,7 +137,6 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 
             let liveUsers = 0;
             let deathUsers = 0;
-            const countUsers = liveUsers + deathUsers;
             const freeTrials = users.filter(x => x.trial_key).length;
             let onlineAt = 0;
 
@@ -164,7 +163,8 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
                     }
                 }
 
-                if (!(countUsers % 25)) {
+                const countUsers = liveUsers + deathUsers;
+                if (!(countUsers % 50)) {
                     await context.editText(`⏳ Обработано ${countUsers} пользователей`);
                 }
 
