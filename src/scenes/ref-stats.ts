@@ -1,10 +1,11 @@
 import { Scene } from '@gramio/scenes';
 import { adminMenuKeyboard, backAdminMenuKeyboard } from '../keyboards/admin.js';
 import { sceneCancelKeyboard } from '../keyboards/scene-cancel.js';
-import { getUsersPayload } from '../database/users.js';
+import { getUsersPayload, setActive } from '../database/users.js';
 import { getPaymentPayload } from '../database/payment.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { IUser } from '../types/database.js';
+import { bot } from '../index.js';
 
 
 export const refStats = new Scene('refStats')
@@ -42,12 +43,25 @@ export const refStats = new Scene('refStats')
     .step(['message', 'callback_query'], async context => {
         const users: IUser[] = context.scene.state.users;
 
-        const liveUsers = users.filter(x => x.is_active).length;
-        const deathUsers = users.length - liveUsers;
+
+        let liveUsers = 0;
+        let deathUsers = 0;
         const freeTrials = users.filter(x => x.trial_key).length;
         let onlineAt = 0;
 
         for (const user of users) {
+
+            try {
+                await bot.api.sendChatAction({
+                    chat_id: user.id,
+                    action: 'typing'
+                });
+                liveUsers++;
+            } catch {
+                await setActive(user.id, false);
+                deathUsers++;
+            }
+
             const remnaUser = await remnawave.getUserByTelegramId(user.id.toString());
             if (!remnaUser || !remnaUser.response.length)
                 continue;
