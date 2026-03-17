@@ -21,7 +21,6 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
         return;
     }
     const expiteDate = new Date(user.response.expireAt);
-
     expiteDate < date ? date.setDate(date.getDate() + days) : date.setDate(expiteDate.getDate() + days);
 
     await remnawave.updateUser({
@@ -35,5 +34,5 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
 ⏳ Дата окончания: <code>${date.toLocaleDateString('ru-RU')}</code>
     `;
 
-    await context.editText('✅ Подписка продлена', { reply_markup: backToMainMenuKeyboard });
+    await context.editText(text, { reply_markup: backToMainMenuKeyboard });
 };

@@ -15,6 +15,7 @@ import { start } from './handlers/start.js';
 import { admin } from './handlers/admin.js';
 import { sceneCancel } from './handlers/scene-cancel.js';
 import { serverFastify } from './services/remnawave/webhooks.js';
+import { webhook } from './handlers/webhook.js';
 
 initDatabase();
 serverFastify();
@@ -33,6 +34,7 @@ export const bot = new Bot(process.env.BOT_TOKEN as string)
     .extend(help)
     .extend(aboutUs)
     .extend(admin)
-    .extend(sceneCancel);
+    .extend(sceneCancel)
+    .extend(webhook);
 
 bot.start();

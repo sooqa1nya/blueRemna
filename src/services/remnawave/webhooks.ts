@@ -4,11 +4,12 @@ import { bot } from '../../index.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
 import { getProfile } from '../../database/user_profiles.js';
 import { urlKeyboard } from '../../keyboards/other.js';
+import { notConnectedKeyboard } from '../../keyboards/webhook.js';
 
 type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto;
 type EventHandler = (body: any) => Promise<void>;
 
-async function handleUserExpired(body: RemnawaveWebhookUserEventsDto) {
+const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
     const [sub] = await getProfile(body.data.uuid);
@@ -18,9 +19,9 @@ async function handleUserExpired(body: RemnawaveWebhookUserEventsDto) {
         parse_mode: 'HTML',
         reply_markup: await extendSubKeyboard(sub.id)
     });
-}
+};
 
-async function handleUserExpires24h(body: RemnawaveWebhookUserEventsDto) {
+const handleUserExpires24h = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
     const [sub] = await getProfile(body.data.uuid);
@@ -30,45 +31,60 @@ async function handleUserExpires24h(body: RemnawaveWebhookUserEventsDto) {
         parse_mode: 'HTML',
         reply_markup: await extendSubKeyboard(sub.id)
     });
-}
+};
 
-async function handleCrmBilling(body: RemnawaveWebhookCrmEventsDto) {
+const handleUserNotConnected = async (body: RemnawaveWebhookUserEventsDto) => {
+    const text = `
+ℹ️ Вы не воспользовались услугой до конца пробного периода.
+
+❗️ Если у вас возникли проблемы с подключением вы всегда можете обратиться в поддержку по кнопке ниже.
+    `;
+    await bot.api.sendMessage({
+        text,
+        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
+        parse_mode: 'HTML',
+        reply_markup: notConnectedKeyboard(body.data.uuid)
+    });
+};
+
+const handleCrmBilling = async (body: RemnawaveWebhookCrmEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
         text: `⏳ Срок действия ноды истекает\n\nНода: ${body.data.nodeName}\nПровайдер: ${body.data.providerName}`,
         parse_mode: 'HTML',
         reply_markup: urlKeyboard('💳 Оплатить', body.data.loginUrl)
     });
-}
+};
 
-async function handleNodeConnectionLost(body: RemnawaveWebhookNodeEventsDto) {
+const handleNodeConnectionLost = async (body: RemnawaveWebhookNodeEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
         text: `📶 Потеряно соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
         parse_mode: 'HTML'
     });
-}
+};
 
-async function handleNodeConnectionRestored(body: RemnawaveWebhookNodeEventsDto) {
+const handleNodeConnectionRestored = async (body: RemnawaveWebhookNodeEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
         text: `✅ Восстановлено соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
         parse_mode: 'HTML'
     });
-}
+};
 
-async function handleNodeDisabled(body: RemnawaveWebhookNodeEventsDto) {
+const handleNodeDisabled = async (body: RemnawaveWebhookNodeEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
         text: `🚫 Нода отключена\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
         parse_mode: 'HTML'
     });
-}
+};
 
 const webhookHandlers: Record<string, Record<string, EventHandler>> = {
     user: {
         'user.expired': handleUserExpired,
-        'user.expires_in_24_hours': handleUserExpires24h
+        'user.expires_in_24_hours': handleUserExpires24h,
+        'user.user.not_connected': handleUserNotConnected
     },
     crm: {
         'crm.infra_billing_node_payment_in_48hrs': handleCrmBilling
