@@ -142,6 +142,10 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 
             for (const user of users) {
                 try {
+                    if (!user.is_active) {
+                        throw new Error;
+                    }
+
                     await bot.api.sendChatAction({
                         chat_id: user.id,
                         action: 'typing'
@@ -168,7 +172,9 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
                     await context.editText(`⏳ Обработано ${countUsers} пользователей`);
                 }
 
-                await scheduler.wait(100);
+                if (user.is_active) {
+                    await scheduler.wait(100);
+                }
             }
 
 
@@ -181,7 +187,7 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 🌐 Подключений: <code>${onlineAt}</code>
 💳 Оплачено подписок: <code>${(await getPaid()).length}</code>
 💰 Получено: <code>${await getPaidSubs()}</code>
-    `;
+            `;
 
             await context.editText(text, {
                 parse_mode: 'HTML',
