@@ -49,19 +49,19 @@ export const serverFastify = () => {
                 if (body.event == 'node.connection_lost') {
                     await bot.api.sendMessage({
                         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-                        text: `📶 Потеряно соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\nПоследний статус:${body.data.lastStatusMessage}`,
+                        text: `📶 Потеряно соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
                         parse_mode: 'HTML'
                     });
                 } else if (body.event == 'node.connection_restored') {
                     await bot.api.sendMessage({
                         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-                        text: `✅ Восстановлено соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\nПоследний статус:${body.data.lastStatusMessage}`,
+                        text: `✅ Восстановлено соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
                         parse_mode: 'HTML'
                     });
                 } else if (body.event == 'node.disabled') {
                     await bot.api.sendMessage({
                         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-                        text: `🚫 Нода отключена\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\nПоследний статус:${body.data.lastStatusMessage}`,
+                        text: `🚫 Нода отключена\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
                         parse_mode: 'HTML'
                     });
                 }
