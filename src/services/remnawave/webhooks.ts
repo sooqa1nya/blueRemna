@@ -5,70 +5,106 @@ import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
 import { getProfile } from '../../database/user_profiles.js';
 import { urlKeyboard } from '../../keyboards/other.js';
 
+type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto;
+type EventHandler = (body: any) => Promise<void>;
+
+async function handleUserExpired(body: RemnawaveWebhookUserEventsDto) {
+    if (!body.data.telegramId) return;
+
+    const [sub] = await getProfile(body.data.uuid);
+    await bot.api.sendMessage({
+        chat_id: body.data.telegramId,
+        text: `🛑 Доступ ограничен!\n\nСрок вашей подписки <code>${body.data.username}</code> истек. Продлите её сейчас, чтобы оставаться в безопасности и сохранить анонимность. 🔐⚡️`,
+        parse_mode: 'HTML',
+        reply_markup: await extendSubKeyboard(sub.id)
+    });
+}
+
+async function handleUserExpires24h(body: RemnawaveWebhookUserEventsDto) {
+    if (!body.data.telegramId) return;
+
+    const [sub] = await getProfile(body.data.uuid);
+    await bot.api.sendMessage({
+        chat_id: body.data.telegramId,
+        text: `⏳ Внимание!\n\nВаша подписка <code>${body.data.username}</code> истекает через 1 день. Продлите её заранее, чтобы не потерять защиту и сохранить анонимность. 🔐⚡️`,
+        parse_mode: 'HTML',
+        reply_markup: await extendSubKeyboard(sub.id)
+    });
+}
+
+async function handleCrmBilling(body: RemnawaveWebhookCrmEventsDto) {
+    await bot.api.sendMessage({
+        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
+        text: `⏳ Срок действия ноды истекает\n\nНода: ${body.data.nodeName}\nПровайдер: ${body.data.providerName}`,
+        parse_mode: 'HTML',
+        reply_markup: urlKeyboard('💳 Оплатить', body.data.loginUrl)
+    });
+}
+
+async function handleNodeConnectionLost(body: RemnawaveWebhookNodeEventsDto) {
+    await bot.api.sendMessage({
+        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
+        text: `📶 Потеряно соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
+        parse_mode: 'HTML'
+    });
+}
+
+async function handleNodeConnectionRestored(body: RemnawaveWebhookNodeEventsDto) {
+    await bot.api.sendMessage({
+        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
+        text: `✅ Восстановлено соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
+        parse_mode: 'HTML'
+    });
+}
+
+async function handleNodeDisabled(body: RemnawaveWebhookNodeEventsDto) {
+    await bot.api.sendMessage({
+        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
+        text: `🚫 Нода отключена\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
+        parse_mode: 'HTML'
+    });
+}
+
+const webhookHandlers: Record<string, Record<string, EventHandler>> = {
+    user: {
+        'user.expired': handleUserExpired,
+        'user.expires_in_24_hours': handleUserExpires24h
+    },
+    crm: {
+        'crm.infra_billing_node_payment_in_48hrs': handleCrmBilling
+    },
+    node: {
+        'node.connection_lost': handleNodeConnectionLost,
+        'node.connection_restored': handleNodeConnectionRestored,
+        'node.disabled': handleNodeDisabled
+    }
+};
+
 export const serverFastify = () => {
     const server = fastify();
 
     server.post('/rwwebhook', async (request, reply) => {
-        const body = request.body as RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto;
-        if (!body.scope) {
-            return 'ok';
+        const body = request.body as WebhookBody;
+
+        if (!body?.scope) {
+            return reply.code(200).send({ status: 'ok' });
         }
 
         try {
-            if (body.scope == 'user') {
-                if (!body.data.telegramId) {
-                    return 'ok';
-                }
+            const handlers = webhookHandlers[body.scope];
+            const handler = handlers?.[body.event];
 
-                const [sub] = await getProfile(body.data.uuid);
-                if (body.event == 'user.expired') {
-                    await bot.api.sendMessage({
-                        chat_id: body.data.telegramId,
-                        text: `🛑 Доступ ограничен!\n\nСрок вашей подписки <code>${body.data.username}</code> истек. Продлите её сейчас, чтобы оставаться в безопасности и сохранить анонимность. 🔐⚡️`,
-                        parse_mode: 'HTML',
-                        reply_markup: await extendSubKeyboard(sub.id)
-                    });
-                } else if (body.event == 'user.expires_in_24_hours') {
-                    await bot.api.sendMessage({
-                        chat_id: body.data.telegramId,
-                        text: `⏳ Внимание!\n\nВаша подписка <code>${body.data.username}</code> истекает через 1 день. Продлите её заранее, чтобы не потерять защиту и сохранить анонимность. 🔐⚡️`,
-                        parse_mode: 'HTML',
-                        reply_markup: await extendSubKeyboard(sub.id)
-                    });
-                }
-            } else if (body.scope == 'crm') {
-                if (body.event == 'crm.infra_billing_node_payment_in_48hrs') {
-                    await bot.api.sendMessage({
-                        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-                        text: `⏳ Срок действия ноды истекает\n\nНода: ${body.data.nodeName}\nПровайдер: ${body.data.providerName}`,
-                        parse_mode: 'HTML',
-                        reply_markup: urlKeyboard('💳 Оплатить', body.data.loginUrl)
-                    });
-                }
-            } else if (body.scope == 'node') {
-                if (body.event == 'node.connection_lost') {
-                    await bot.api.sendMessage({
-                        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-                        text: `📶 Потеряно соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
-                        parse_mode: 'HTML'
-                    });
-                } else if (body.event == 'node.connection_restored') {
-                    await bot.api.sendMessage({
-                        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-                        text: `✅ Восстановлено соединение с нодой\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
-                        parse_mode: 'HTML'
-                    });
-                } else if (body.event == 'node.disabled') {
-                    await bot.api.sendMessage({
-                        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-                        text: `🚫 Нода отключена\n\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
-                        parse_mode: 'HTML'
-                    });
-                }
+            if (handler) {
+                await handler(body as any);
+                return reply.code(200).send({ status: 'ok' });
+            } else {
+                console.warn(`Unhandled webhook event: ${body.scope}.${body.event}`);
+                return reply.code(200).send({ status: 'ok' });
             }
-        } catch { }
-
-        return 'ok';
+        } catch (error) {
+            console.error(`Webhook error for ${body.scope}.${body.event}:`, error);
+            return reply.code(500).send({ error: 'Internal server error' });
+        }
     });
 
     server.listen({ host: '0.0.0.0', port: 6663 }, (err, address) => {
