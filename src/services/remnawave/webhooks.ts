@@ -60,7 +60,7 @@ const handleCrmBilling = async (body: RemnawaveWebhookCrmEventsDto) => {
 const handleNodeConnectionLost = async (body: RemnawaveWebhookNodeEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-        text: `📶 Соединение потеряно\n\nПровайдер: <code>${body.data.provider?.name}</code>\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
+        text: `📶 Соединение потеряно\n\nПровайдер: <code>${body.data.provider?.name}</code>\nНода: <code>${body.data.countryCode} ${body.data.name}</code>${body.data.lastStatusMessage ? `\nПоследний статус: <code>${body.data.lastStatusMessage}</code>` : ''}`,
         parse_mode: 'HTML'
     });
 };
@@ -68,7 +68,7 @@ const handleNodeConnectionLost = async (body: RemnawaveWebhookNodeEventsDto) => 
 const handleNodeConnectionRestored = async (body: RemnawaveWebhookNodeEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-        text: `✅ Соединение восстановлено\n\nПровайдер: <code>${body.data.provider?.name}</code>\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
+        text: `✅ Соединение восстановлено\n\nПровайдер: <code>${body.data.provider?.name}</code>\nНода: <code>${body.data.countryCode} ${body.data.name}</code>${body.data.lastStatusMessage ? `\nПоследний статус: <code>${body.data.lastStatusMessage}</code>` : ''}`,
         parse_mode: 'HTML'
     });
 };
@@ -76,7 +76,7 @@ const handleNodeConnectionRestored = async (body: RemnawaveWebhookNodeEventsDto)
 const handleNodeDisabled = async (body: RemnawaveWebhookNodeEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-        text: `🚫 Нода отключена\n\nПровайдер: <code>${body.data.provider?.name}</code>\nНода: ${body.data.name} (${body.data.address})\nРегион: ${body.data.countryCode}\n${body.data.lastStatusMessage ? `Последний статус:${body.data.lastStatusMessage}` : ''}`,
+        text: `🚫 Нода отключена\n\nПровайдер: <code>${body.data.provider?.name}</code>\nНода: <code>${body.data.countryCode} ${body.data.name}</code>${body.data.lastStatusMessage ? `\nПоследний статус: <code>${body.data.lastStatusMessage}</code>` : ''}`,
         parse_mode: 'HTML'
     });
 };
