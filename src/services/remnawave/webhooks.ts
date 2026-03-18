@@ -83,7 +83,7 @@ const handleNodeDisabled = async (body: RemnawaveWebhookNodeEventsDto) => {
 
 const webhookHandlers: Record<string, Record<string, EventHandler>> = {
     user: {
-        'user.user.not_connected': handleUserNotConnected,
+        'user.not_connected': handleUserNotConnected,
         'user.expired': handleUserExpired,
         'user.expires_in_24_hours': handleUserExpires24h
     },
