@@ -4,7 +4,7 @@ import { bot } from '../../index.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
 import { getProfile } from '../../database/user_profiles.js';
 import { urlKeyboard } from '../../keyboards/other.js';
-import { notConnectedKeyboard } from '../../keyboards/webhook.js';
+
 
 type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto;
 type EventHandler = (body: any) => Promise<void>;
@@ -34,19 +34,17 @@ const handleUserExpires24h = async (body: RemnawaveWebhookUserEventsDto) => {
 };
 
 const handleUserNotConnected = async (body: RemnawaveWebhookUserEventsDto) => {
+    if (!body.data.telegramId) return;
+
     const text = `
-    ${body.data.telegramId}
-ℹ️ Вы не воспользовались услугой до конца пробного периода.
+ℹ️ Вы не подключились к сервису за определенное время
 
-🟢 Не переживайте, мы предусмотрели такой поворт и даем вам возможность воспользоваться пробным периодом снова!)
-
-❗️ Если у вас возникли проблемы с подключением вы всегда можете обратиться в поддержку по кнопке ниже.
+❗️ Наша услуга всё еще активна. Если у вас возникли проблемы с вы всегда можете обратиться в поддержку по кнопке ниже. Мы поможем вам с подключением и проконсультируем по всем вопросам
     `;
     await bot.api.sendMessage({
+        chat_id: body.data.telegramId,
         text,
-        chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-        parse_mode: 'HTML',
-        reply_markup: notConnectedKeyboard(body.data.uuid)
+        parse_mode: 'HTML'
     });
 };
 
