@@ -35,6 +35,7 @@ const handleUserExpires24h = async (body: RemnawaveWebhookUserEventsDto) => {
 
 const handleUserNotConnected = async (body: RemnawaveWebhookUserEventsDto) => {
     const text = `
+    ${body.data.telegramId}
 ℹ️ Вы не воспользовались услугой до конца пробного периода.
 
 🟢 Не переживайте, мы предусмотрели такой поворт и даем вам возможность воспользоваться пробным периодом снова!)
