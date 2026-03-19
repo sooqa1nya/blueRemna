@@ -4,6 +4,7 @@ import { bot } from '../../index.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
 import { getProfile } from '../../database/user_profiles.js';
 import { urlKeyboard } from '../../keyboards/other.js';
+import { supportKeyboard } from '../../keyboards/main.js';
 
 
 type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto;
@@ -37,14 +38,19 @@ const handleUserNotConnected = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
     const text = `
-ℹ️ Вы не подключились к сервису за определенное время
+🚀 <b>Ваш VPN готов к работе!</b>
 
-❗️ Наша услуга всё еще активна. Если у вас возникли проблемы с вы всегда можете обратиться в поддержку по кнопке ниже. Мы поможем вам с подключением и проконсультируем по всем вопросам
+Мы заметили, что после оформления подписки вы ещё ни разу не подключались.
+
+✅ Ваша подписка <b>активна</b> и ждёт вас!
+
+🤔 Не получается настроить? Не знаете с чего начать? Мы с радостью поможем разобраться!
     `;
     await bot.api.sendMessage({
         chat_id: body.data.telegramId,
         text,
-        parse_mode: 'HTML'
+        parse_mode: 'HTML',
+        reply_markup: supportKeyboard
     });
 };
 
