@@ -5,6 +5,7 @@ import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
 import { getProfile } from '../../database/user_profiles.js';
 import { urlKeyboard } from '../../keyboards/other.js';
 import { supportKeyboard } from '../../keyboards/main.js';
+import { findUser, setActive } from '../../database/users.js';
 
 
 type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto;
@@ -119,14 +120,19 @@ export const serverFastify = () => {
 
             if (handler) {
                 await handler(body as any);
-                return reply.code(200).send({ status: 'ok' });
             } else {
                 console.warn(`Unhandled webhook event: ${body.scope}.${body.event}`);
-                return reply.code(200).send({ status: 'ok' });
             }
         } catch (error) {
-            console.error(`Webhook error for ${body.scope}.${body.event}:`, error);
-            return reply.code(500).send({ error: 'Internal server error' });
+            if (!(body.scope == 'user')) return;
+            if (!body.data.telegramId) return;
+
+            const user = await findUser(body.data.telegramId);
+            if (user) {
+                await setActive(user.id, false);
+            }
+        } finally {
+            return reply.code(200).send({ status: 'ok' });
         }
     });
 
