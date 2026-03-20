@@ -50,7 +50,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
         // Если хватает реф. баланса, то используем его
         if (context.dbuser && context.dbuser.ref_balance >= context.queryData.p) {
             try {
-                await context.send(`💰 Покупка подписки с реферального баланса\n\n- Пользователь: <code>${context.from.id}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Списано: ${context.queryData.p}`, {
+                await context.send(`💰 Покупка подписки с реферального баланса\n\n- Пользователь: <code>${context.from.id}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Списано: <code>${context.queryData.p}₽</code>`, {
                     chat_id: process.env.LOG_CHAT_ID!,
                     parse_mode: 'HTML'
                 });
@@ -106,7 +106,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
         }
 
         try {
-            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Цена: ${context.queryData.p}`, {
+            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Цена: <code>${context.queryData.p}₽</code>`, {
                 chat_id: process.env.LOG_CHAT_ID!,
                 parse_mode: 'HTML'
             });

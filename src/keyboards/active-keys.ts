@@ -3,6 +3,7 @@ import { getProfiles } from '../database/user_profiles.js';
 import { backToMainMenuKeyboard } from './main.js';
 import { copyLinkKeyboard } from './other.js';
 import { currentKeysData } from './sub-payment.js';
+import { getLimitExtend } from '../database/settings.js';
 
 // Список всех подписок
 export const userKeyData = new CallbackData('active_key')
@@ -30,15 +31,20 @@ export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit
         .combine(backToMainMenuKeyboard);
 };
 
+export const refExtendPaymentData = new CallbackData('ref_balance_lim_extend')
+    .number('k');
 export const extendPaymentData = new CallbackData('extend_payment')
     .string('s')
     .number('k');
-export const extendPaymentMethodKeyboard = async (key: number) => {
+export const extendPaymentMethodKeyboard = async (key: number, refBalance: number) => {
+    const limit = await getLimitExtend();
+    const price = Number(limit.price);
+
     return new InlineKeyboard()
+        .columns(1)
+        .addIf(refBalance >= price, InlineKeyboard.text('💰 Списать с баланса', refExtendPaymentData.pack({ k: key })))
         .text('СБП', extendPaymentData.pack({ s: 'pl', k: key }), { icon_custom_emoji_id: '5447186509029452373' })
-        .row()
         .text('CryptoBot', extendPaymentData.pack({ s: 'cb', k: key }), { icon_custom_emoji_id: '5361914370068613491' })
-        .row()
         .combine(backToMainMenuKeyboard);
 };
 

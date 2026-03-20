@@ -28,3 +28,11 @@ export const getProfileByID = async (id: number) => {
         WHERE id = ${id}
     `;
 };
+
+export const setLimitExtended = async (id: number, limitExtended: boolean) => {
+    await sql`
+        UPDATE user_profiles
+        SET is_limit_extended = ${limitExtended}
+        WHERE id = ${id}    
+    `;
+};

@@ -1,11 +1,12 @@
 import { Composer } from 'gramio';
 import * as keyboard from '../keyboards/index.js';
-import { getProfileByID, getProfiles } from '../database/user_profiles.js';
+import { getProfileByID, getProfiles, setLimitExtended } from '../database/user_profiles.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getLimitExtend } from '../database/settings.js';
 import { createPayment } from '../utils/create-payment.js';
 import { checkPayment } from '../utils/check-payment.js';
 import { addRefBalance } from '../utils/add-ref-balance.js';
+import { updateRefBalance } from '../database/users.js';
 
 export const activeKeys = new Composer({ name: 'activeKeys' })
     .callbackQuery('active_keys', async context => {
@@ -57,7 +58,7 @@ ${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${u
 
         await context.editText(text, {
             parse_mode: 'HTML',
-            reply_markup: await keyboard.extendPaymentMethodKeyboard(context.queryData.k)
+            reply_markup: await keyboard.extendPaymentMethodKeyboard(context.queryData.k, context.dbuser!.ref_balance)
         });
     })
 
@@ -116,11 +117,56 @@ ${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${u
         }
 
         try {
-            await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n - Цена: ${limit.price}`, {
+            await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Цена: <code>${limit.price}₽</code>`, {
                 chat_id: process.env.LOG_CHAT_ID!,
                 parse_mode: 'HTML'
             });
         } catch { }
+
+        await setLimitExtended(context.queryData.k, true);
+
+        await context.editText(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: keyboard.backToMainMenuKeyboard });
+    })
+
+    .callbackQuery(keyboard.refExtendPaymentData, async context => {
+        if (!context.dbuser) {
+            return;
+        }
+
+        const [userProfile] = await getProfileByID(context.queryData.k);
+        if (userProfile.is_limit_extended) {
+            await context.editText('🚫 Максимальный лимит устройств для этой подписки уже достигнут', { reply_markup: keyboard.backToMainMenuKeyboard });
+            return;
+        }
+
+        const limit = await getLimitExtend();
+        const price = Number(limit.price);
+
+        if (context.dbuser.ref_balance < price) {
+            await context.editText('🚫 Недостаточно реферального баланса для оплаты', { reply_markup: keyboard.backToMainMenuKeyboard });
+            return;
+        }
+
+        const user = await remnawave.getUserByUUID((await getProfileByID(context.queryData.k))[0]!.uuid);
+
+        try {
+            await remnawave.updateUser({
+                uuid: user.response.uuid,
+                hwidDeviceLimit: Number(user.response.hwidDeviceLimit!) + Number(limit.devices)
+            });
+        } catch (e) {
+            console.error('Ошибка при расширении лимита устройств:', e);
+        }
+
+        try {
+            await context.send(`💰 Покупка доп устройств с реферального баланса\n\n- Пользователь: <code>${context.from.id}</code>\n- Списано: <code>${limit.price}₽</code>`, {
+                chat_id: process.env.LOG_CHAT_ID!,
+                parse_mode: 'HTML'
+            });
+        } catch { }
+
+        await updateRefBalance(context.from.id, context.dbuser.ref_balance - price);
+        await setLimitExtended(context.queryData.k, true);
 
         await context.editText(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: keyboard.backToMainMenuKeyboard });
     });
