@@ -1,5 +1,5 @@
 export const supportClients = {
-    ios: `[Happ](https://apps.apple.com/us/app/happ-proxy-utility/id6504287215) / [v2RayTun](https://apps.apple.com/us/app/v2raytun/id6476628951)`,
+    ios: `[Happ](https://apps.apple.com/us/app/happ-proxy-utility/id6504287215) / [v2RayTun](https://apps.apple.com/us/app/v2raytun/id6476628951) / [Karing](https://apps.apple.com/us/app/karing/id6472431552)`,
     android: `[Happ](https://play.google.com/store/apps/details?id=com.happproxy) / [v2RayTun](https://play.google.com/store/apps/details?id=com.v2raytun.android) / [FlClashX](https://github.com/pluralplay/FlClashX/releases/latest)`,
     windows: `[Happ](https://github.com/Happ-proxy/happ-desktop/releases/latest/download/setup-Happ.x64.exe) / [Throne](https://github.com/throneproj/Throne/releases/latest) / [v2RayTun](https://v2raytun.com/) / [FlClashX](https://github.com/pluralplay/FlClashX/releases/latest) / [Koala Clash](https://github.com/coolcoala/koala-clash/releases/latest)`,
     macos: `[Happ](https://apps.apple.com/us/app/happ-proxy-utility/id6504287215) / [Throne](https://github.com/throneproj/Throne/releases/latest) / [FlClashX](https://github.com/pluralplay/FlClashX/releases/latest) / [Koala Clash](https://github.com/coolcoala/koala-clash/releases/latest)`,
