@@ -99,3 +99,11 @@ export const getUsersPayload = async (payload: string) => {
         WHERE payload = ${payload}
     `;
 };
+
+export const updateRefBalance = async (id: string | number, balance: number) => {
+    await sql`
+        UPDATE users
+        SET ref_balance = ${balance}
+        WHERE id = ${id}
+    `;
+};

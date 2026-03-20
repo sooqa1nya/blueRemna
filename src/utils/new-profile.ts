@@ -55,7 +55,10 @@ export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any
 2. Установите любое поддерживаемое приложение для работы с подписками <i>(доступные приложения можно найти в меню "Помощь")</i>
 3. Вставьте скопированную ссылку в приложение и наслаждайтесь использованием blueVPN 💙`;
 
-    await context.editText(text, { parse_mode: 'HTML', reply_markup: copyWebappMenuKeyboard('👤 Профиль', user.response.subscriptionUrl) });
+    await context.editText(text, {
+        parse_mode: 'HTML',
+        reply_markup: copyWebappMenuKeyboard('👤 Профиль', user.response.subscriptionUrl)
+    });
 };
 
 

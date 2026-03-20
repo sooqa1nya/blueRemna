@@ -8,6 +8,7 @@ import { newProfile } from '../utils/new-profile.js';
 import { updateProfile } from '../utils/update-profile.js';
 import { createPayment } from '../utils/create-payment.js';
 import { getProfiles } from '../database/user_profiles.js';
+import { updateRefBalance } from '../database/users.js';
 
 export const subPayment = new Composer({ name: 'subPayment' })
     .callbackQuery(keyboard.mainMenuData, async context => {
@@ -46,6 +47,26 @@ export const subPayment = new Composer({ name: 'subPayment' })
     })
 
     .callbackQuery(keyboard.priceData, async context => {
+        // Если хватает реф. баланса, то используем его
+        if (context.dbuser && context.dbuser.ref_balance >= context.queryData.p) {
+            try {
+                await context.send(`💰 Покупка подписки с реферального баланса\n\n- Пользователь: <code>${context.from.id}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Списано: ${context.queryData.p}`, {
+                    chat_id: process.env.LOG_CHAT_ID!,
+                    parse_mode: 'HTML'
+                });
+            } catch { }
+
+            // Продление или создание новой подписки
+            if (context.queryData.k == -1) {
+                await newProfile(context);
+                return;
+            }
+            await updateProfile(context);
+
+            await updateRefBalance(context.from.id, context.dbuser.ref_balance - context.queryData.p);
+            return;
+        }
+
         await context.editText('💳 Выберите способ оплаты', {
             reply_markup: await keyboard.paymentSystemKeyboard(context.queryData.k, context.queryData.m, context.queryData.p)
         });

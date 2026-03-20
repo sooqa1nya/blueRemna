@@ -5,7 +5,7 @@ import { backToMainMenuKeyboard } from '../keyboards/main.js';
 
 export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, any>) => {
     const days = context.queryData.m * 30;
-    const date = new Date();
+    const currentDate = new Date();
 
     const [profile] = await getProfileByID(context.queryData.k);
     if (!profile) {
@@ -20,8 +20,12 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
         console.error('Ошибка #2 при продлении подписки', user);
         return;
     }
-    const expiteDate = new Date(user.response.expireAt);
-    expiteDate < date ? date.setDate(date.getDate() + days) : date.setDate(expiteDate.getDate() + days);
+
+    const expireDate = new Date(user.response.expireAt);
+
+    // Выбираем источник: если подписка не истекла, добавляем к её дате, иначе к текущей
+    const date = expireDate >= currentDate ? expireDate : currentDate;
+    date.setDate(date.getDate() + days);
 
     await remnawave.updateUser({
         uuid: profile.uuid,
@@ -34,5 +38,8 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
 ⏳ Дата окончания: <code>${date.toLocaleDateString('ru-RU')}</code>
     `;
 
-    await context.editText(text, { reply_markup: backToMainMenuKeyboard });
+    await context.editText(text, {
+        parse_mode: 'HTML',
+        reply_markup: backToMainMenuKeyboard
+    });
 };
