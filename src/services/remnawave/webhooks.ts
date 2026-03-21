@@ -58,7 +58,7 @@ const handleUserNotConnected = async (body: RemnawaveWebhookUserEventsDto) => {
 const handleCrmBilling = async (body: RemnawaveWebhookCrmEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
-        text: `⏳ Срок действия ноды истекает\n\nНода: ${body.data.nodeName}\nПровайдер: ${body.data.providerName}`,
+        text: `⏳ Срок действия ноды истекает\n\nПровайдер: <code>${body.data.providerName}</code>\nНода: <code>${body.data.nodeName}</code>`,
         parse_mode: 'HTML',
         reply_markup: urlKeyboard('💳 Оплатить', body.data.loginUrl)
     });
