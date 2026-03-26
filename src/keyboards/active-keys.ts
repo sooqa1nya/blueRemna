@@ -98,7 +98,6 @@ export const extendPaymentInvoiceKeyboard = async (key: number, invoiceUrl: stri
 };
 
 export const deviceInfoData = new CallbackData('di')
-    .string('i') // uuid
     .string('h') // hwid
     .number('u'); // user profile id
 export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: number) => {
@@ -109,7 +108,7 @@ export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: numbe
     devices.forEach((x, index) => {
         keyboard.text(
             `⏺️ ${x.deviceModel}`,
-            deviceInfoData.pack({ i: uuid, h: x.hwid, u: userProfileId })
+            deviceInfoData.pack({ h: x.hwid, u: userProfileId })
         );
         // если устройств в ряду == 2 переносим строку
         if ((index + 1) % 2 === 0) {
@@ -125,12 +124,11 @@ export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: numbe
 };
 
 export const removeHwidDeviceData = new CallbackData('rd')
-    .string('i') // uuid
     .string('h') // hwid
     .number('u'); // user profile id
 export const userDeviceKeyboard = async (uuid: string, hwid: string, userProfileId: number) => {
     return new InlineKeyboard()
         .columns(1)
-        .text('Удалить', removeHwidDeviceData.pack({ i: uuid, h: hwid, u: userProfileId }), { style: 'danger' })
+        .text('Удалить', removeHwidDeviceData.pack({ h: hwid, u: userProfileId }), { style: 'danger' })
         .text('◀️ Назад', userHwidDevicesData.pack({ k: userProfileId, uuid }));
 };
