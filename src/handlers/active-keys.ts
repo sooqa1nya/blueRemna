@@ -30,9 +30,7 @@ export const activeKeys = new Composer({ name: 'activeKeys' })
     
 📆 Действует до: <code>${expire.toLocaleDateString('ru-RU')}</code>
 ⏳ Осталось: <code>${!!daysRemaining ? daysRemaining : 0}д</code>
-
-${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>` : ''}
-
+${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>\n` : ''}
 ℹ️ Подключение:
  • Нажмите зеленую кнопку чтобы скопировать ключ доступа
  • Добавьте его в любое поддерживаемое приложение
