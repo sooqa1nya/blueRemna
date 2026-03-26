@@ -29,7 +29,7 @@ export const activeKeys = new Composer({ name: 'activeKeys' })
 👤 Подписка: <code>${dbprofile?.username}</code>
     
 📆 Действует до: <code>${expire.toLocaleDateString('ru-RU')}</code>
-⏳ Осталось: <code>${!!daysRemaining ? daysRemaining : 0}д</code>
+⏳ Осталось: <code>${daysRemaining > 0 ? daysRemaining : '0'}д</code>
 ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>\n` : ''}
 ℹ️ Подключение:
  • Нажмите зеленую кнопку чтобы скопировать ключ доступа
