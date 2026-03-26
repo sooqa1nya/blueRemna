@@ -104,11 +104,24 @@ export const deviceInfoData = new CallbackData('device_info')
 export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: number) => {
     const devices = (await remnawave.getUserHwidDevices(uuid)).response.devices;
 
-    return new InlineKeyboard()
-        .columns(2)
-        .add(...devices.map(x => InlineKeyboard.text(`⏺️ ${x.deviceModel}`, deviceInfoData.pack({ i: uuid, h: x.hwid, u: userProfileId }))))
-        .columns(1)
+    const keyboard = new InlineKeyboard();
+
+    devices.forEach((x, index) => {
+        keyboard.text(
+            `⏺️ ${x.deviceModel}`,
+            deviceInfoData.pack({ i: uuid, h: x.hwid, u: userProfileId })
+        );
+        // если устройств в ряду == 2 переносим строку
+        if ((index + 1) % 2 === 0) {
+            keyboard.row();
+        }
+    });
+
+    keyboard
+        .row()
         .text('◀️ Назад', userKeyData.pack({ k: userProfileId }));
+
+    return keyboard;
 };
 
 export const removeHwidDeviceData = new CallbackData('remove_device')
