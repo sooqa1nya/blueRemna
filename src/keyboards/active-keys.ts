@@ -4,13 +4,46 @@ import { backToMainMenuKeyboard } from './main.js';
 import { copyLinkKeyboard } from './other.js';
 import { currentKeysData } from './sub-payment.js';
 import { getLimitExtend } from '../database/settings.js';
+import { remnawave } from '../services/remnawave/index.js';
 
 // Список всех подписок
 export const userKeyData = new CallbackData('active_key')
     .number('k');
 export const userKeysKeyboard = async (userId: number) => {
+    const userProfiles = await getProfiles(userId);
+
+    const userWithStatus = await Promise.all(userProfiles.map(async x => {
+        const remoteUser = await remnawave.getUserByUUID(x.uuid);
+        return {
+            profile: x,
+            status: remoteUser?.response?.status ?? 'UNKNOWN'
+        };
+    }));
+
+    const buttons = userWithStatus.map(({ profile, status }) => {
+        let statusPrefix = '';
+        switch (status) {
+            case 'ACTIVE':
+                statusPrefix = '🟢';
+                break;
+            case 'DISABLED':
+                statusPrefix = '🔴';
+                break;
+            case 'EXPIRED':
+                statusPrefix = '🟡';
+                break;
+            case 'LIMITED':
+                statusPrefix = '⚠️';
+                break;
+            default:
+                statusPrefix = '❔';
+        }
+
+        return InlineKeyboard.text(`${statusPrefix} ${profile.username}`, userKeyData.pack({ k: profile.id }));
+    });
+
     return new InlineKeyboard()
-        .add(...(await getProfiles(userId)).map(x => InlineKeyboard.text(`⏺️ ${x.username}`, userKeyData.pack({ k: x.id }))))
+        .add(...buttons)
         .combine(backToMainMenuKeyboard)
         .columns(1);
 };

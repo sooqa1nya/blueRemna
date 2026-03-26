@@ -26,14 +26,17 @@ export const activeKeys = new Composer({ name: 'activeKeys' })
         const daysRemaining = Math.ceil((expire.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
         await context.editText(`
-🔑 <code>${dbprofile?.username}</code>
+👤 Подписка: <code>${dbprofile?.username}</code>
+    
+📆 Действует до: <code>${expire.toLocaleDateString('ru-RU')}</code>
+⏳ Осталось: <code>${!!daysRemaining ? daysRemaining : 0}д</code>
 
-📆 Дата истечения: <code>${expire.toLocaleDateString('ru-RU')} (${daysRemaining}д)</code>
-${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>\n` : ''}
-ℹ️ Примечание:
-<i> - Что бы активировать подписку необходимо добавить ссылку в приложение.
-- Список доступных приложений вы можете найти в разделе "Помощь" главного меню или перейдя по кнопке "Профиль".
-- Что бы скопировать ссылку нажмите на зеленую кнопку.</i>
+${user.response.hwidDeviceLimit ? `📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>` : ''}
+
+ℹ️ Подключение:
+ • Нажмите зеленую кнопку чтобы скопировать ключ доступа
+ • Добавьте его в любое поддерживаемое приложение
+ • Список рекомендуемых приложений находится в разделе главного меню "Помощь"
     `, {
             reply_markup: await keyboard.userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!dbprofile?.is_limit_extended),
             parse_mode: 'HTML',
