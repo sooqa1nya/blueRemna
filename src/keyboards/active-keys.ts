@@ -5,6 +5,7 @@ import { copyLinkKeyboard } from './other.js';
 import { currentKeysData } from './sub-payment.js';
 import { getLimitExtend } from '../database/settings.js';
 import { remnawave } from '../services/remnawave/index.js';
+import { HwidDeviceDto } from '../services/remnawave/types.js';
 
 // Список всех подписок
 export const userKeyData = new CallbackData('active_key')
@@ -51,11 +52,15 @@ export const userKeysKeyboard = async (userId: number) => {
 // Отдельная подписка
 export const extendDeviceLimitData = new CallbackData('extend_limit')
     .number('k');
-export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit: boolean) => {
+export const userHwidDevicesData = new CallbackData('user_hwid_devices')
+    .number('k')
+    .string('uuid'); // uuid
+export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit: boolean, uuid: string) => {
     return new InlineKeyboard()
+        .webApp('👤 Профиль', subUrl, { style: 'primary' })
         .combine(copyLinkKeyboard(subUrl))
         .row()
-        .webApp('👤 Профиль', subUrl, { style: 'primary' })
+        .text('📱 Мои устройства', userHwidDevicesData.pack({ k: key, uuid }))
         .row()
         .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key })))
         .row()
@@ -90,4 +95,29 @@ export const extendPaymentInvoiceKeyboard = async (key: number, invoiceUrl: stri
         .text('✅ Проверить оплату', extendCheckPaymentData.pack({ k: key }), { style: 'success' })
         .row()
         .combine(backToMainMenuKeyboard);
+};
+
+export const deviceInfoData = new CallbackData('device_info')
+    .string('i') // uuid
+    .string('h') // hwid
+    .number('u'); // user profile id
+export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: number) => {
+    const devices = (await remnawave.getUserHwidDevices(uuid)).response.devices;
+
+    return new InlineKeyboard()
+        .columns(2)
+        .add(...devices.map(x => InlineKeyboard.text(`⏺️ ${x.deviceModel}`, deviceInfoData.pack({ i: uuid, h: x.hwid, u: userProfileId }))))
+        .columns(1)
+        .text('◀️ Назад', userKeyData.pack({ k: userProfileId }));
+};
+
+export const removeHwidDeviceData = new CallbackData('remove_device')
+    .string('i') // uuid
+    .string('h') // hwid
+    .number('u'); // user profile id
+export const userDeviceKeyboard = async (uuid: string, hwid: string, userProfileId: number) => {
+    return new InlineKeyboard()
+        .columns(1)
+        .text('Удалить', removeHwidDeviceData.pack({ i: uuid, h: hwid, u: userProfileId }), { style: 'danger' })
+        .text('◀️ Назад', userHwidDevicesData.pack({ k: userProfileId, uuid }));
 };

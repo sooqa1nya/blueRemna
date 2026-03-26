@@ -36,7 +36,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
  • Добавьте его в любое поддерживаемое приложение
  • Список рекомендуемых приложений находится в разделе главного меню "Помощь"
     `, {
-            reply_markup: await keyboard.userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!dbprofile?.is_limit_extended),
+            reply_markup: await keyboard.userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!dbprofile?.is_limit_extended, user.response.uuid),
             parse_mode: 'HTML',
             link_preview_options: { is_disabled: true }
         });
@@ -170,4 +170,64 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         await setLimitExtended(context.queryData.k, true);
 
         await context.editText(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: keyboard.backToMainMenuKeyboard });
+    })
+
+    .callbackQuery(keyboard.userHwidDevicesData, async context => {
+        const userHwid = (await remnawave.getUserHwidDevices(context.queryData.uuid)).response;
+
+        if (!userHwid.total) {
+            return context.answerCallbackQuery('⚠️ У вас нет подключенных устройств');
+        }
+
+        await context.editText(`📱 Подключенные устройства: <code>${userHwid.total}</code>`, {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.userHwidDevicesKeyboard(context.queryData.uuid, context.queryData.k)
+        });
+    })
+
+    .callbackQuery(keyboard.deviceInfoData, async context => {
+        const devices = (await remnawave.getUserHwidDevices(context.queryData.i)).response.devices;
+        const device = devices.find(x => x.hwid == context.queryData.h);
+
+        if (!device) {
+            return await context.answerCallbackQuery('❌ Ошибка: устройство не найдено');
+        }
+
+        const created = new Date(device.createdAt);
+        const updated = new Date(device.updatedAt);
+
+        const text = `
+📱 Информация об устройстве
+       <code>${device.deviceModel}</code>
+
+🗓 Создано: <code>${created.toLocaleDateString('ru-RU')} в ${created.toLocaleTimeString('ru-RU')}</code>
+🔄 Обновлено: <code>${updated.toLocaleDateString('ru-RU')} в ${updated.toLocaleTimeString('ru-RU')}</code>
+
+
+💻 Платформа: <code>${device.platform} ${device.osVersion}</code>
+🆔 HWID: <code>${device.hwid}</code>
+🌐 User-Agent: <code>${device.userAgent}</code>
+        `;
+
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.userDeviceKeyboard(context.queryData.i, device.hwid, context.queryData.u)
+        });
+    })
+
+    .callbackQuery(keyboard.removeHwidDeviceData, async context => {
+        const isRemove = await remnawave.deleteUserHwidDevice({ userUuid: context.queryData.i, hwid: context.queryData.h });
+
+        const userHwid = (await remnawave.getUserHwidDevices(context.queryData.i)).response;
+
+        await context.editText(`📱 Подключенные устройства: <code>${userHwid.total}</code>`, {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.userHwidDevicesKeyboard(context.queryData.i, context.queryData.u)
+        });
+
+        if (isRemove) {
+            await context.answerCallbackQuery('✅ Устройство удалено');
+        } else {
+            await context.answerCallbackQuery('❌ Устройства не существует');
+        }
     });

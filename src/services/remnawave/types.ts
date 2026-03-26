@@ -1307,3 +1307,80 @@ export interface RemnawaveWebhookCrmEventsDto {
 
     data: CrmWebhookDataDto;
 }
+
+/**
+ * Информация об HWID-устройстве пользователя
+ */
+export interface HwidDeviceDto {
+    hwid: string;
+
+    /**
+     * @format uuid
+     */
+    userUuid: string;
+
+    /**
+     * @nullable
+     */
+    platform: string | null;
+
+    /**
+     * @nullable
+     */
+    osVersion: string | null;
+
+    /**
+     * @nullable
+     */
+    deviceModel: string | null;
+
+    /**
+     * @nullable
+     */
+    userAgent: string | null;
+
+    /**
+     * @format date-time
+     */
+    createdAt: string;
+
+    /**
+     * @format date-time
+     */
+    updatedAt: string;
+}
+
+/**
+ * Тело ответа со списком HWID-устройств
+ */
+export interface HwidDevicesResponseData {
+    total: number;
+
+    devices: HwidDeviceDto[];
+}
+
+/**
+ * DTO ответа на запрос получения HWID-устройств пользователя
+ */
+export interface GetUserHwidDevicesResponseDto {
+    response: HwidDevicesResponseData;
+}
+
+/**
+ * DTO запроса на удаление HWID-устройства пользователя
+ */
+export interface DeleteUserHwidDeviceRequestDto {
+    /**
+     * @format uuid
+     */
+    userUuid: string;
+
+    hwid: string;
+}
+
+/**
+ * DTO ответа на запрос удаления HWID-устройства пользователя
+ */
+export interface DeleteUserHwidDeviceResponseDto {
+    response: HwidDevicesResponseData;
+}

@@ -1,4 +1,4 @@
-import type { CreateUserRequestDto, CreateUserResponseDto, GetAllHostsResponseDto, GetConfigProfilesResponseDto, GetExternalSquadsResponseDto, GetInternalSquadsResponseDto, GetUserByTelegramIdResponseDto, GetUserByUuidResponseDto, UpdateUserRequestDto } from './types.js';
+import type { CreateUserRequestDto, CreateUserResponseDto, DeleteUserHwidDeviceRequestDto, DeleteUserHwidDeviceResponseDto, GetAllHostsResponseDto, GetConfigProfilesResponseDto, GetExternalSquadsResponseDto, GetInternalSquadsResponseDto, GetUserByTelegramIdResponseDto, GetUserByUuidResponseDto, GetUserHwidDevicesResponseDto, UpdateUserRequestDto } from './types.js';
 
 class RemnaWaveService {
     private JWT: string;
@@ -139,6 +139,21 @@ class RemnaWaveService {
         }
         return hosts;
     }
+
+    public async getUserHwidDevices(uuid: string) {
+        return this.request<GetUserHwidDevicesResponseDto>(`/api/hwid/devices/${uuid}`, {
+            method: 'GET'
+        });
+    }
+
+    public async deleteUserHwidDevice(data: DeleteUserHwidDeviceRequestDto) {
+        return this.request<DeleteUserHwidDeviceResponseDto>('/api/hwid/devices/delete', {
+            method: 'POST',
+            body: JSON.stringify({
+                ...data
+            })
+        });
+    };
 }
 
 export const remnawave = new RemnaWaveService(
