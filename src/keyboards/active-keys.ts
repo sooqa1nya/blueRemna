@@ -97,7 +97,7 @@ export const extendPaymentInvoiceKeyboard = async (key: number, invoiceUrl: stri
         .combine(backToMainMenuKeyboard);
 };
 
-export const deviceInfoData = new CallbackData('device_info')
+export const deviceInfoData = new CallbackData('di')
     .string('i') // uuid
     .string('h') // hwid
     .number('u'); // user profile id
