@@ -186,7 +186,7 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 🆓 Пробных подписок: <code>${freeTrials}</code>
 🌐 Подключений: <code>${onlineAt}</code>
 💳 Оплачено подписок: <code>${(await getPaid()).length}</code>
-💰 Получено: <code>${await getPaidSubs()}</code>
+💰 Получено: <code>${await getPaidSubs()}₽</code>
             `;
 
             await context.editText(text, {
