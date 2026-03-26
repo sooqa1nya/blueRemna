@@ -124,7 +124,7 @@ export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: numbe
     return keyboard;
 };
 
-export const removeHwidDeviceData = new CallbackData('remove_device')
+export const removeHwidDeviceData = new CallbackData('rd')
     .string('i') // uuid
     .string('h') // hwid
     .number('u'); // user profile id
