@@ -10,16 +10,20 @@ export const aUserProfileText = async (userId: string | number) => {
 
     const userProfiles = (await remnawave.getUserByTelegramId(String(userId))).response;
     let activeSub = 0;
-    for (const sub of userProfiles) {
-        if (sub.status == 'ACTIVE') {
-            activeSub++;
+    if (userProfiles.length) {
+        for (const sub of userProfiles) {
+            if (sub.status == 'ACTIVE') {
+                activeSub++;
+            }
         }
     }
 
     const payments = await getUserPaidPayments(Number(userId));
     let paymentSum = 0;
-    for (const payment of payments) {
-        paymentSum += payment.amount;
+    if (payments.length) {
+        for (const payment of payments) {
+            paymentSum += payment.amount;
+        }
     }
 
     const refCount = (await findPayloadCount(`id${userId}`)).count;
