@@ -19,6 +19,7 @@ export const aUserProfileText = async (userId: string | number) => {
     }
 
     const payments = await getUserPaidPayments(Number(userId));
+    console.log(payments);
     let paymentSum = 0;
     if (payments.length) {
         for (const payment of payments) {
