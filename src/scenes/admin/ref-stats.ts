@@ -1,11 +1,11 @@
 import { Scene } from '@gramio/scenes';
-import { adminMenuKeyboard, retryRefStatsKeyboard } from '../keyboards/admin.js';
-import { sceneCancelKeyboard } from '../keyboards/scene-cancel.js';
-import { getUsersPayload, setActive } from '../database/users.js';
-import { getPaymentPayload } from '../database/payment.js';
-import { remnawave } from '../services/remnawave/index.js';
-import { IUser } from '../types/database.js';
-import { bot } from '../index.js';
+import { adminMenuKeyboard, retryRefStatsKeyboard } from '../../keyboards/admin.js';
+import { sceneCancelKeyboard } from '../../keyboards/scene-cancel.js';
+import { getUsersPayload, setActive } from '../../database/users.js';
+import { getPaymentPayload } from '../../database/payment.js';
+import { remnawave } from '../../services/remnawave/index.js';
+import { IUser } from '../../types/database.js';
+import { bot } from '../../index.js';
 
 
 export const refStats = new Scene('refStats')

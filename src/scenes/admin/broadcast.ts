@@ -1,7 +1,7 @@
 import { Scene } from '@gramio/scenes';
-import { adminMenuKeyboard, broadcastMenuKeyboard } from '../keyboards/admin.js';
-import { updateGlobalSale } from '../database/settings.js';
-import { sceneCancelKeyboard } from '../keyboards/scene-cancel.js';
+import { adminMenuKeyboard, broadcastMenuKeyboard } from '../../keyboards/admin.js';
+import { updateGlobalSale } from '../../database/settings.js';
+import { sceneCancelKeyboard } from '../../keyboards/scene-cancel.js';
 
 
 export const broadcastScene = new Scene('broadcast')

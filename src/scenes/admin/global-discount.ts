@@ -1,7 +1,7 @@
 import { Scene } from '@gramio/scenes';
-import { adminMenuKeyboard } from '../keyboards/admin.js';
-import { updateGlobalSale } from '../database/settings.js';
-import { sceneCancelKeyboard } from '../keyboards/scene-cancel.js';
+import { adminMenuKeyboard } from '../../keyboards/admin.js';
+import { updateGlobalSale } from '../../database/settings.js';
+import { sceneCancelKeyboard } from '../../keyboards/scene-cancel.js';
 
 
 export const globalDiscountScene = new Scene('change_global_discount')

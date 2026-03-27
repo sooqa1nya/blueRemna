@@ -1,10 +1,12 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
 
+
 export const adminMenuKeyboard = async () => {
     return new InlineKeyboard()
         .columns(1)
         .text('Рассылка', 'broadcast_settings')
         .text('Статистика', 'admin_stats')
+        .text('Профиль пользователя', 'admin_user_profile')
         .text('Создать рефку', 'ref_generate')
         .text('Изменить глобальную скидку', 'change_discount');
 };
@@ -40,3 +42,30 @@ export const backRefKeyboard = new InlineKeyboard()
     .columns(1)
     .text('Статистика', 'admin_stats')
     .combine(backAdminMenuKeyboard);
+
+
+export const backAUserProfileData = new CallbackData('back_a_u_profile')
+    .string('i'); // user id
+export const backAUserProfileKeyboard = (userId: string) => {
+    return new InlineKeyboard()
+        .text('◀️ Пользователь', backAUserProfileData.pack({ i: userId }));
+};
+
+export const aChangeUserSaleData = new CallbackData('a_change_user_sale')
+    .string('i'); // user id
+export const aChangeUserRefBalanceData = new CallbackData('a_change_user_ref_b')
+    .string('i'); // user id
+export const aChangeUserRefProcData = new CallbackData('a_change_user_ref_p')
+    .string('i'); // user id
+export const aUserSubData = new CallbackData('a_user_sub')
+    .string('i'); // user id
+export const aUserProfileKeyboard = (userId: string | number) => {
+    return new InlineKeyboard()
+        .text('Реф. баланс', aChangeUserRefBalanceData.pack({ i: String(userId) }))
+        .text('Реф. процент', aChangeUserRefProcData.pack({ i: String(userId) }))
+        .row()
+        .text('Скидка', aChangeUserSaleData.pack({ i: String(userId) }))
+        .text('Подписки', aUserSubData.pack({ i: String(userId) }))
+        .row()
+        .combine(backAdminMenuKeyboard);
+};

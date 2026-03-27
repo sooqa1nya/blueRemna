@@ -57,3 +57,12 @@ export const getPaidSubs = async () => {
 
     return result.sum || 0;
 };
+
+export const getUserPaidPayments = async (id: number) => {
+    return await sql<IPayment[]>`
+        SELECT * FROM payments
+        WHERE
+            id = ${id} AND
+            status = 'paid'
+    `;
+};

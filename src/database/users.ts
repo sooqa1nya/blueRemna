@@ -100,10 +100,34 @@ export const getUsersPayload = async (payload: string) => {
     `;
 };
 
-export const updateRefBalance = async (id: string | number, balance: number) => {
+export const setRefBalance = async (id: string | number, balance: number) => {
     await sql`
         UPDATE users
         SET ref_balance = ${balance}
+        WHERE id = ${id}
+    `;
+};
+
+export const updateRefBalance = async (id: string | number, balance: number) => {
+    await sql`
+        UPDATE users
+        SET ref_balance = ref_balance + ${balance}
+        WHERE id = ${id}
+    `;
+};
+
+export const setUserSale = async (id: string | number, sale: number) => {
+    await sql`
+        UPDATE users
+        SET sale = ${sale}
+        WHERE id = ${id}
+    `;
+};
+
+export const setUserRefProc = async (id: string | number, proc: number) => {
+    await sql`
+        UPDATE users
+        SET ref_proc = ${proc}
         WHERE id = ${id}
     `;
 };

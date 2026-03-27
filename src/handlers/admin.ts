@@ -1,16 +1,21 @@
 import { Composer } from 'gramio';
-import { globalDiscountScene } from '../scenes/global-discount.js';
-import { adminMenuKeyboard, backAdminMenuKeyboard, backRefKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
+import { globalDiscountScene } from '../scenes/admin/global-discount.js';
+import { aChangeUserRefBalanceData, aChangeUserRefProcData, aChangeUserSaleData, adminMenuKeyboard, aUserProfileKeyboard, aUserSubData, backAdminMenuKeyboard, backAUserProfileData, backAUserProfileKeyboard, backRefKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
 import { sceneInit } from '../plugins/scenes.js';
-import { broadcastScene } from '../scenes/broadcast.js';
+import { broadcastScene } from '../scenes/admin/broadcast.js';
 import { getActiveUsers, getUsers, setActive } from '../database/users.js';
 import { withRetries } from 'gramio/utils';
 import { bot } from '../index.js';
 import { scheduler } from 'node:timers/promises';
-import { refStats } from '../scenes/ref-stats.js';
+import { refStats } from '../scenes/admin/ref-stats.js';
 import { refGenerate } from '../utils/ref-generate.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getPaid, getPaidSubs } from '../database/payment.js';
+import { aFindUserProfile } from '../scenes/admin/find-user-profile.js';
+import { aUserProfileText } from '../utils/a-user-profile.js';
+import { changeSale } from '../scenes/admin/change-sale.js';
+import { changeRefBalance } from '../scenes/admin/change-ref-balance.js';
+import { changeRefProcent } from '../scenes/admin/change-ref-procent.js';
 
 
 export const admin = new Composer({ name: 'admin' })
@@ -196,4 +201,41 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
         } catch {
             await context.editText('🚫 Ошибка получения статистики', { reply_markup: backRefKeyboard });
         }
+    })
+
+    .callbackQuery('admin_user_profile', async context => {
+        await context.scene.enter(aFindUserProfile);
+    })
+
+    .callbackQuery(backAUserProfileData, async context => {
+        await context.editText(await aUserProfileText(context.queryData.i), {
+            parse_mode: 'HTML',
+            reply_markup: aUserProfileKeyboard(context.queryData.i)
+        });
+    })
+
+    .callbackQuery(aChangeUserSaleData, async context => {
+        await context.scene.enter(changeSale, {
+            userId: context.queryData.i
+        });
+    })
+
+    .callbackQuery(aChangeUserRefBalanceData, async context => {
+        await context.scene.enter(changeRefBalance, {
+            userId: context.queryData.i
+        });
+    })
+
+    .callbackQuery(aChangeUserRefProcData, async context => {
+        await context.scene.enter(changeRefProcent, {
+            userId: context.queryData.i
+        });
+    })
+
+    .callbackQuery(aUserSubData, async context => {
+        await context.editText('В разработке..',
+            {
+                reply_markup: backAUserProfileKeyboard(context.queryData.i)
+            }
+        );
     });

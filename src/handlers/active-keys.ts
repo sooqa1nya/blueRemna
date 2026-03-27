@@ -6,7 +6,7 @@ import { getLimitExtend } from '../database/settings.js';
 import { createPayment } from '../utils/create-payment.js';
 import { checkPayment } from '../utils/check-payment.js';
 import { addRefBalance } from '../utils/add-ref-balance.js';
-import { updateRefBalance } from '../database/users.js';
+import { setRefBalance } from '../database/users.js';
 
 export const activeKeys = new Composer({ name: 'activeKeys' })
     .callbackQuery('active_keys', async context => {
@@ -166,7 +166,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
             });
         } catch { }
 
-        await updateRefBalance(context.from.id, context.dbuser.ref_balance - price);
+        await setRefBalance(context.from.id, context.dbuser.ref_balance - price);
         await setLimitExtended(context.queryData.k, true);
 
         await context.editText(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: keyboard.backToMainMenuKeyboard });

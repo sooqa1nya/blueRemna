@@ -8,7 +8,7 @@ import { newProfile } from '../utils/new-profile.js';
 import { updateProfile } from '../utils/update-profile.js';
 import { createPayment } from '../utils/create-payment.js';
 import { getProfiles } from '../database/user_profiles.js';
-import { updateRefBalance } from '../database/users.js';
+import { setRefBalance } from '../database/users.js';
 
 export const subPayment = new Composer({ name: 'subPayment' })
     .callbackQuery(keyboard.mainMenuData, async context => {
@@ -63,7 +63,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
             }
             await updateProfile(context);
 
-            await updateRefBalance(context.from.id, context.dbuser.ref_balance - context.queryData.p);
+            await setRefBalance(context.from.id, context.dbuser.ref_balance - context.queryData.p);
             return;
         }
 
