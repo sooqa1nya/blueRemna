@@ -4,14 +4,10 @@ import { remnawave } from '../services/remnawave/index.js';
 
 export const aUserProfileText = async (userId: string | number) => {
     const user = await findUser(userId);
-
-    console.log(1);
-
     const regDate = new Date(user.register);
     const lastActivityDate = new Date(user.last_activity);
 
     const userProfiles = (await remnawave.getUserByTelegramId(String(userId))).response;
-    console.log(2);
     let activeSub = 0;
     if (userProfiles.length) {
         for (const sub of userProfiles) {
@@ -20,11 +16,8 @@ export const aUserProfileText = async (userId: string | number) => {
             }
         }
     }
-    console.log(3);
 
     const payments = await getUserPaidPayments(Number(userId));
-    console.log(4);
-    console.log(payments);
     let paymentSum = 0;
     if (payments.length) {
         for (const payment of payments) {
