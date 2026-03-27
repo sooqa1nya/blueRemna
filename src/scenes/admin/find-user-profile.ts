@@ -29,12 +29,7 @@ export const aFindUserProfile = new Scene('a_find_user_profile')
             return await context.send('Пользователь не найден.. Попробуйте снова', { reply_markup: sceneCancelKeyboard });
         }
 
-        console.log(1);
-        const text = await aUserProfileText(userId);
-        console.log(2);
-        console.log(text);
-
-        await context.send(text, {
+        await context.send(await aUserProfileText(userId), {
             parse_mode: 'HTML',
             reply_markup: aUserProfileKeyboard(userId)
         });
