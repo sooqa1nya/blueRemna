@@ -1,7 +1,7 @@
 import { Scene } from '@gramio/scenes';
 import { sceneCancelKeyboard } from '../../keyboards/scene-cancel.js';
 import { aUserProfileKeyboard } from '../../keyboards/admin.js';
-import { setUserSale } from '../../database/users.js';
+import { setActive, setUserSale } from '../../database/users.js';
 import { aUserProfileText } from '../../utils/a-user-profile.js';
 import { bot } from '../../index.js';
 
@@ -31,16 +31,21 @@ export const changeSale = new Scene('change_sale')
 
         await setUserSale(userId, sale);
 
-        await context.send(await aUserProfileText(userId) + '\n✅ Скидка изменена', {
+        await context.send(await aUserProfileText(userId) + '✅ Скидка изменена', {
             parse_mode: 'HTML',
             reply_markup: aUserProfileKeyboard(userId)
         });
 
-        await bot.api.sendMessage({
-            chat_id: userId,
-            parse_mode: 'HTML',
-            text: `👤 Персональное сообщение\n\n▶️ Новая личная скидка: <code>${sale}%</code>`
-        });
+        try {
+            await bot.api.sendMessage({
+                chat_id: userId,
+                parse_mode: 'HTML',
+                text: `👤 Персональное сообщение\n\n▶️ Новая личная скидка: <code>${sale}%</code>`
+            });
+        } catch {
+            context.send('Пользователь заблокировал бота');
+            await setActive(userId, false);
+        }
 
         return context.scene.exit();
     });

@@ -45,7 +45,6 @@ export const aUserProfileText = async (userId: string | number) => {
 Рефералы: <code>${refCount}</code>
 Реф. баланс: <code>${user.ref_balance}</code>
 Реф. процент: <code>${user.ref_proc}%</code>
-
-${user.payload ? `payload: <code>${user.payload}</code>` : ''}
+${user.payload ? `\npayload: <code>${user.payload}</code>\n` : ''}
     `;
 };
