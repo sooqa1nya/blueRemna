@@ -41,15 +41,24 @@ export const refStats = new Scene('refStats')
     })
 
     .step(['message', 'callback_query'], async context => {
+        const message = await context.send('⏳ Обработка запроса');
         const users: IUser[] = context.scene.state.users;
-
 
         let liveUsers = 0;
         let deathUsers = 0;
-        const freeTrials = users.filter(x => x.trial_key).length;
+        let freeTrials = 0;
+        let agreedPolicy = 0;
         let onlineAt = 0;
 
         for (const user of users) {
+            if (user.trial_key) {
+                freeTrials++;
+            }
+
+            if (user.agreed_policy) {
+                agreedPolicy++;
+            }
+
             try {
                 await bot.api.sendChatAction({
                     chat_id: user.id,
@@ -62,20 +71,24 @@ export const refStats = new Scene('refStats')
             }
 
             const remnaUser = await remnawave.getUserByTelegramId(user.id.toString());
-            if (!remnaUser || !remnaUser.response.length)
-                continue;
-
-            for (const element of remnaUser.response) {
-                if (element.userTraffic.onlineAt) {
-                    onlineAt++;
-                    continue;
+            if (remnaUser && remnaUser.response.length) {
+                for (const element of remnaUser.response) {
+                    if (element.userTraffic.onlineAt) {
+                        onlineAt++;
+                        break;
+                    }
                 }
+            }
+
+            const countUsers = liveUsers + deathUsers;
+            if (!(countUsers % 50)) {
+                await message.editText(`⏳ Обработано ${countUsers} пользователей`);
             }
         }
 
-
         const text = `
 🔗 Реферальная ссылка: <code>${context.scene.state.ref}</code>
+📜 Авторизировалось: <code>${agreedPolicy}</code>
 
 👤 Всего: <code>${users.length}</code>
 🟢 Живых: <code>${liveUsers}</code>
@@ -86,7 +99,7 @@ export const refStats = new Scene('refStats')
 💳 Оплачено подписок: <code>${(await getPaymentPayload(context.scene.state.ref)).length}</code>
         `;
 
-        await context.send(text, {
+        await message.editText(text, {
             parse_mode: 'HTML',
             reply_markup: retryRefStatsKeyboard
         });

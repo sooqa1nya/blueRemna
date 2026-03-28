@@ -142,10 +142,19 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 
             let liveUsers = 0;
             let deathUsers = 0;
-            const freeTrials = users.filter(x => x.trial_key).length;
+            let freeTrials = 0;
+            let agreedPolicy = 0;
             let onlineAt = 0;
 
             for (const user of users) {
+                if (user.trial_key) {
+                    freeTrials++;
+                }
+
+                if (user.agreed_policy) {
+                    agreedPolicy++;
+                }
+
                 try {
                     if (!user.is_active) {
                         throw new Error;
@@ -162,13 +171,12 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
                 }
 
                 const remnaUser = await remnawave.getUserByTelegramId(user.id.toString());
-                if (!remnaUser || !remnaUser.response.length)
-                    continue;
-
-                for (const element of remnaUser.response) {
-                    if (element.userTraffic.onlineAt) {
-                        onlineAt++;
-                        continue;
+                if (remnaUser && remnaUser.response.length) {
+                    for (const element of remnaUser.response) {
+                        if (element.userTraffic.onlineAt) {
+                            onlineAt++;
+                            break;
+                        }
                     }
                 }
 
@@ -176,14 +184,12 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
                 if (!(countUsers % 50)) {
                     await context.editText(`⏳ Обработано ${countUsers} пользователей`);
                 }
-
-                if (user.is_active) {
-                    await scheduler.wait(100);
-                }
             }
 
 
             const text = `
+📜 Авторизировалось: <code>${agreedPolicy}</code>
+
 👤 Всего: <code>${users.length}</code>
 🟢 Живых: <code>${liveUsers}</code>
 🔴 Мертвых: <code>${deathUsers}</code>
