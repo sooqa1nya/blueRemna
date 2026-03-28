@@ -30,6 +30,7 @@ export const aUserProfileText = async (userId: string | number) => {
     return `
 Профиль пользователя: ${user.is_active ? '🟢' : '🔴'} <code>${userId}</code>
 
+Авторизирован: <code>${user.agreed_policy ? 'Да' : 'Нет'}</code>
 Регистрация: <code>${regDate.toLocaleDateString('ru-RU')} ${regDate.toLocaleTimeString('ru-RU')}</code>
 Последняя активность: <code>${lastActivityDate.toLocaleDateString('ru-RU')} ${lastActivityDate.toLocaleTimeString('ru-RU')}</code>
 

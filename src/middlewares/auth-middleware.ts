@@ -21,7 +21,18 @@ export const authMiddleware = async (context: Context<Bot>, next: () => Promise<
 
         if (!context.dbuser?.agreed_policy) {
             if (context.is('callback_query')) await context.answerCallbackQuery();
-            await context.send('❗️ Перед использованием бота необходимо согласиться с политикой', { reply_markup: policyKeyboard });
+            const text = `
+❗️ Привет, перед использованием бота необходимо ознакомиться и согласиться с информацией:
+
+[📜 Пользовательское соглашение (кликабельно)](${process.env.USER_AGREEMENT_URL!})
+[🔒 Политика конфиденциальности (кликабельно)](${process.env.PRIVACY_POLICY_URL!})
+            `;
+
+            await context.send(text, {
+                reply_markup: policyKeyboard,
+                link_preview_options: { is_disabled: true },
+                parse_mode: 'Markdown'
+            });
             return;
         }
     }
