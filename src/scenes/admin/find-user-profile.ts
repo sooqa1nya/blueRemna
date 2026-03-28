@@ -2,7 +2,7 @@ import { Scene } from '@gramio/scenes';
 import { sceneCancelKeyboard } from '../../keyboards/scene-cancel.js';
 import { adminMenuKeyboard, aUserProfileKeyboard } from '../../keyboards/admin.js';
 import { findUser } from '../../database/users.js';
-import { aUserProfileText } from '../../utils/a-user-profile.js';
+import { aUserProfileText } from '../../utils/text/a-user-profile-text.js';
 
 
 export const aFindUserProfile = new Scene('a_find_user_profile')

@@ -2,7 +2,7 @@ import { Scene } from '@gramio/scenes';
 import { sceneCancelKeyboard } from '../../keyboards/scene-cancel.js';
 import { aUserProfileKeyboard } from '../../keyboards/admin.js';
 import { setActive, updateRefBalance } from '../../database/users.js';
-import { aUserProfileText } from '../../utils/a-user-profile.js';
+import { aUserProfileText } from '../../utils/text/a-user-profile-text.js';
 import { bot } from '../../index.js';
 
 

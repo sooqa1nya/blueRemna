@@ -12,7 +12,7 @@ import { refGenerate } from '../utils/ref-generate.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getPaid, getPaidSubs } from '../database/payment.js';
 import { aFindUserProfile } from '../scenes/admin/find-user-profile.js';
-import { aUserProfileText } from '../utils/a-user-profile.js';
+import { aUserProfileText } from '../utils/text/a-user-profile-text.js';
 import { changeSale } from '../scenes/admin/change-sale.js';
 import { changeRefBalance } from '../scenes/admin/change-ref-balance.js';
 import { changeRefProcent } from '../scenes/admin/change-ref-procent.js';

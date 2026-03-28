@@ -1,6 +1,6 @@
-import { getUserPaidPayments } from '../database/payment.js';
-import { findPayloadCount, findUser } from '../database/users.js';
-import { remnawave } from '../services/remnawave/index.js';
+import { getUserPaidPayments } from '../../database/payment.js';
+import { findPayloadCount, findUser } from '../../database/users.js';
+import { remnawave } from '../../services/remnawave/index.js';
 
 export const aUserProfileText = async (userId: string | number) => {
     const user = await findUser(userId);

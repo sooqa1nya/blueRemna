@@ -1,6 +1,7 @@
 import { Composer } from 'gramio';
 import { acceptPolicy, findUser, upsertUser } from '../database/users.js';
 import { mainMenuKeyboard, policyKeyboard } from '../keyboards/main.js';
+import { mainMenuText } from '../utils/text/main-menu-text.js';
 
 export const start = new Composer({ name: 'start' })
     .command('start', async context => {
@@ -56,7 +57,10 @@ ${context.args ? `- Payload: <code>${context.args}</code>` : ''}
                 parse_mode: 'Markdown'
             });
         } else {
-            await context.send('🌐 Главное меню', { reply_markup: await mainMenuKeyboard(user.trial_key, context.from.id) });
+            await context.send(await mainMenuText(context.dbuser!), {
+                parse_mode: 'HTML',
+                reply_markup: await mainMenuKeyboard(user.trial_key, context.from.id)
+            });
         }
     })
     .callbackQuery('accept_policy', async context => {
@@ -74,5 +78,8 @@ ${context.args ? `- Payload: <code>${context.args}</code>` : ''}
         }
         await context.answerCallbackQuery('✅ Политика принята!');
 
-        await context.editText(`🌐 Главное меню`, { reply_markup: await mainMenuKeyboard(Boolean(context.dbuser?.trial_key), context.from.id) });
+        await context.editText(await mainMenuText(context.dbuser!), {
+            parse_mode: 'HTML',
+            reply_markup: await mainMenuKeyboard(Boolean(context.dbuser?.trial_key), context.from.id)
+        });
     });
