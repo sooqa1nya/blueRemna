@@ -48,7 +48,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
 
     .callbackQuery(keyboard.priceData, async context => {
         // Если хватает реф. баланса, то используем его
-        if (context.dbuser && context.dbuser.ref_balance >= context.queryData.p) {
+        if (context.dbuser && Number(context.dbuser.ref_balance) >= context.queryData.p) {
             try {
                 await context.send(`💰 Покупка подписки с реферального баланса\n\n- Пользователь: <code>${context.from.id}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Списано: <code>${context.queryData.p}₽</code>`, {
                     chat_id: process.env.LOG_CHAT_ID!,
@@ -63,7 +63,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
             }
             await updateProfile(context);
 
-            await setRefBalance(context.from.id, context.dbuser.ref_balance - context.queryData.p);
+            await setRefBalance(context.from.id, Number(context.dbuser.ref_balance) - context.queryData.p);
             return;
         }
 

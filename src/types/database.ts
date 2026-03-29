@@ -5,7 +5,7 @@ export interface IUser {
     register: Date;
     trial_key: boolean;
     last_activity: Date;
-    ref_balance: number;
+    ref_balance: string;
     ref_proc: number;
     sale: number;
     is_admin: boolean;
@@ -35,7 +35,7 @@ export interface IPayment {
     service: string;
     payment_id: string;
     payment_time: Date;
-    amount: number;
+    amount: string;
     status: 'pending' | 'paid';
     payload: string | null;
 }

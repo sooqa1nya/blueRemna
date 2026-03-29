@@ -59,7 +59,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
 
         await context.editText(text, {
             parse_mode: 'HTML',
-            reply_markup: await keyboard.extendPaymentMethodKeyboard(context.queryData.k, context.dbuser!.ref_balance)
+            reply_markup: await keyboard.extendPaymentMethodKeyboard(context.queryData.k, Number(context.dbuser!.ref_balance))
         });
     })
 
@@ -143,7 +143,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         const limit = await getLimitExtend();
         const price = Number(limit.price);
 
-        if (context.dbuser.ref_balance < price) {
+        if (Number(context.dbuser.ref_balance) < price) {
             await context.editText('🚫 Недостаточно реферального баланса для оплаты', { reply_markup: keyboard.backToMainMenuKeyboard });
             return;
         }
@@ -166,7 +166,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
             });
         } catch { }
 
-        await setRefBalance(context.from.id, context.dbuser.ref_balance - price);
+        await setRefBalance(context.from.id, Number(context.dbuser.ref_balance) - price);
         await setLimitExtended(context.queryData.k, true);
 
         await context.editText(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: keyboard.backToMainMenuKeyboard });

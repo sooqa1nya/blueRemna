@@ -13,7 +13,7 @@ export const addRefBalance = async (context: CallbackQueryShorthandContext<Bot, 
 
             const referrer = await findUser(Number(referrerId));
             if (referrer) {
-                await updateUserRefBalance(referrer.id, referrer.ref_balance + amount * (referrer.ref_proc / 100));
+                await updateUserRefBalance(referrer.id, Number(referrer.ref_balance) + amount * (referrer.ref_proc / 100));
             }
         }
     }

@@ -21,7 +21,7 @@ export const aUserProfileText = async (userId: string | number) => {
     let paymentSum = 0;
     if (payments.length) {
         for (const payment of payments) {
-            paymentSum += payment.amount;
+            paymentSum += Number(payment.amount);
         }
     }
 
