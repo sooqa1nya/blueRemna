@@ -28,13 +28,17 @@ export const aUserProfileText = async (userId: string | number) => {
     const refCount = (await findPayloadCount(`id${userId}`)).count;
 
     return `
-Профиль пользователя: ${user.is_active ? '🟢' : '🔴'} <code>${userId}</code>
+<a href="tg://user?id=${userId}">Профиль пользователя</a>
+
+${user.is_active ? '🟢' : '🔴'} <code>${userId}</code>
+Username: ${user.username ? `@${user.username}` : '<code>N/A</code>'}
+Имя: ${user.first_name ? `<code>${user.first_name}</code>` : '<code>N/A</code>'}
+
+Админ: ${user.is_admin ? '✅' : '❌'}
 
 Авторизирован: <code>${user.agreed_policy ? 'Да' : 'Нет'}</code>
 Регистрация: <code>${regDate.toLocaleDateString('ru-RU')} ${regDate.toLocaleTimeString('ru-RU')}</code>
 Последняя активность: <code>${lastActivityDate.toLocaleDateString('ru-RU')} ${lastActivityDate.toLocaleTimeString('ru-RU')}</code>
-
-Админ: ${user.is_admin ? '✅' : '❌'}
 
 Пробный период: <code>${user.trial_key ? 'Использован' : 'Не использован'}</code>
 Подписок: <code>${userProfiles.length}</code>
