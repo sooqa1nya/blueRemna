@@ -21,7 +21,7 @@ export const aUserProfileText = async (userId: string | number) => {
     let paymentSum = 0;
     if (payments.length) {
         for (const payment of payments) {
-            paymentSum += payment.amount.tof;
+            paymentSum += payment.amount;
         }
     }
 
@@ -41,7 +41,7 @@ export const aUserProfileText = async (userId: string | number) => {
 Активных: <code>${activeSub}</code>
 
 Скидка: <code>${user.sale}%</code>
-Транзакции: <code>${paymentSum.toFixed(2)}₽ (${payments.length})</code>
+Транзакции: <code>${paymentSum}₽ (${payments.length})</code>
 
 Рефералы: <code>${refCount}</code>
 Реф. баланс: <code>${user.ref_balance}</code>
