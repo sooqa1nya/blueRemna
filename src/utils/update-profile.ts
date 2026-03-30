@@ -1,7 +1,7 @@
 import type { Bot, CallbackQueryShorthandContext } from 'gramio';
 import { getProfileByID } from '../database/user_profiles.js';
 import { remnawave } from '../services/remnawave/index.js';
-import { backToMainMenuKeyboard } from '../keyboards/main.js';
+import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 
 export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, any>) => {
     const days = context.queryData.m * 30;
@@ -36,10 +36,16 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
 ✅ Подписка продлена
 
 ⏳ Дата окончания: <code>${date.toLocaleDateString('ru-RU')}</code>
+
+ℹ️ Подключение
+ <i>- Если у вас установлен Happ, нажмите кнопку "Подключить в Happ"
+ - У вас другой клиент? Нажмите кнопку "Скопировать" и добавьте ключ вручную</i>
+
+<b>❗️ Если вы не разобрались как подключиться к VPN нажмите кнопку "Помощь с подключением" или обратитесь в поддержку</b>
     `;
 
     await context.editText(text, {
         parse_mode: 'HTML',
-        reply_markup: backToMainMenuKeyboard
+        reply_markup: copyWebappMenuKeyboard('👤 Профиль', user.response.subscriptionUrl)
     });
 };

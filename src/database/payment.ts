@@ -1,4 +1,4 @@
-import type { IPayment } from '../types/database.js';
+import type { IPayment } from './types.js';
 import sql from './index.js';
 
 export const addPayment = async (userId: number, service: string, paymentId: string, amount: number, payload: string | null) => {

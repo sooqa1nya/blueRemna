@@ -96,6 +96,34 @@ export const initDatabase = async () => {
                 ('global_sale', ${sql.json(globalSale)})
             ON CONFLICT (key) DO NOTHING
         `;
+        await sql`
+            CREATE TABLE IF NOT EXISTS operating_systems (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(32) UNIQUE NOT NULL,
+                button_style VARCHAR(32),
+                priority INTEGER DEFAULT 0
+            )
+        `;
+        await sql`
+        INSERT INTO operating_systems (name, priority)
+        VALUES
+            ('iOS', 40),
+            ('Android', 30),
+            ('Windows', 20),
+            ('MacOS', 10),
+            ('Linux', 0)
+        ON CONFLICT (name) DO NOTHING;
+        `;
+        await sql`
+            CREATE TABLE IF NOT EXISTS vpn_clients (
+                id SERIAL PRIMARY KEY,
+                operating_system_id INTEGER REFERENCES operating_systems(id) ON DELETE CASCADE,
+                name VARCHAR(32) NOT NULL,
+                link TEXT,
+                button_style VARCHAR(32),
+                priority INTEGER DEFAULT 0
+            )
+        `;
         console.log('✅ База данных инициализирована');
     } catch (error) {
         console.error('❌ Ошибка инициализации БД:', error);

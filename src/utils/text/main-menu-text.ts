@@ -1,4 +1,4 @@
-import { IUser } from '../../types/database.js';
+import { IUser } from '../../database/types.js';
 
 export const mainMenuText = async (user: IUser) => {
     const regDate = new Date(user.register);

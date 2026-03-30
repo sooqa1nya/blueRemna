@@ -1,3 +1,5 @@
+import { ButtonOptions } from 'gramio';
+
 export interface IUser {
     id: number;
     username: string | null;
@@ -46,7 +48,22 @@ export interface ISetting {
     data: any;
 }
 
-// еще под вопросом
+export interface IOperatingSystems {
+    id: number;
+    name: string;
+    button_style: ButtonOptions['style'];
+    priority: number;
+}
+
+export interface IVpnClients {
+    id: number;
+    operating_system_id: number;
+    name: string;
+    link: string;
+    button_style: ButtonOptions['style'];
+    priority: number;
+}
+
 declare module 'gramio' {
     interface Context<Bot> {
         dbuser?: IUser;

@@ -1,11 +1,12 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
 import { getProfiles } from '../database/user_profiles.js';
 import { backToMainMenuKeyboard } from './main.js';
-import { copyLinkKeyboard } from './other.js';
+import { copyLinkKeyboard, importHappKeyboard } from './other.js';
 import { currentKeysData } from './sub-payment.js';
 import { getLimitExtend } from '../database/settings.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { HwidDeviceDto } from '../services/remnawave/types.js';
+import { connectHelpKeyboard } from './help.js';
 
 // Список всех подписок
 export const userKeyData = new CallbackData('active_key')
@@ -57,9 +58,13 @@ export const userHwidDevicesData = new CallbackData('user_hwid_devices')
     .string('uuid'); // uuid
 export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit: boolean, uuid: string) => {
     return new InlineKeyboard()
+        .combine(importHappKeyboard(subUrl))
+        .row()
         .combine(copyLinkKeyboard(subUrl))
         .row()
         .webApp('👤 Профиль', subUrl, { style: 'primary' })
+        .row()
+        .combine(connectHelpKeyboard)
         .row()
         .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key })))
         .text('📱 Мои устройства', userHwidDevicesData.pack({ k: key, uuid }))

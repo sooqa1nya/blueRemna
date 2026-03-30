@@ -1,4 +1,4 @@
-import type { ISetting } from '../types/database.js';
+import type { ISetting } from './types.js';
 import sql from './index.js';
 
 export const getKey = async (key: string) => {

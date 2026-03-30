@@ -1,5 +1,6 @@
 import { InlineKeyboard } from 'gramio';
 import { backToMainMenuKeyboard } from './main.js';
+import { connectHelpKeyboard } from './help.js';
 
 export const copyLinkKeyboard = (url: string) => {
     return new InlineKeyboard()
@@ -20,14 +21,26 @@ export const copyAndMenuKeyboard = (url: string) => {
 
 export const copyWebappMenuKeyboard = (text: string, url: string) => {
     return new InlineKeyboard()
+        .columns(1)
+        .combine(importHappKeyboard(url))
         .combine(copyLinkKeyboard(url))
-        .row()
         .combine(webAppKeyboard(text, url))
-        .row()
+        .combine(connectHelpKeyboard)
         .combine(backToMainMenuKeyboard);
 };
 
 export const urlKeyboard = (text: string, url: string) => {
     return new InlineKeyboard()
         .url(text, url);
-}; 
+};
+
+export const emptyButtonKeyboard = (text: string) => {
+    return new InlineKeyboard()
+        .text(text, '__empty_button');
+};
+
+export const importHappKeyboard = (subUrl: string) => {
+    const happUrl = subUrl.replace(/https:\/\/(\w+)/, 'https://happ');
+    return new InlineKeyboard()
+        .url('Подключить в Happ', happUrl, { style: 'success' });
+};

@@ -2,7 +2,7 @@ import type { Bot, CallbackQueryShorthandContext } from 'gramio';
 import { changeStatus, getPayments } from '../database/payment.js';
 import { cryptoBot } from '../services/crypto-bot/index.js';
 import { platega } from '../services/platega/index.js';
-import type { IPayment } from '../types/database.js';
+import type { IPayment } from '../database/types.js';
 
 export const checkPayment = async (context: CallbackQueryShorthandContext<Bot, any>) => {
     const payments = await getPayments(context.from.id);

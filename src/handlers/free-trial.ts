@@ -6,7 +6,6 @@ import { addProfile } from '../database/user_profiles.js';
 import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 import { freeTrialInfoKeyboard } from '../keyboards/free-trial.js';
 import { backToMainMenuKeyboard } from '../keyboards/main.js';
-import { supportClients } from '../utils/get-support-clients.js';
 
 
 export const freeTrial = new Composer({ name: 'freeTrial' })
@@ -18,24 +17,13 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
         }
 
         const text = `
-🎁 Пробная подписка
+🎁 *Пробная подписка*
 
 ⏳ Длительность (дни): \`${await getFreeTrial()}\`
 
-❗️ *Инструкция по подключению*
- - Для начала вам необходимо скачать любое приложение из списка ниже.
- - После установки нажмите кнопку активации подписки. 
- - После активации вам будет выдана ссылка для подключения, получить её можно нажав кнопку "Скопировать".
- - После копирования ссылку нужно вставить в скачанное приложение, после чего вы сможете подключиться к blueVPN.
+❗️ Что бы получить инструкцию по подключению нажмите кнопку *"Помощь с подключением"*
 
-ℹ️ При возникновении проблем вы всегда можете обратиться в поддержку
-
-💮 Поддерживаемые приложения (текст кликабельный)
- - iOS: ${supportClients.ios}
- - Android: ${supportClients.android}
- - Windows: ${supportClients.windows}
- - macOS: ${supportClients.macos}
- - Linux: ${supportClients.linux}
+ℹ️ Если у вас не получилось подключиться - обратитесь в поддержку *(кнопка "Поддержка")*, поможем с настройкой и подключением
         `;
 
         await context.editText(text, {
@@ -99,18 +87,11 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
 
 ⏳ Дата окончания: \`${date.toLocaleDateString('ru-RU')}\`
 
-❗️ *Инструкция по подключению*
- - Для начала вам необходимо скачать любое приложение из списка ниже.
- - После установки нажмите кнопку активации подписки. 
- - После активации вам будет выдана ссылка для подключения, получить её можно нажав кнопку "Скопировать".
- - После копирования ссылку нужно вставить в скачанное приложение, после чего вы сможете подключиться к blueVPN.
+ℹ️ Подключение
+ _- Если у вас установлен Happ, нажмите кнопку "Подключить в Happ"
+ - У вас другой клиент? Нажмите кнопку "Скопировать" и добавьте ключ вручную_
 
-💮 Поддерживаемые приложения (текст кликабельный)
- - iOS: ${supportClients.ios}
- - Android: ${supportClients.android}
- - Windows: ${supportClients.windows}
- - macOS: ${supportClients.macos}
- - Linux: ${supportClients.linux}
+*❗️ Если вы не разобрались как подключиться к VPN нажмите кнопку "Помощь с подключением" или обратитесь в поддержку*
             `;
 
         await context.editText(text, {

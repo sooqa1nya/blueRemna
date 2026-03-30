@@ -1,4 +1,4 @@
-import type { IUser } from '../types/database.js';
+import type { IUser } from './types.js';
 import sql from './index.js';
 
 export const upsertUser = async (id: string | number, username: string | null, firstName: string, payload: string | null) => {

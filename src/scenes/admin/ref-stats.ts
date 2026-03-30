@@ -4,7 +4,7 @@ import { sceneCancelKeyboard } from '../../keyboards/scene-cancel.js';
 import { getUsersPayload, setActive } from '../../database/users.js';
 import { getPaymentPayload } from '../../database/payment.js';
 import { remnawave } from '../../services/remnawave/index.js';
-import { IUser } from '../../types/database.js';
+import { IUser } from '../../database/types.js';
 import { bot } from '../../index.js';
 
 

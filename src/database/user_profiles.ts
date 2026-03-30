@@ -1,4 +1,4 @@
-import type { IUserProfiles } from '../types/database.js';
+import type { IUserProfiles } from './types.js';
 import sql from './index.js';
 
 export const addProfile = async (userId: number, uuid: string, username: string): Promise<void> => {
