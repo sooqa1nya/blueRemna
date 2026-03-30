@@ -56,10 +56,12 @@ export const helpListVpnClientsKeyboard = async (osId: number) => {
         .combine(backToMainMenuKeyboard);
 };
 
-export const helpListOsKeyboard = new InlineKeyboard()
-    .columns(1)
-    .combine(await listOsKeyboard())
-    .text('◀️ Назад', 'help');
+export const helpListOsKeyboard = async () => {
+    return new InlineKeyboard()
+        .columns(1)
+        .combine(await listOsKeyboard())
+        .text('◀️ Назад', 'help');
+};
 
 export const connectHelpKeyboard = new InlineKeyboard()
     .text('Помощь с подключением', 'help', { style: 'danger' });

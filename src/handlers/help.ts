@@ -34,7 +34,7 @@ export const help = new Composer({ name: 'help' })
     .callbackQuery('list_clients', async context => {
         await context.editText(`↘️ Выберите ваше устройство`, {
             parse_mode: 'HTML',
-            reply_markup: helpListOsKeyboard
+            reply_markup: await helpListOsKeyboard()
         });
     })
 

@@ -17,10 +17,6 @@ import { sceneCancel } from './handlers/scene-cancel.js';
 import { serverFastify } from './services/remnawave/webhooks.js';
 import { emptyButton } from './handlers/other.js';
 
-initDatabase();
-serverFastify();
-
-
 export const bot = new Bot(process.env.BOT_TOKEN as string)
     .onStart(() => console.log('🤖 Бот запущен'))
     .derive(dbUser)
@@ -37,4 +33,10 @@ export const bot = new Bot(process.env.BOT_TOKEN as string)
     .extend(sceneCancel)
     .extend(emptyButton);
 
-bot.start();
+const startServices = async () => {
+    serverFastify();
+    await initDatabase();
+    await bot.start();
+};
+
+startServices();
