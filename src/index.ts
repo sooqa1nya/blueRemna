@@ -18,23 +18,23 @@ import { serverFastify } from './services/remnawave/webhooks.js';
 import { emptyButton } from './handlers/other.js';
 
 initDatabase();
-serverFastify();
+// serverFastify();
 
 
-export const bot = new Bot(process.env.BOT_TOKEN as string)
-    .onStart(() => console.log('🤖 Бот запущен'))
-    .derive(dbUser)
-    .use(authMiddleware)
-    .extend(start)
-    .extend(mainMenu)
-    .extend(subPayment)
-    .extend(activeKeys)
-    .extend(freeTrial)
-    .extend(affilianteProgram)
-    .extend(help)
-    .extend(aboutUs)
-    .extend(admin)
-    .extend(sceneCancel)
-    .extend(emptyButton);
+// export const bot = new Bot(process.env.BOT_TOKEN as string)
+//     .onStart(() => console.log('🤖 Бот запущен'))
+//     .derive(dbUser)
+//     .use(authMiddleware)
+//     .extend(start)
+//     .extend(mainMenu)
+//     .extend(subPayment)
+//     .extend(activeKeys)
+//     .extend(freeTrial)
+//     .extend(affilianteProgram)
+//     .extend(help)
+//     .extend(aboutUs)
+//     .extend(admin)
+//     .extend(sceneCancel)
+//     .extend(emptyButton);
 
-bot.start();
+// bot.start();
