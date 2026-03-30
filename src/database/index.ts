@@ -104,16 +104,7 @@ export const initDatabase = async () => {
                 priority INTEGER DEFAULT 0
             )
         `;
-        await sql`
-        INSERT INTO operating_systems (name, priority)
-        VALUES
-            ('iOS', 40),
-            ('Android', 30),
-            ('Windows', 20),
-            ('MacOS', 10),
-            ('Linux', 0)
-        ON CONFLICT (name) DO NOTHING;
-        `;
+
         await sql`
             CREATE TABLE IF NOT EXISTS vpn_clients (
                 id SERIAL PRIMARY KEY,
