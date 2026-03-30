@@ -104,17 +104,26 @@ export const initDatabase = async () => {
                 priority INTEGER DEFAULT 0
             )
         `;
-
         await sql`
-            CREATE TABLE IF NOT EXISTS vpn_clients (
-                id SERIAL PRIMARY KEY,
-                operating_system_id INTEGER REFERENCES operating_systems(id) ON DELETE CASCADE,
-                name VARCHAR(32) NOT NULL,
-                link TEXT,
-                button_style VARCHAR(32),
-                priority INTEGER DEFAULT 0
-            )
+            INSERT INTO operating_systems (name, priority)
+            VALUES
+                ('iOS', 40),
+                ('Android', 30),
+                ('Windows', 20),
+                ('MacOS', 10),
+                ('Linux', 0)
+            ON CONFLICT (name) DO NOTHING;
         `;
+        // await sql`
+        //     CREATE TABLE IF NOT EXISTS vpn_clients (
+        //         id SERIAL PRIMARY KEY,
+        //         operating_system_id INTEGER REFERENCES operating_systems(id) ON DELETE CASCADE,
+        //         name VARCHAR(32) NOT NULL,
+        //         link TEXT,
+        //         button_style VARCHAR(32),
+        //         priority INTEGER DEFAULT 0
+        //     )
+        // `;
         console.log('✅ База данных инициализирована');
     } catch (error) {
         console.error('❌ Ошибка инициализации БД:', error);
