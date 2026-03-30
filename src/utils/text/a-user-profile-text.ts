@@ -25,7 +25,7 @@ export const aUserProfileText = async (userId: string | number) => {
         }
     }
 
-    const refCount = (await findPayloadCount(`id${userId}`)).count;
+    const { count } = await findPayloadCount(`id${userId}`);
 
     return `
 <a href="tg://user?id=${userId}">Профиль пользователя</a>
@@ -47,8 +47,8 @@ Username: ${user.username ? `@${user.username}` : '<code>N/A</code>'}
 Скидка: <code>${user.sale}%</code>
 Транзакции: <code>${paymentSum}₽ (${payments.length})</code>
 
-Рефералы: <code>${refCount}</code>
-Реф. баланс: <code>${user.ref_balance}</code>
+Рефералы: <code>${count}</code>
+Реф. баланс: <code>${user.ref_balance}₽</code>
 Реф. процент: <code>${user.ref_proc}%</code>
 ${user.payload ? `\npayload: <code>${user.payload}</code>\n` : ''}`;
 };
