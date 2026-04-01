@@ -5,7 +5,7 @@ import { sceneInit } from '../plugins/scenes.js';
 import { broadcastScene } from '../scenes/admin/broadcast.js';
 import { getActiveUsers, getUsers, setActive } from '../database/users.js';
 import { withRetries } from 'gramio/utils';
-import { bot } from '../index.js';
+import { bot } from '../bot.js';
 import { scheduler } from 'node:timers/promises';
 import { refStats } from '../scenes/admin/ref-stats.js';
 import { refGenerate } from '../utils/ref-generate.js';

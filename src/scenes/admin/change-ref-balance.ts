@@ -3,7 +3,7 @@ import { sceneCancelKeyboard } from '../../keyboards/scene-cancel.js';
 import { aUserProfileKeyboard } from '../../keyboards/admin.js';
 import { setActive, updateRefBalance } from '../../database/users.js';
 import { aUserProfileText } from '../../utils/text/a-user-profile-text.js';
-import { bot } from '../../index.js';
+import { bot } from '../../bot.js';
 
 
 export const changeRefBalance = new Scene('change_ref_balance')

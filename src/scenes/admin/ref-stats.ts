@@ -5,7 +5,7 @@ import { getUsersPayload, setActive } from '../../database/users.js';
 import { getPaymentPayload } from '../../database/payment.js';
 import { remnawave } from '../../services/remnawave/index.js';
 import { IUser } from '../../database/types.js';
-import { bot } from '../../index.js';
+import { bot } from '../../bot.js';
 
 
 export const refStats = new Scene('refStats')

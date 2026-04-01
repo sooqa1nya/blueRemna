@@ -1,6 +1,7 @@
 import type { Bot, CallbackQueryShorthandContext } from 'gramio';
 import { findUser, updateUserRefBalance } from '../database/users.js';
 
+
 export const addRefBalance = async (context: CallbackQueryShorthandContext<Bot, any>, amount: number) => {
     if (context.dbuser?.payload) {
         const regex = /id([?<id>0-9]+)/;
@@ -18,5 +19,3 @@ export const addRefBalance = async (context: CallbackQueryShorthandContext<Bot, 
         }
     }
 };
-
-

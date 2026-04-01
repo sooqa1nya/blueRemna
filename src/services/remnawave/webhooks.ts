@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import { RemnawaveWebhookCrmEventsDto, RemnawaveWebhookNodeEventsDto, RemnawaveWebhookUserEventsDto } from './types.js';
-import { bot } from '../../index.js';
+import { bot } from '../../bot.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
 import { getProfile } from '../../database/user_profiles.js';
 import { urlKeyboard } from '../../keyboards/other.js';
