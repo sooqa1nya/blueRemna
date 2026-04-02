@@ -92,6 +92,28 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         });
     })
 
+    .callbackQuery(keyboard.starsExtendPaymentData, async context => {
+        const limit = await getLimitExtend();
+        const price = Number(limit.price) / Number(process.env.STARS_COEFFICIENT);
+
+        await context.sendInvoice({
+            title: `Расширение лимита устройств`,
+            description: `Для оплаты нажмите кнопку ниже`,
+            payload: JSON.stringify({
+                e: true, // extend?
+                k: context.queryData.k,
+                p: price
+            }),
+            currency: 'XTR',
+            prices: [
+                {
+                    label: 'Подписка', amount: Math.round(price)
+                }
+            ]
+        });
+        await context.answerCallbackQuery();
+    })
+
     .callbackQuery(keyboard.extendCheckPaymentData, async context => {
         const paymentInfo = await checkPayment(context);
         if (!paymentInfo) {

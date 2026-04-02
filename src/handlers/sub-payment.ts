@@ -103,7 +103,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
         await context.sendInvoice({
             title: `Покупка подписки на ${context.queryData.m} мес.`,
             description: `Для оплаты нажмите кнопку ниже`,
-            payload: JSON.stringify({ k: context.queryData.k, m: context.queryData.m }),
+            payload: JSON.stringify({ e: false, k: context.queryData.k, m: context.queryData.m }),
             currency: 'XTR',
             prices: [
                 {

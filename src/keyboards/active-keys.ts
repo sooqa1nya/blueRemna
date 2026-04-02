@@ -79,6 +79,9 @@ export const refExtendPaymentData = new CallbackData('ref_balance_lim_extend')
 export const extendPaymentData = new CallbackData('extend_payment')
     .string('s')
     .number('k');
+export const starsExtendPaymentData = new CallbackData('stars_extend_payment')
+    .string('s')
+    .number('k');
 export const extendPaymentMethodKeyboard = async (key: number, refBalance: number) => {
     const limit = await getLimitExtend();
     const price = Number(limit.price);
@@ -88,6 +91,7 @@ export const extendPaymentMethodKeyboard = async (key: number, refBalance: numbe
         .addIf(refBalance >= price, InlineKeyboard.text('💰 Списать с баланса', refExtendPaymentData.pack({ k: key })))
         .text('СБП', extendPaymentData.pack({ s: 'pl', k: key }), { icon_custom_emoji_id: '5447186509029452373' })
         .text('CryptoBot', extendPaymentData.pack({ s: 'cb', k: key }), { icon_custom_emoji_id: '5361914370068613491' })
+        .text('Stars', starsExtendPaymentData.pack({ s: 'cb', k: key }), { icon_custom_emoji_id: '5321485469249198987' })
         .combine(backToMainMenuKeyboard);
 };
 
