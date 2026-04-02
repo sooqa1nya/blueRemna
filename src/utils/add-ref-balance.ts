@@ -2,11 +2,11 @@ import type { Bot, CallbackQueryShorthandContext } from 'gramio';
 import { findUser, updateUserRefBalance } from '../database/users.js';
 
 
-export const addRefBalance = async (context: CallbackQueryShorthandContext<Bot, any>, amount: number) => {
-    if (context.dbuser?.payload) {
+export const addRefBalance = async (payload: string | null | undefined, amount: number) => {
+    if (payload) {
         const regex = /id([?<id>0-9]+)/;
-        if (regex.test(context.dbuser.payload)) {
-            const match = context.dbuser.payload.match(regex)!;
+        if (regex.test(payload)) {
+            const match = payload.match(regex)!;
             const referrerId = match[1];
             if (!referrerId) {
                 return;

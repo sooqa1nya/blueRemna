@@ -64,12 +64,18 @@ export const paymentSystemData = new CallbackData('payment_system')
     .number('k')
     .number('m')
     .number('p');
+export const starsSystemData = new CallbackData('stars_system')
+    .string('s')
+    .number('k')
+    .number('m')
+    .number('p');
 export const paymentSystemKeyboard = async (key: number, months: number, price: number) => {
     return new InlineKeyboard()
         .text('СБП', paymentSystemData.pack({ s: 'pl', k: key, m: months, p: price }), { icon_custom_emoji_id: '5447186509029452373' })
         .row()
         .text('CryptoBot', paymentSystemData.pack({ s: 'cb', k: key, m: months, p: price }), { icon_custom_emoji_id: '5361914370068613491' })
         .row()
+        .text('Stars', starsSystemData.pack({ s: 'st', k: key, m: months, p: price }), { icon_custom_emoji_id: '5321485469249198987' })
         .combine(backToMainMenuKeyboard);
 };
 

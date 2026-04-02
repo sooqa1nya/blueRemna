@@ -7,17 +7,24 @@ import { freeTrial } from './handlers/free-trial.js';
 import { affilianteProgram } from './handlers/affiliate-program.js';
 import { help } from './handlers/help.js';
 import { aboutUs } from './handlers/about-us.js';
-import { dbUser } from './middlewares/db-user.js';
 import { authMiddleware } from './middlewares/auth-middleware.js';
 import { start } from './handlers/start.js';
 import { admin } from './handlers/admin.js';
 import { sceneCancel } from './handlers/scene-cancel.js';
 import { emptyButton } from './handlers/other.js';
+import { starsPayment } from './handlers/stars-payment.js';
+import { findUser } from './database/users.js';
 
 
 export const bot = new Bot(process.env.BOT_TOKEN as string)
     .onStart(() => console.log('🤖 Бот запущен'))
-    .derive(dbUser)
+    .derive(async context => {
+        if (context.is('message') || context.is('callback_query')) {
+            const dbuser = await findUser(context.chatId || context.from?.id);
+            return { dbuser };
+        }
+        return {};
+    })
     .use(authMiddleware)
     .extend(start)
     .extend(mainMenu)
@@ -27,6 +34,7 @@ export const bot = new Bot(process.env.BOT_TOKEN as string)
     .extend(affilianteProgram)
     .extend(help)
     .extend(aboutUs)
+    .extend(starsPayment)
     .extend(admin)
     .extend(sceneCancel)
     .extend(emptyButton);

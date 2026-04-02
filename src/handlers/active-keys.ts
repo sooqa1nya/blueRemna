@@ -103,7 +103,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
 
         // Бонуска
         try {
-            await addRefBalance(context, Number(limit.price));
+            await addRefBalance(context.dbuser?.payload, Number(limit.price));
         } catch (e) {
             console.error('Ошибка выдачи рефки (active-keys):', e);
         }

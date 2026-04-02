@@ -1,7 +1,7 @@
 import { Composer } from 'gramio';
 import * as keyboard from '../keyboards/index.js';
 import { getGlobalSale } from '../database/settings.js';
-import { calcSale } from '../utils/final-price.js';
+import { calcSale, finalPrice } from '../utils/final-price.js';
 import { checkPayment } from '../utils/check-payment.js';
 import { addRefBalance } from '../utils/add-ref-balance.js';
 import { newProfile } from '../utils/new-profile.js';
@@ -99,6 +99,21 @@ export const subPayment = new Composer({ name: 'subPayment' })
         });
     })
 
+    .callbackQuery(keyboard.starsSystemData, async context => {
+        await context.sendInvoice({
+            title: `Покупка подписки на ${context.queryData.m} мес.`,
+            description: `Для оплаты нажмите кнопку ниже`,
+            payload: JSON.stringify({ k: context.queryData.k, m: context.queryData.m }),
+            currency: 'XTR',
+            prices: [
+                {
+                    label: 'Подписка', amount: await finalPrice(context.queryData.p, context.dbuser!.sale, true)
+                }
+            ]
+        });
+        await context.message?.delete();
+    })
+
     .callbackQuery(keyboard.checkPaymentData, async context => {
         const paymentInfo = await checkPayment(context);
         if (!paymentInfo) {
@@ -114,7 +129,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
 
         // Бонуска
         try {
-            await addRefBalance(context, context.queryData.p);
+            await addRefBalance(context.dbuser?.payload, context.queryData.p);
         } catch (e) {
             console.error('Ошибка выдачи рефки (sub-payment):', e);
         }
