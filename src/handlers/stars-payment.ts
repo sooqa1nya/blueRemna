@@ -1,5 +1,4 @@
 import { Composer } from 'gramio';
-import { bot } from '../bot.js';
 import { addRefBalance } from '../utils/add-ref-balance.js';
 import { addPayment } from '../database/payment.js';
 import { newProfileStars } from '../utils/new-profile.js';
