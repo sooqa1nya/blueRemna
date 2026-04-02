@@ -10,6 +10,6 @@ export const finalPrice = async (price: number, userSale: number, stars: boolean
     if (stars) {
         result = result / Number(process.env.STARS_COEFFICIENT);
     }
-    return Number(Math.round(result));
+    return Math.round(result);
 };
 
