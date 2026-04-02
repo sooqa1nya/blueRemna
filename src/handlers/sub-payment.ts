@@ -111,6 +111,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
                 }
             ]
         });
+        await context.answerCallbackQuery();
     })
 
     .callbackQuery(keyboard.checkPaymentData, async context => {
