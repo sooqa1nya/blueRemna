@@ -116,7 +116,7 @@ const webhookHandlers: Record<string, Record<string, EventHandler>> = {
         'node.disabled': handleNodeDisabled
     },
     torrent_blocker: {
-        'torrent_blocker.detected': handleTorrentBlocker
+        'torrent_blocker.report ': handleTorrentBlocker
     }
 };
 
