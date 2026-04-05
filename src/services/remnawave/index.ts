@@ -127,12 +127,12 @@ class RemnaWaveService {
     };
 
     public async getHostsForVPN() {
-        const profile = await this.getConfigForVPN();
-        if (!profile) {
-            return undefined;
-        }
+        // const profile = await this.getConfigForVPN();
+        // if (!profile) {
+        //     return undefined;
+        // }
 
-        const hosts = await this.getHosts().then(res => res.response.filter(x => x.inbound.configProfileUuid === profile && !x.isDisabled && !x.isHidden).map(x => x.remark));
+        const hosts = await this.getHosts().then(res => res.response.filter(x => x.sni && !x.isDisabled && !x.isHidden).map(x => x.remark));
         if (!hosts.length) {
             console.error('Ошибка получения хостов для профиля');
             return undefined;
