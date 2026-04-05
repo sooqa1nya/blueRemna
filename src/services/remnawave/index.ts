@@ -1,83 +1,94 @@
-import type { CreateUserRequestDto, CreateUserResponseDto, DeleteUserHwidDeviceRequestDto, DeleteUserHwidDeviceResponseDto, GetAllHostsResponseDto, GetConfigProfilesResponseDto, GetExternalSquadsResponseDto, GetInternalSquadsResponseDto, GetUserByTelegramIdResponseDto, GetUserByUuidResponseDto, GetUserHwidDevicesResponseDto, UpdateUserRequestDto } from './types.js';
+import createClient from "openapi-fetch";
+import type { paths, components } from './types.js';
+
 
 class RemnaWaveService {
-    private JWT: string;
-    private baseURL: string;
     private squads: { internal: string; external: string; } | null = null;
     private configProfile: string | null = null;
+    private client: ReturnType<typeof createClient<paths>>;
 
     constructor(JWT: string, baseURL: string) {
-        this.JWT = JWT;
-        this.baseURL = baseURL;
-    }
-
-
-    private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-        const response = await fetch(`${this.baseURL}${endpoint}`, {
-            ...options,
+        this.client = createClient<paths>({
+            baseUrl: baseURL,
             headers: {
-                'Authorization': `Bearer ${this.JWT}`,
-                'Content-Type': 'application/json',
-                ...options.headers
+                'Authorization': `Bearer ${JWT}`,
+                'Content-Type': 'application/json'
             }
         });
-
-        if (!response.ok) {
-            const error = await response.text();
-            console.error('RemnaWave API error:', error);
-            return undefined as T;
-        }
-
-        return await response.json();
     }
 
 
-    public async createUser(data: CreateUserRequestDto) {
-        return this.request<CreateUserResponseDto>('/api/users', {
-            method: 'POST',
-            body: JSON.stringify({
-                ...data
-            })
+    public async createUser(data: components['schemas']['CreateUserRequestDto']) {
+        const { data: response, error } = await this.client.POST('/api/users', {
+            body: data
         });
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return response;
     };
 
-    public async updateUser(data: UpdateUserRequestDto) {
-        return this.request('/api/users', {
-            method: 'PATCH',
-            body: JSON.stringify({
-                ...data
-            })
+    public async updateUser(data: components['schemas']['UpdateUserRequestDto']) {
+        const { data: response, error } = await this.client.PATCH('/api/users', {
+            body: data
         });
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return response;
     };
 
     public async getUserByUUID(uuid: string) {
-        return this.request<GetUserByUuidResponseDto>(`/api/users/${uuid}`, {
-            method: 'GET'
+        const { data, error } = await this.client.GET('/api/users/{uuid}', {
+            params: { path: { uuid } }
         });
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return data;
     };
 
     public async getUserByTelegramId(tg: string) {
-        return this.request<GetUserByTelegramIdResponseDto>(`/api/users/by-telegram-id/${tg}`, {
-            method: 'GET'
+        const { data, error } = await this.client.GET('/api/users/by-telegram-id/{telegramId}', {
+            params: { path: { telegramId: tg } }
         });
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return data;
     };
 
     public async deleteUser(uuid: string) {
-        return this.request(`/api/users/${uuid}`, {
-            method: 'DELETE'
+        const { data, error } = await this.client.DELETE('/api/users/{uuid}', {
+            params: { path: { uuid } }
         });
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return data;
     };
 
     public async getInternalSquads() {
-        return this.request<GetInternalSquadsResponseDto>('/api/internal-squads', {
-            method: 'GET'
-        });
+        const { data, error } = await this.client.GET('/api/internal-squads', {});
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return data;
     };
 
     public async getExternalSquads() {
-        return this.request<GetExternalSquadsResponseDto>('/api/external-squads', {
-            method: 'GET'
-        });
+        const { data, error } = await this.client.GET('/api/external-squads', {});
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return data;
     };
 
     public async getSquadForVPN() {
@@ -85,8 +96,10 @@ class RemnaWaveService {
             return this.squads;
         }
 
-        const internal = await this.getInternalSquads().then(res => res.response.internalSquads.filter(x => x.name === process.env.REMNAWAVE_INTERNAL_SQUAD)[0]?.uuid);
-        const external = await this.getExternalSquads().then(res => res.response.externalSquads.filter(x => x.name === process.env.REMNAWAVE_EXTERNAL_SQUAD)[0]?.uuid);
+        const res = await this.getInternalSquads();
+        const internal = res?.response.internalSquads.filter(x => x.name === process.env.REMNAWAVE_INTERNAL_SQUAD)[0]?.uuid;
+        const res2 = await this.getExternalSquads();
+        const external = res2?.response.externalSquads.filter(x => x.name === process.env.REMNAWAVE_EXTERNAL_SQUAD)[0]?.uuid;
         if (!internal || !external) {
             console.error('Ошибка получения сквада');
             return undefined;
@@ -100,9 +113,12 @@ class RemnaWaveService {
     };
 
     public async getConfigProfiles() {
-        return this.request<GetConfigProfilesResponseDto>('/api/config-profiles', {
-            method: 'GET'
-        });
+        const { data, error } = await this.client.GET('/api/config-profiles', {});
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return data;
     };
 
     public async getConfigForVPN() {
@@ -110,7 +126,8 @@ class RemnaWaveService {
             return this.configProfile;
         }
 
-        const profile = await this.getConfigProfiles().then(res => res.response.configProfiles.filter(x => x.name === process.env.REMNAWAVE_PROFILE)[0]?.uuid);
+        const res = await this.getConfigProfiles();
+        const profile = res?.response.configProfiles.filter(x => x.name === process.env.REMNAWAVE_PROFILE)[0]?.uuid;
         if (!profile) {
             console.error('Ошибка получения конфига профиля');
             return undefined;
@@ -121,9 +138,12 @@ class RemnaWaveService {
     }
 
     public async getHosts() {
-        return this.request<GetAllHostsResponseDto>('/api/hosts', {
-            method: 'GET'
-        });
+        const { data, error } = await this.client.GET('/api/hosts', {});
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return data;
     };
 
     public async getHostsForVPN() {
@@ -132,8 +152,9 @@ class RemnaWaveService {
         //     return undefined;
         // }
 
-        const hosts = await this.getHosts().then(res => res.response.filter(x => x.sni && !x.isDisabled && !x.isHidden).map(x => x.remark));
-        if (!hosts.length) {
+        const res = await this.getHosts();
+        const hosts = res?.response.filter(x => x.sni && !x.isDisabled && !x.isHidden).map(x => x.remark);
+        if (!hosts?.length) {
             console.error('Ошибка получения хостов для профиля');
             return undefined;
         }
@@ -141,18 +162,25 @@ class RemnaWaveService {
     }
 
     public async getUserHwidDevices(uuid: string) {
-        return this.request<GetUserHwidDevicesResponseDto>(`/api/hwid/devices/${uuid}`, {
-            method: 'GET'
+        const { data, error } = await this.client.GET('/api/hwid/devices/{userUuid}', {
+            params: { path: { userUuid: uuid } }
         });
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return data;
     }
 
-    public async deleteUserHwidDevice(data: DeleteUserHwidDeviceRequestDto) {
-        return this.request<DeleteUserHwidDeviceResponseDto>('/api/hwid/devices/delete', {
-            method: 'POST',
-            body: JSON.stringify({
-                ...data
-            })
+    public async deleteUserHwidDevice(data: components['schemas']['DeleteUserHwidDeviceRequestDto']) {
+        const { data: response, error } = await this.client.POST('/api/hwid/devices/delete', {
+            body: data
         });
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return response;
     };
 }
 

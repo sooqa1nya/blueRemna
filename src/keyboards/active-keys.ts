@@ -5,7 +5,6 @@ import { copyLinkKeyboard, importHappKeyboard } from './other.js';
 import { currentKeysData } from './sub-payment.js';
 import { getLimitExtend } from '../database/settings.js';
 import { remnawave } from '../services/remnawave/index.js';
-import { HwidDeviceDto } from '../services/remnawave/types.js';
 import { connectHelpKeyboard } from './help.js';
 
 // Список всех подписок
@@ -110,7 +109,7 @@ export const deviceInfoData = new CallbackData('di')
     .string('h') // hwid
     .number('u'); // user profile id
 export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: number) => {
-    const devices = (await remnawave.getUserHwidDevices(uuid)).response.devices;
+    const devices = (await remnawave.getUserHwidDevices(uuid))!.response.devices;
 
     const keyboard = new InlineKeyboard();
 

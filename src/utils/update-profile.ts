@@ -30,6 +30,7 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
 
     await remnawave.updateUser({
         uuid: profile.uuid,
+        trafficLimitStrategy: 'NO_RESET',
         expireAt: date.toISOString()
     });
 
@@ -89,6 +90,7 @@ export const updateProfileStars = async (context: SuccessfulPaymentContext<Bot>)
 
     await remnawave.updateUser({
         uuid: profile.uuid,
+        trafficLimitStrategy: 'NO_RESET',
         expireAt: date.toISOString()
     });
 

@@ -55,6 +55,8 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
         date.setDate(date.getDate() + Number(days));
         const user = await remnawave.createUser({
             username: profile,
+            status: 'ACTIVE',
+            trafficLimitStrategy: 'NO_RESET',
             expireAt: date.toISOString(),
             telegramId: context.from.id,
             hwidDeviceLimit: 5,

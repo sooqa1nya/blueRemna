@@ -20,6 +20,8 @@ export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any
     date.setDate(date.getDate() + Number(days));
     const user = await remnawave.createUser({
         username: profile,
+        status: 'ACTIVE',
+        trafficLimitStrategy: 'NO_RESET',
         expireAt: date.toISOString(),
         telegramId: context.from.id,
         hwidDeviceLimit: 5,
@@ -90,6 +92,8 @@ export const newProfileStars = async (context: SuccessfulPaymentContext<Bot>) =>
     date.setDate(date.getDate() + Number(days));
     const user = await remnawave.createUser({
         username: profile,
+        status: 'ACTIVE',
+        trafficLimitStrategy: 'NO_RESET',
         expireAt: date.toISOString(),
         telegramId: context.from.id,
         hwidDeviceLimit: 5,

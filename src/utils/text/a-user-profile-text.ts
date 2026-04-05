@@ -7,7 +7,7 @@ export const aUserProfileText = async (userId: string | number) => {
     const regDate = new Date(user.register);
     const lastActivityDate = new Date(user.last_activity);
 
-    const userProfiles = (await remnawave.getUserByTelegramId(String(userId))).response;
+    const userProfiles = (await remnawave.getUserByTelegramId(String(userId)))!.response;
     let activeSub = 0;
     if (userProfiles.length) {
         for (const sub of userProfiles) {

@@ -1,5 +1,5 @@
 import fastify from 'fastify';
-import { RemnawaveWebhookCrmEventsDto, RemnawaveWebhookNodeEventsDto, RemnawaveWebhookUserEventsDto } from './types.js';
+import type { components } from './types.js';
 import { bot } from '../../bot.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
 import { getProfile } from '../../database/user_profiles.js';
@@ -8,7 +8,11 @@ import { supportKeyboard } from '../../keyboards/main.js';
 import { findUser, setActive } from '../../database/users.js';
 
 
-type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto;
+type RemnawaveWebhookUserEventsDto = components['schemas']['RemnawaveWebhookUserEventsDto'];
+type RemnawaveWebhookCrmEventsDto = components['schemas']['RemnawaveWebhookCrmEventsDto'];
+type RemnawaveWebhookNodeEventsDto = components['schemas']['RemnawaveWebhookNodeEventsDto'];
+type RemnawaveWebhookTorrentBlockerEventsDto = components['schemas']['RemnawaveWebhookTorrentBlockerEventsDto'];
+type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto | RemnawaveWebhookTorrentBlockerEventsDto;
 type EventHandler = (body: any) => Promise<void>;
 
 const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
@@ -55,6 +59,14 @@ const handleUserNotConnected = async (body: RemnawaveWebhookUserEventsDto) => {
     });
 };
 
+const handleTorrentBlocker = async (body: RemnawaveWebhookTorrentBlockerEventsDto) => {
+    await bot.api.sendMessage({
+        chat_id: body.data.user.telegramId!,
+        text: `⚠️ Обнаружен торрент-трафик!\n\nВаша подписка временно приостановлена из-за использования торрент-клиента. Пожалуйста, отключайте VPN во время загрузки торрентов.\nДлительность: <code>${body.data.report.actionReport.blockDuration / 1000 / 60} мин.</code>`,
+        parse_mode: 'HTML'
+    });
+};
+
 const handleCrmBilling = async (body: RemnawaveWebhookCrmEventsDto) => {
     await bot.api.sendMessage({
         chat_id: process.env.LOG_SYSTEM_CHAT_ID!,
@@ -88,6 +100,7 @@ const handleNodeDisabled = async (body: RemnawaveWebhookNodeEventsDto) => {
     });
 };
 
+
 const webhookHandlers: Record<string, Record<string, EventHandler>> = {
     user: {
         'user.not_connected': handleUserNotConnected,
@@ -101,6 +114,9 @@ const webhookHandlers: Record<string, Record<string, EventHandler>> = {
         'node.connection_lost': handleNodeConnectionLost,
         'node.connection_restored': handleNodeConnectionRestored,
         'node.disabled': handleNodeDisabled
+    },
+    torrent_blocker: {
+        'torrent_blocker.detected': handleTorrentBlocker
     }
 };
 

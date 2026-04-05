@@ -64,8 +64,9 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
 
             try {
                 await remnawave.updateUser({
-                    uuid: user.response.uuid,
-                    hwidDeviceLimit: Number(user.response.hwidDeviceLimit!) + Number(limit.devices)
+                    uuid: user!.response.uuid,
+                    trafficLimitStrategy: 'NO_RESET',
+                    hwidDeviceLimit: Number(user!.response.hwidDeviceLimit!) + Number(limit.devices)
                 });
             } catch (e) {
                 console.error('Ошибка при расширении лимита устройств:', e);

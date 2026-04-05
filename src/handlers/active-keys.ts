@@ -22,6 +22,9 @@ export const activeKeys = new Composer({ name: 'activeKeys' })
         const [dbprofile] = (await getProfileByID(context.queryData.k));
 
         const user = await remnawave.getUserByUUID(dbprofile!.uuid);
+        if (!user) {
+            return await context.answerCallbackQuery('❌ Ошибка при получении данных о подписке. Попробуйте позже.');
+        }
         const expire = new Date(user.response.expireAt);
         const daysRemaining = Math.ceil((expire.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
@@ -132,8 +135,9 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
 
         try {
             await remnawave.updateUser({
-                uuid: user.response.uuid,
-                hwidDeviceLimit: Number(user.response.hwidDeviceLimit!) + Number(limit.devices)
+                uuid: user!.response.uuid,
+                trafficLimitStrategy: 'NO_RESET',
+                hwidDeviceLimit: Number(user!.response.hwidDeviceLimit!) + Number(limit.devices)
             });
         } catch (e) {
             console.error('Ошибка при расширении лимита устройств:', e);
@@ -174,8 +178,9 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
 
         try {
             await remnawave.updateUser({
-                uuid: user.response.uuid,
-                hwidDeviceLimit: Number(user.response.hwidDeviceLimit!) + Number(limit.devices)
+                uuid: user!.response.uuid,
+                trafficLimitStrategy: 'NO_RESET',
+                hwidDeviceLimit: Number(user!.response.hwidDeviceLimit!) + Number(limit.devices)
             });
         } catch (e) {
             console.error('Ошибка при расширении лимита устройств:', e);
@@ -195,7 +200,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
     })
 
     .callbackQuery(keyboard.userHwidDevicesData, async context => {
-        const userHwid = (await remnawave.getUserHwidDevices(context.queryData.uuid)).response;
+        const userHwid = (await remnawave.getUserHwidDevices(context.queryData.uuid))!.response;
 
         if (!userHwid.total) {
             return context.answerCallbackQuery('⚠️ У вас нет подключенных устройств');
@@ -211,7 +216,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         const [profile] = await getProfileByID(context.queryData.u);
         const uuid = profile.uuid;
 
-        const devices = (await remnawave.getUserHwidDevices(uuid)).response.devices;
+        const devices = (await remnawave.getUserHwidDevices(uuid))!.response.devices;
         const device = devices.find(x => x.hwid == context.queryData.h);
 
         if (!device) {
@@ -245,7 +250,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         const uuid = profile.uuid;
         const isRemove = await remnawave.deleteUserHwidDevice({ userUuid: uuid, hwid: context.queryData.h });
 
-        const userHwid = (await remnawave.getUserHwidDevices(uuid)).response;
+        const userHwid = (await remnawave.getUserHwidDevices(uuid))!.response;
         await context.editText(`📱 Подключенные устройства: <code>${userHwid.total}</code>`, {
             parse_mode: 'HTML',
             reply_markup: await keyboard.userHwidDevicesKeyboard(uuid, context.queryData.u)
