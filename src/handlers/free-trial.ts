@@ -34,13 +34,12 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
     })
 
     .callbackQuery('free_trial', async context => {
-        if (context.dbuser?.trial_key) {
+        const trialActivated = await useFreeTrial(context.from.id);
+        if (!trialActivated) {
             return await context.editText('🚫 Вы уже активировали пробную подписку', {
                 reply_markup: backToMainMenuKeyboard
             });
         }
-
-        await useFreeTrial(context.from.id);
 
         const date = new Date();
         const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
