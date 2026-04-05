@@ -62,7 +62,7 @@ const handleUserNotConnected = async (body: RemnawaveWebhookUserEventsDto) => {
 const handleTorrentBlocker = async (body: RemnawaveWebhookTorrentBlockerEventsDto) => {
     await bot.api.sendMessage({
         chat_id: body.data.user.telegramId!,
-        text: `⚠️ Обнаружен торрент-трафик!\n\nВаша подписка временно приостановлена из-за использования торрент-клиента. Пожалуйста, отключайте VPN во время загрузки торрентов.\n\nДлительность: <code>${body.data.report.actionReport.blockDuration / 60} мин.</code>\nIP: <code>${body.data.report.actionReport.ip}</code>`,
+        text: `⚠️ Обнаружен торрент-трафик!\n\n<i>Ваша подписка временно приостановлена из-за использования торрент-клиента. Пожалуйста, отключайте VPN во время загрузки торрентов.</i>\n\nДлительность: <code>${body.data.report.actionReport.blockDuration / 60} мин.</code>\nIP: <code>${body.data.report.actionReport.ip}</code>`,
         parse_mode: 'HTML'
     });
 };
