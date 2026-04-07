@@ -6,7 +6,7 @@ import { aUserProfileText } from '../../utils/text/a-user-profile-text.js';
 import { bot } from '../../bot.js';
 
 
-export const changeRefProcent = new Scene('change_ref_procent')
+export const changeRefProcentScene = new Scene('change_ref_procent')
     .params<{ userId: number; }>()
     .step(['message', 'callback_query'], async (context) => {
         if (context.scene.step.firstTime) {
@@ -43,9 +43,9 @@ export const changeRefProcent = new Scene('change_ref_procent')
                 text: `👤 Персональное сообщение\n\n▶️ Новый реферальный процент: <code>${proc}%</code>`
             });
         } catch {
-            context.send('Пользователь заблокировал бота');
+            await context.send('Пользователь заблокировал бота');
             await setActive(userId, false);
         }
 
-        return context.scene.exit();
+        return await context.scene.exit();
     });

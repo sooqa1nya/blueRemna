@@ -8,7 +8,7 @@ import { IUser } from '../../database/types.js';
 import { bot } from '../../bot.js';
 
 
-export const refStats = new Scene('refStats')
+export const refStatsScene = new Scene('ref_stats')
     .step(['message', 'callback_query'], async context => {
         if (context.scene.step.firstTime) {
             return await context.editText('Отправьте реферальную ссылку', { reply_markup: sceneCancelKeyboard });
@@ -104,5 +104,5 @@ export const refStats = new Scene('refStats')
             reply_markup: retryRefStatsKeyboard
         });
 
-        return context.scene.exit();
+        return await context.scene.exit();
     });

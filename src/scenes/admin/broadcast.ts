@@ -24,5 +24,5 @@ export const broadcastScene = new Scene('broadcast')
             reply_markup: broadcastMenuKeyboard(context.id)
         });
 
-        return context.scene.exit();
+        return await context.scene.exit();
     });

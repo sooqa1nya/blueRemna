@@ -6,7 +6,7 @@ import { aUserProfileText } from '../../utils/text/a-user-profile-text.js';
 import { bot } from '../../bot.js';
 
 
-export const changeRefBalance = new Scene('change_ref_balance')
+export const changeRefBalanceScene = new Scene('change_ref_balance')
     .params<{ userId: number; }>()
     .step(['message', 'callback_query'], async (context) => {
         if (context.scene.step.firstTime) {
@@ -43,9 +43,9 @@ export const changeRefBalance = new Scene('change_ref_balance')
                 text: `👤 Персональное сообщение\n\n▶️ ${amount > 0 ? 'Начислено на реф. баланс' : 'Списано с реф. баланса'}: <code>${amount}₽</code>`
             });
         } catch {
-            context.send('Пользователь заблокировал бота');
+            await context.send('Пользователь заблокировал бота');
             await setActive(userId, false);
         }
 
-        return context.scene.exit();
+        return await context.scene.exit();
     });

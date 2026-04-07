@@ -6,7 +6,7 @@ import { aUserProfileText } from '../../utils/text/a-user-profile-text.js';
 import { bot } from '../../bot.js';
 
 
-export const changeSale = new Scene('change_sale')
+export const changeSaleScene = new Scene('change_sale')
     .params<{ userId: number; }>()
     .step(['message', 'callback_query'], async (context) => {
         if (context.scene.step.firstTime) {
@@ -43,9 +43,9 @@ export const changeSale = new Scene('change_sale')
                 text: `👤 Персональное сообщение\n\n▶️ Новая личная скидка: <code>${sale}%</code>`
             });
         } catch {
-            context.send('Пользователь заблокировал бота');
+            await context.send('Пользователь заблокировал бота');
             await setActive(userId, false);
         }
 
-        return context.scene.exit();
+        return await context.scene.exit();
     });

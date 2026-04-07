@@ -1,21 +1,27 @@
 import { Composer } from 'gramio';
 import { globalDiscountScene } from '../scenes/admin/global-discount.js';
-import { aChangeUserRefBalanceData, aChangeUserRefProcData, aChangeUserSaleData, adminMenuKeyboard, aUserProfileKeyboard, aUserSubData, backAdminMenuKeyboard, backAUserProfileData, backAUserProfileKeyboard, backRefKeyboard, broadcastMenuKeyboard, checkMailingData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
+import { aChangeUserRefBalanceData, aChangeUserRefProcData, aChangeUserSaleData, adminAddClientData, adminListOsKeyboard, adminlistVpnClientsKeyboard, adminMenuKeyboard, adminVpnClientData, adminVpnClientProfileKeyboard, adminVpnClientsListData, aUserProfileKeyboard, aUserSubData, backAdminMenuKeyboard, backAUserProfileData, backAUserProfileKeyboard, backRefKeyboard, broadcastMenuKeyboard, changeClientPriorityData, changeStyleButtonKeyboard, checkMailingData, chooseButtonStyleData, deleteVpnClientData, linkVpnClientData, nameVpnClientData, newButtonStyleData, startMailingData, statsKeyboard } from '../keyboards/admin.js';
 import { sceneInit } from '../plugins/scenes.js';
 import { broadcastScene } from '../scenes/admin/broadcast.js';
 import { getActiveUsers, getUsers, setActive } from '../database/users.js';
 import { withRetries } from 'gramio/utils';
 import { bot } from '../bot.js';
 import { scheduler } from 'node:timers/promises';
-import { refStats } from '../scenes/admin/ref-stats.js';
+import { refStatsScene } from '../scenes/admin/ref-stats.js';
 import { refGenerate } from '../utils/ref-generate.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { getPaid, getPaidSubs } from '../database/payment.js';
-import { aFindUserProfile } from '../scenes/admin/find-user-profile.js';
+import { aFindUserProfileScene } from '../scenes/admin/find-user-profile.js';
 import { aUserProfileText } from '../utils/text/a-user-profile-text.js';
-import { changeSale } from '../scenes/admin/change-sale.js';
-import { changeRefBalance } from '../scenes/admin/change-ref-balance.js';
-import { changeRefProcent } from '../scenes/admin/change-ref-procent.js';
+import { changeSaleScene } from '../scenes/admin/change-sale.js';
+import { changeRefBalanceScene } from '../scenes/admin/change-ref-balance.js';
+import { changeRefProcentScene } from '../scenes/admin/change-ref-procent.js';
+import { addVpnClientScene } from '../scenes/admin/add-vpn-client.js';
+import { changeVpnClientButtonStyle, deleteVpnClient, getVpnClientById, updateVpnClientPriority } from '../database/vpn_clients.js';
+import { getOsById } from '../database/operating_systems.js';
+import { clientInfoText } from '../utils/text/a-client-info-text.js';
+import { changeVpnClientNameScene } from '../scenes/admin/change-vpn-client-name.js';
+import { changeVpnClientLinkScene } from '../scenes/admin/change-vpn-client-link.js';
 
 
 export const admin = new Composer({ name: 'admin' })
@@ -114,7 +120,7 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
     })
 
     .callbackQuery('ref_stats', async context => {
-        await context.scene.enter(refStats);
+        await context.scene.enter(refStatsScene);
     })
 
     .callbackQuery('ref_generate', async context => {
@@ -210,7 +216,7 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
     })
 
     .callbackQuery('admin_user_profile', async context => {
-        await context.scene.enter(aFindUserProfile);
+        await context.scene.enter(aFindUserProfileScene);
     })
 
     .callbackQuery(backAUserProfileData, async context => {
@@ -221,19 +227,19 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
     })
 
     .callbackQuery(aChangeUserSaleData, async context => {
-        await context.scene.enter(changeSale, {
+        await context.scene.enter(changeSaleScene, {
             userId: context.queryData.i
         });
     })
 
     .callbackQuery(aChangeUserRefBalanceData, async context => {
-        await context.scene.enter(changeRefBalance, {
+        await context.scene.enter(changeRefBalanceScene, {
             userId: context.queryData.i
         });
     })
 
     .callbackQuery(aChangeUserRefProcData, async context => {
-        await context.scene.enter(changeRefProcent, {
+        await context.scene.enter(changeRefProcentScene, {
             userId: context.queryData.i
         });
     })
@@ -244,4 +250,86 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
                 reply_markup: backAUserProfileKeyboard(context.queryData.i)
             }
         );
+    })
+
+    .callbackQuery('admin_clients', async context => {
+        await context.editText('Список ОС',
+            {
+                reply_markup: await adminListOsKeyboard()
+            }
+        );
+    })
+
+    .callbackQuery(adminVpnClientsListData, async context => {
+        await context.editText('Список клиентов',
+            {
+                reply_markup: await adminlistVpnClientsKeyboard(context.queryData.id)
+            }
+        );
+    })
+
+    .callbackQuery(adminAddClientData, async context => {
+        await context.scene.enter(addVpnClientScene, {
+            osId: context.queryData.os
+        });
+    })
+
+    .callbackQuery(adminVpnClientData, async context => {
+        await context.editText(await clientInfoText(context.queryData.id), {
+            parse_mode: 'HTML',
+            link_preview_options: { is_disabled: true },
+            reply_markup: await adminVpnClientProfileKeyboard(context.queryData.os, context.queryData.id)
+        });
+    })
+
+    .callbackQuery(changeClientPriorityData, async context => {
+        await updateVpnClientPriority(context.queryData.id, context.queryData.value);
+        await context.answerCallbackQuery();
+
+        await context.editText(await clientInfoText(context.queryData.id), {
+            parse_mode: 'HTML',
+            link_preview_options: { is_disabled: true },
+            reply_markup: await adminVpnClientProfileKeyboard(context.queryData.os, context.queryData.id)
+        });
+    })
+
+    .callbackQuery(deleteVpnClientData, async context => {
+        await deleteVpnClient(context.queryData.id);
+        await context.answerCallbackQuery();
+
+        await context.editText('Список клиентов', {
+            reply_markup: await adminlistVpnClientsKeyboard(context.queryData.os)
+        });
+    })
+
+    .callbackQuery(nameVpnClientData, async context => {
+        await context.scene.enter(changeVpnClientNameScene, {
+            osId: context.queryData.os,
+            clientId: context.queryData.id
+        });
+    })
+
+    .callbackQuery(linkVpnClientData, async context => {
+        await context.scene.enter(changeVpnClientLinkScene, {
+            osId: context.queryData.os,
+            clientId: context.queryData.id
+        });
+    })
+
+    .callbackQuery(chooseButtonStyleData, async context => {
+        await context.editText('Выберите стиль кнопки', {
+            reply_markup: await changeStyleButtonKeyboard(context.queryData.os, context.queryData.id)
+        });
+    })
+
+    .callbackQuery(newButtonStyleData, async context => {
+        const style: string | null = context.queryData.style ? context.queryData.style : null;
+        await changeVpnClientButtonStyle(context.queryData.id, style);
+        await context.answerCallbackQuery();
+
+        await context.editText(await clientInfoText(context.queryData.id), {
+            parse_mode: 'HTML',
+            link_preview_options: { is_disabled: true },
+            reply_markup: await adminVpnClientProfileKeyboard(context.queryData.os, context.queryData.id)
+        });
     });

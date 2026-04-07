@@ -1,4 +1,7 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
+import { emptyButtonKeyboard } from './other.js';
+import { getAllOs } from '../database/operating_systems.js';
+import { getVpnClientsByOs } from '../database/vpn_clients.js';
 
 
 export const adminMenuKeyboard = async () => {
@@ -8,7 +11,8 @@ export const adminMenuKeyboard = async () => {
         .text('Статистика', 'admin_stats')
         .text('Профиль пользователя', 'admin_user_profile')
         .text('Создать рефку', 'ref_generate')
-        .text('Изменить глобальную скидку', 'change_discount');
+        .text('Изменить глобальную скидку', 'change_discount')
+        .text('Клиенты', 'admin_clients');
 };
 
 export const backAdminMenuKeyboard = new InlineKeyboard()
@@ -69,3 +73,95 @@ export const aUserProfileKeyboard = (userId: string | number) => {
         .row()
         .combine(backAdminMenuKeyboard);
 };
+
+export const adminVpnClientsListData = new CallbackData('admin_vpn_client_os_id')
+    .number('id'); // id os
+export const adminListOsKeyboard = async () => {
+    const os = await getAllOs();
+
+    const keyboard = new InlineKeyboard();
+    keyboard.columns(1);
+    if (os.length) {
+        for (const element of os) {
+            keyboard.text(element.name, adminVpnClientsListData.pack({ id: element.id }), {
+                style: element.button_style || undefined
+            });
+        }
+    } else {
+        keyboard.combine(emptyButtonKeyboard('🚫 Список пуст'));
+    }
+
+    keyboard.combine(backAdminMenuKeyboard);
+
+    return keyboard;
+};
+
+
+export const adminVpnClientData = new CallbackData('admin_client_os_id')
+    .number('os') // id os
+    .number('id'); // id client
+export const adminAddClientData = new CallbackData('add_client')
+    .number('os'); // id os
+export const adminlistVpnClientsKeyboard = async (osId: number) => {
+    const vpnClients = await getVpnClientsByOs(osId);
+
+    const keyboard = new InlineKeyboard();
+    keyboard.columns(1);
+    if (vpnClients.length) {
+        for (const element of vpnClients) {
+            keyboard.text(element.name, adminVpnClientData.pack({ os: osId, id: element.id }), {
+                style: element.button_style || undefined
+            });
+        }
+    } else {
+        keyboard.combine(emptyButtonKeyboard('🚫 Список пуст'));
+    }
+
+    keyboard.text('➕ Добавить', adminAddClientData.pack({ os: osId }), { style: 'success' });
+    keyboard.text('◀️ Назад', 'admin_clients');
+
+    return keyboard;
+};
+
+export const changeClientPriorityData = new CallbackData('change_client_priority')
+    .number('os') // id os
+    .number('id') // id client
+    .number('value'); // change value
+export const deleteVpnClientData = new CallbackData('delete_client')
+    .number('os') // id os
+    .number('id'); // id client
+export const nameVpnClientData = new CallbackData('new_client_name')
+    .number('os') // id os
+    .number('id'); // id client
+export const linkVpnClientData = new CallbackData('new_client_link')
+    .number('os') // id os
+    .number('id'); // id client
+export const chooseButtonStyleData = new CallbackData('choose_bs')
+    .number('os') // id os
+    .number('id'); // id client
+export const adminVpnClientProfileKeyboard = async (osId: number, clientId: number) => {
+    return new InlineKeyboard()
+        .text('-1', changeClientPriorityData.pack({ os: osId, id: clientId, value: -1 }), { style: 'danger' }).text('+1', changeClientPriorityData.pack({ os: osId, id: clientId, value: 1 }), { style: 'success' }).row()
+        .text('-5', changeClientPriorityData.pack({ os: osId, id: clientId, value: -5 }), { style: 'danger' }).text('+5', changeClientPriorityData.pack({ os: osId, id: clientId, value: 5 }), { style: 'success' }).row()
+        .text('Название', nameVpnClientData.pack({ os: osId, id: clientId }))
+        .text('Ссылка', linkVpnClientData.pack({ os: osId, id: clientId }))
+        .text('Стиль', chooseButtonStyleData.pack({ os: osId, id: clientId }))
+        .row()
+        .text('Удалить', deleteVpnClientData.pack({ os: osId, id: clientId }), { style: 'danger' }).row()
+        .text('◀️ Назад', adminVpnClientsListData.pack({ id: osId }));
+};
+
+
+export const newButtonStyleData = new CallbackData('set_bs')
+    .number('os') // id os
+    .number('id') // id client
+    .string('style'); // button style
+export const changeStyleButtonKeyboard = async (osId: number, clientId: number) => {
+    return new InlineKeyboard()
+        .columns(1)
+        .text('success', newButtonStyleData.pack({ os: osId, id: clientId, style: 'success' }), { style: 'success' })
+        .text('primary', newButtonStyleData.pack({ os: osId, id: clientId, style: 'primary' }), { style: 'primary' })
+        .text('danger', newButtonStyleData.pack({ os: osId, id: clientId, style: 'danger' }), { style: 'danger' })
+        .text('default', newButtonStyleData.pack({ os: osId, id: clientId, style: 'default' }))
+        .text('◀️ Назад', adminVpnClientData.pack({ os: osId, id: clientId }));
+}; 

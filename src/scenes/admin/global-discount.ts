@@ -30,5 +30,5 @@ export const globalDiscountScene = new Scene('change_global_discount')
             reply_markup: await adminMenuKeyboard()
         });
 
-        return context.scene.exit();
+        return await context.scene.exit();
     });

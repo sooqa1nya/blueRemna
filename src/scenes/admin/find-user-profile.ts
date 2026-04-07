@@ -5,7 +5,7 @@ import { findUser } from '../../database/users.js';
 import { aUserProfileText } from '../../utils/text/a-user-profile-text.js';
 
 
-export const aFindUserProfile = new Scene('a_find_user_profile')
+export const aFindUserProfileScene = new Scene('a_find_user_profile')
     .step(['message', 'callback_query'], async (context) => {
         if (context.scene.step.firstTime) {
             return await context.editText('Отправьте id пользователя', { reply_markup: sceneCancelKeyboard });
@@ -34,5 +34,5 @@ export const aFindUserProfile = new Scene('a_find_user_profile')
             reply_markup: aUserProfileKeyboard(userId)
         });
 
-        return context.scene.exit();
+        return await context.scene.exit();
     });

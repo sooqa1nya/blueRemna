@@ -32,7 +32,7 @@ export const listOsKeyboard = async () => {
 };
 
 export const listVpnClientsKeyboard = async (osId: number) => {
-    const vpnClients = await getVpnClientsByOs(osId);
+    const vpnClients = (await getVpnClientsByOs(osId)).filter(client => client.link);
 
     const keyboard = new InlineKeyboard();
     if (vpnClients.length) {
