@@ -11,13 +11,12 @@ export const broadcastScene = new Scene('broadcast')
         }
 
         if (context.is("callback_query")) {
-            context.scene.exit();
-            await context.editText('Меню рассылки', {
+            await context.send('Меню рассылки', {
                 reply_markup: broadcastMenuKeyboard()
             });
 
             await context.answerCallbackQuery();
-            return;
+            return await context.scene.exit();
         }
 
         await context.send('Меню рассылки', {
