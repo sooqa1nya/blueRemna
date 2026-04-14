@@ -7,7 +7,7 @@ import { bot } from '../../bot.js';
 
 
 export const changeRefBalanceScene = new Scene('change_ref_balance')
-    .params<{ userId: number; }>()
+    .params<{ userId: string; }>()
     .step(['message', 'callback_query'], async (context) => {
         if (context.scene.step.firstTime) {
             return await context.editText('Отправьте сколько добавить или списать с реф. баланса (100, -100)', { reply_markup: sceneCancelKeyboard });

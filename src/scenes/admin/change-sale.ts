@@ -7,7 +7,7 @@ import { bot } from '../../bot.js';
 
 
 export const changeSaleScene = new Scene('change_sale')
-    .params<{ userId: number; }>()
+    .params<{ userId: string; }>()
     .step(['message', 'callback_query'], async (context) => {
         if (context.scene.step.firstTime) {
             return await context.editText('Введите новую скидку в процентах (число от 0 до 100)', { reply_markup: sceneCancelKeyboard });
