@@ -22,12 +22,15 @@ export const checkMailingData = new CallbackData('check_mailing_data')
     .number('id');
 export const startMailingData = new CallbackData('start_mailing_data')
     .number('id');
+export const startActiveSubMailingData = new CallbackData('start_active_mailing')
+    .number('id');
 export const broadcastMenuKeyboard = (copyMessageId: number = 0) => {
     return new InlineKeyboard()
         .columns(1)
         .text('🔄 Изменить пост', 'change_post')
         .addIf(!!copyMessageId, InlineKeyboard.text('👀 Посмотреть пост', checkMailingData.pack({ id: copyMessageId })))
-        .addIf(!!copyMessageId, InlineKeyboard.text('🟢 Начать рассылку', startMailingData.pack({ id: copyMessageId })))
+        .addIf(!!copyMessageId, InlineKeyboard.text('🟢 Рассылка по всем', startMailingData.pack({ id: copyMessageId })))
+        .addIf(!!copyMessageId, InlineKeyboard.text('🟢 Рассылка по активным', startActiveSubMailingData.pack({ id: copyMessageId })))
         .combine(backAdminMenuKeyboard);
 };
 

@@ -18,6 +18,17 @@ class RemnaWaveService {
     }
 
 
+    public async getUsers(data?: { size?: number, start?: number; }) {
+        const { data: response, error } = await this.client.GET('/api/users', {
+            params: { query: data }
+        });
+        if (error) {
+            console.error('RemnaWave API error:', error);
+            return undefined;
+        }
+        return response;
+    }
+
     public async createUser(data: components['schemas']['CreateUserRequestDto']) {
         const { data: response, error } = await this.client.POST('/api/users', {
             body: data
