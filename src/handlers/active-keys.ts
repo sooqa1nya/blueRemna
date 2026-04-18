@@ -20,6 +20,18 @@ export const activeKeys = new Composer({ name: 'activeKeys' })
 
     .callbackQuery(keyboard.userKeyData, async context => {
         const [dbprofile] = (await getProfileByID(context.queryData.k));
+        if (dbprofile.user_id != context.from.id) {
+            await context.send(`
+⚠️ Попытка доступа к чужой подписке
+
+- Пользователь: <code>${context.from.id}</code>
+- Подписка: <code>${dbprofile.username}</code>
+            `, {
+                chat_id: process.env.LOG_CHAT_ID!,
+                parse_mode: 'HTML'
+            });
+            return await context.answerCallbackQuery('❌ Ошибка: эта подписка не принадлежит вам');
+        }
 
         const user = await remnawave.getUserByUUID(dbprofile!.uuid);
         if (!user) {
@@ -38,7 +50,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
  • Нажмите зеленую кнопку чтобы скопировать ключ доступа
  • Добавьте его в любое поддерживаемое приложение
  • Список рекомендуемых приложений находится в разделе главного меню "Помощь"
-    `, {
+        `, {
             reply_markup: await keyboard.userKeyKeyboard(context.queryData.k, user.response.subscriptionUrl, !!dbprofile?.is_limit_extended, user.response.uuid),
             parse_mode: 'HTML',
             link_preview_options: { is_disabled: true }
