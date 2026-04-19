@@ -411,11 +411,11 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 <b>📊 Статистика
 
 💎 Пополнения
-  ├Общая сумма: <code>${stats.sum_all}₽ (${stats.count_all})</code>
+  ├ Общая сумма: <code>${stats.sum_all}₽ (${stats.count_all})</code>
   │
-  ├За день: <code>${stats.sum_today}₽ (${stats.count_today})</code>
-  ├За неделю: <code>${stats.sum_week}₽ (${stats.count_week})</code>
-  └За месяц: <code>${stats.sum_month}₽ (${stats.count_month})</code></b>
+  ├ За день: <code>${stats.sum_today}₽ (${stats.count_today})</code>
+  ├ За неделю: <code>${stats.sum_week}₽ (${stats.count_week})</code>
+  └ За месяц: <code>${stats.sum_month}₽ (${stats.count_month})</code></b>
         `;
 
         await context.editText(text, {
