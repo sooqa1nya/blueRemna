@@ -77,6 +77,7 @@ export const initDatabase = async () => {
                 payment_time TIMESTAMP DEFAULT NOW(),
                 amount NUMERIC(10, 2),
                 status VARCHAR(32) DEFAULT 'pending',
+                months INT,
                 payload TEXT
             )
         `;

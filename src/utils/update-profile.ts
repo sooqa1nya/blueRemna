@@ -4,8 +4,8 @@ import { remnawave } from '../services/remnawave/index.js';
 import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 import { scheduler } from 'node:timers/promises';
 
-export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, any>) => {
-    const days = context.queryData.m * 30;
+export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, any>, months: number) => {
+    const days = months * 30;
     const currentDate = new Date();
 
     const [profile] = await getProfileByID(context.queryData.k);

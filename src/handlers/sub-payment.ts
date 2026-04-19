@@ -58,10 +58,10 @@ export const subPayment = new Composer({ name: 'subPayment' })
 
             // Продление или создание новой подписки
             if (context.queryData.k == -1) {
-                await newProfile(context);
+                await newProfile(context, context.queryData.m);
                 return;
             }
-            await updateProfile(context);
+            await updateProfile(context, context.queryData.m);
 
             await setRefBalance(context.from.id, Number(context.dbuser.ref_balance) - context.queryData.p);
             return;
@@ -73,7 +73,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
     })
 
     .callbackQuery(keyboard.paymentSystemData, async context => {
-        const url = await createPayment(context, context.queryData.p);
+        const url = await createPayment(context, context.queryData.p, context.queryData.m);
 
         if (!url) {
             await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
@@ -136,9 +136,9 @@ export const subPayment = new Composer({ name: 'subPayment' })
 
         // Продление или создание новой подписки
         if (context.queryData.k == -1) {
-            await newProfile(context);
+            await newProfile(context, paymentInfo.payment.months);
             return;
         }
 
-        await updateProfile(context);
+        await updateProfile(context, paymentInfo.payment.months);
     });

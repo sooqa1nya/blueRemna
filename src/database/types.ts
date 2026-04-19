@@ -39,6 +39,7 @@ export interface IPayment {
     payment_time: Date;
     amount: string;
     status: 'pending' | 'paid';
+    months: number;
     payload: string | null;
 }
 

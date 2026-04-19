@@ -10,7 +10,7 @@ import { scheduler } from 'node:timers/promises';
 import { refStatsScene } from '../scenes/admin/ref-stats.js';
 import { refGenerate } from '../utils/ref-generate.js';
 import { remnawave } from '../services/remnawave/index.js';
-import { getPaid, getPaidSubs } from '../database/payment.js';
+import { getPaid, getPaidSubs, getPaymentStats } from '../database/payment.js';
 import { aFindUserProfileScene } from '../scenes/admin/find-user-profile.js';
 import { aUserProfileText } from '../utils/text/a-user-profile-text.js';
 import { changeSaleScene } from '../scenes/admin/change-sale.js';
@@ -22,6 +22,7 @@ import { getOsById } from '../database/operating_systems.js';
 import { clientInfoText } from '../utils/text/a-client-info-text.js';
 import { changeVpnClientNameScene } from '../scenes/admin/change-vpn-client-name.js';
 import { changeVpnClientLinkScene } from '../scenes/admin/change-vpn-client-link.js';
+import { backToMainMenuKeyboard } from '../keyboards/main.js';
 
 
 export const admin = new Composer({ name: 'admin' })
@@ -401,5 +402,25 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
             parse_mode: 'HTML',
             link_preview_options: { is_disabled: true },
             reply_markup: await adminVpnClientProfileKeyboard(context.queryData.os, context.queryData.id)
+        });
+    })
+
+    .callbackQuery('a_payment_stats', async context => {
+        const [stats] = await getPaymentStats();
+        const text = `
+<b>📊 Статистика
+
+💎 Пополнения
+  ├Общая сумма: <code>${stats.sum_all}₽ (${stats.count_all})</code>
+  │
+  ├За день: <code>${stats.sum_today}₽ (${stats.count_today})</code>
+  ├За неделю: <code>${stats.sum_week}₽ (${stats.count_week})</code>
+  └За месяц: <code>${stats.sum_month}₽ (${stats.count_month})</code></b>
+        `;
+
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            link_preview_options: { is_disabled: true },
+            reply_markup: backRefKeyboard
         });
     });

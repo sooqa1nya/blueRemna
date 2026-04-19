@@ -4,8 +4,8 @@ import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 import { addProfile } from '../database/user_profiles.js';
 import { scheduler } from 'node:timers/promises';
 
-export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any>) => {
-    const days = context.queryData.m * 30;
+export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any>, months: number) => {
+    const days = months * 30;
     const date = new Date();
 
     const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
