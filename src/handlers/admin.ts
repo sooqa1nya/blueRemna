@@ -219,6 +219,7 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
             let deathUsers = 0;
             let freeTrials = 0;
             let agreedPolicy = 0;
+            let agreedPolicyActive = 0;
             let onlineAt = 0;
 
             for (const user of users) {
@@ -234,6 +235,7 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
                     if (!user.is_active) {
                         throw new Error;
                     }
+                    agreedPolicyActive++;
 
                     await bot.api.sendChatAction({
                         chat_id: user.id,
@@ -263,10 +265,13 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 
 
             const text = `
-📜 Авторизировалось: <code>${agreedPolicy} (${(agreedPolicy * 100 / users.length).toFixed(2)}%)</code>
-
 👤 Всего: <code>${users.length}</code>
+  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / users.length).toFixed(2)}%)</code>
+
+
 🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / users.length).toFixed(2)}%)</code>
+  └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2)}%)</code>
+
 🔴 Мертвых: <code>${deathUsers}</code>
 
 🆓 Пробных подписок: <code>${freeTrials}</code>
