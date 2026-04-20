@@ -1,6 +1,6 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
 import { getProfiles } from '../database/user_profiles.js';
-import { backToMainMenuKeyboard, mainMenuData, sendMainMenuKeyboard } from './main.js';
+import { backToMainMenuKeyboard, sendMainMenuKeyboard } from './main.js';
 import { finalPrice } from '../utils/final-price.js';
 import { getSubPrices } from '../database/sub_prices.js';
 

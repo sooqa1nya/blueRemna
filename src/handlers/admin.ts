@@ -10,19 +10,17 @@ import { scheduler } from 'node:timers/promises';
 import { refStatsScene } from '../scenes/admin/ref-stats.js';
 import { refGenerate } from '../utils/ref-generate.js';
 import { remnawave } from '../services/remnawave/index.js';
-import { getPaid, getPaidSubs, getPaymentStats } from '../database/payment.js';
+import { getPaymentStats } from '../database/payment.js';
 import { aFindUserProfileScene } from '../scenes/admin/find-user-profile.js';
 import { aUserProfileText } from '../utils/text/a-user-profile-text.js';
 import { changeSaleScene } from '../scenes/admin/change-sale.js';
 import { changeRefBalanceScene } from '../scenes/admin/change-ref-balance.js';
 import { changeRefProcentScene } from '../scenes/admin/change-ref-procent.js';
 import { addVpnClientScene } from '../scenes/admin/add-vpn-client.js';
-import { changeVpnClientButtonStyle, deleteVpnClient, getVpnClientById, updateVpnClientPriority } from '../database/vpn_clients.js';
-import { getOsById } from '../database/operating_systems.js';
+import { changeVpnClientButtonStyle, deleteVpnClient, updateVpnClientPriority } from '../database/vpn_clients.js';
 import { clientInfoText } from '../utils/text/a-client-info-text.js';
 import { changeVpnClientNameScene } from '../scenes/admin/change-vpn-client-name.js';
 import { changeVpnClientLinkScene } from '../scenes/admin/change-vpn-client-link.js';
-import { backToMainMenuKeyboard } from '../keyboards/main.js';
 
 
 export const admin = new Composer({ name: 'admin' })
@@ -265,16 +263,14 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 
 
             const text = `
-📜 Авторизировалось: <code>${agreedPolicy}</code>
+📜 Авторизировалось: <code>${agreedPolicy} (${(agreedPolicy * 100 / users.length).toFixed(2)}%)</code>
 
 👤 Всего: <code>${users.length}</code>
-🟢 Живых: <code>${liveUsers}</code>
+🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / users.length).toFixed(2)}%)</code>
 🔴 Мертвых: <code>${deathUsers}</code>
 
 🆓 Пробных подписок: <code>${freeTrials}</code>
-🌐 Подключений: <code>${onlineAt}</code>
-💳 Оплачено подписок: <code>${(await getPaid()).length}</code>
-💰 Получено: <code>${await getPaidSubs()}₽</code>
+🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2)}%)</code>
             `;
 
             await context.editText(text, {

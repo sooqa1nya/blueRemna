@@ -88,14 +88,14 @@ export const refStatsScene = new Scene('ref_stats')
 
         const text = `
 🔗 Реферальная ссылка: <code>${context.scene.state.ref}</code>
-📜 Авторизировалось: <code>${agreedPolicy}</code>
+📜 Авторизировалось: <code>${agreedPolicy} (${(agreedPolicy * 100 / users.length).toFixed(2)}%)</code>
 
 👤 Всего: <code>${users.length}</code>
-🟢 Живых: <code>${liveUsers}</code>
+🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / users.length).toFixed(2)}%)</code>
 🔴 Мертвых: <code>${deathUsers}</code>
 
 🆓 Пробных подписок: <code>${freeTrials}</code>
-🌐 Подключений: <code>${onlineAt}</code>
+🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2)}%)</code>
 💳 Оплачено подписок: <code>${(await getPaymentPayload(context.scene.state.ref)).length}</code>
         `;
 
