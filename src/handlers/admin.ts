@@ -215,6 +215,7 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
         try {
             const users = await getUsers();
 
+            const usersCount = users.length;
             let liveUsers = 0;
             let deathUsers = 0;
             let freeTrials = 0;
@@ -260,24 +261,26 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
                     }
                 }
 
-                const countUsers = liveUsers + deathUsers;
-                if (!(countUsers % 50)) {
-                    await context.editText(`⏳ Обработано ${countUsers} пользователей`);
+                const usersProcessed = liveUsers + deathUsers;
+                if (!(usersProcessed % 50)) {
+                    await context.editText(`⏳ Обработано <code>${usersProcessed} (${(usersProcessed * 100 / usersCount).toFixed(2)}%)</code> пользователей`, {
+                        parse_mode: 'HTML'
+                    });
                 }
             }
 
 
             const text = `
-👤 Всего: <code>${users.length}</code>
-  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / users.length).toFixed(2)}%)</code>
+👤 Всего: <code>${usersCount}</code>
+  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / usersCount).toFixed(2)}%)</code>
 
 
-🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / users.length).toFixed(2)}%)</code>
+🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / usersCount).toFixed(2)}%)</code>
   └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2)}%)</code>
 
 🔴 Мертвых: <code>${deathUsers}</code>
 
-🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / users.length).toFixed(2)}%)</code>
+🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2)}%)</code>
 🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2)}%)</code>
             `;
 

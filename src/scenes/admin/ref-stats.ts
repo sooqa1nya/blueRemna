@@ -44,6 +44,7 @@ export const refStatsScene = new Scene('ref_stats')
         const message = await context.send('⏳ Обработка запроса');
         const users: IUser[] = context.scene.state.users;
 
+        const usersCount = users.length;
         let liveUsers = 0;
         let deathUsers = 0;
         let freeTrials = 0;
@@ -89,24 +90,26 @@ export const refStatsScene = new Scene('ref_stats')
                 }
             }
 
-            const countUsers = liveUsers + deathUsers;
-            if (!(countUsers % 50)) {
-                await message.editText(`⏳ Обработано ${countUsers} пользователей`);
+            const usersProcessed = liveUsers + deathUsers;
+            if (!(usersProcessed % 50)) {
+                await message.editText(`⏳ Обработано <code>${usersProcessed} (${(usersProcessed * 100 / usersCount).toFixed(2)}%)</code> пользователей`, {
+                    parse_mode: 'HTML'
+                });
             }
         }
 
         const text = `
 🔗 Реферальная ссылка: <code>${context.scene.state.ref}</code>
 
-👤 Всего: <code>${users.length}</code>
-  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / users.length).toFixed(2)}%)</code>
+👤 Всего: <code>${usersCount}</code>
+  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / usersCount).toFixed(2)}%)</code>
 
-🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / users.length).toFixed(2)}%)</code>
+🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / usersCount).toFixed(2)}%)</code>
   └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2)}%)</code>
 
 🔴 Мертвых: <code>${deathUsers}</code>
 
-🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / users.length).toFixed(2)}%)</code>
+🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2)}%)</code>
 🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2)}%)</code>
 💳 Оплачено подписок: <code>${(await getPaymentPayload(context.scene.state.ref)).length}</code>
         `;
