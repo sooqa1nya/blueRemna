@@ -48,6 +48,7 @@ export const refStatsScene = new Scene('ref_stats')
         let deathUsers = 0;
         let freeTrials = 0;
         let agreedPolicy = 0;
+        let agreedPolicyActive = 0;
         let onlineAt = 0;
 
         for (const user of users) {
@@ -57,6 +58,9 @@ export const refStatsScene = new Scene('ref_stats')
 
             if (user.agreed_policy) {
                 agreedPolicy++;
+                if (user.is_active) {
+                    agreedPolicyActive++;
+                }
             }
 
             try {
@@ -88,10 +92,13 @@ export const refStatsScene = new Scene('ref_stats')
 
         const text = `
 🔗 Реферальная ссылка: <code>${context.scene.state.ref}</code>
-📜 Авторизировалось: <code>${agreedPolicy} (${(agreedPolicy * 100 / users.length).toFixed(2)}%)</code>
 
 👤 Всего: <code>${users.length}</code>
+  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / users.length).toFixed(2)}%)</code>
+
 🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / users.length).toFixed(2)}%)</code>
+  └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2)}%)</code>
+
 🔴 Мертвых: <code>${deathUsers}</code>
 
 🆓 Пробных подписок: <code>${freeTrials}</code>

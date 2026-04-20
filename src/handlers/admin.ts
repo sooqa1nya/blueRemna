@@ -235,7 +235,10 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
                     if (!user.is_active) {
                         throw new Error;
                     }
-                    agreedPolicyActive++;
+
+                    if (user.agreed_policy) {
+                        agreedPolicyActive++;
+                    }
 
                     await bot.api.sendChatAction({
                         chat_id: user.id,
