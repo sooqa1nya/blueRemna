@@ -65,6 +65,12 @@ export interface IVpnClients {
     priority: number;
 }
 
+export interface ISubPrices {
+    id: number;
+    months: number;
+    amount: string;
+}
+
 declare module 'gramio' {
     interface Context<Bot> {
         dbuser?: IUser;

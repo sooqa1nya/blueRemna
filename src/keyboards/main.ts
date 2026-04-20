@@ -25,6 +25,9 @@ export const mainMenuKeyboard = async (free_trial: boolean, id: number) => {
 export const backToMainMenuKeyboard = new InlineKeyboard()
     .text('◀️ Главное меню', 'main_menu');
 
+export const sendMainMenuKeyboard = new InlineKeyboard()
+    .text('◀️ Главное меню', 'main_menu_send');
+
 export const supportKeyboard = new InlineKeyboard()
     .url('👤 Поддержка', `https://t.me/${process.env.SUPPORT_USERNAME as string}`, { style: 'primary' });
 

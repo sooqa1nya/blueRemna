@@ -4,7 +4,11 @@ import { addPayment } from '../database/payment.js';
 import { platega } from '../services/platega/index.js';
 
 export const createPayment = async (context: CallbackQueryShorthandContext<Bot, any>, price: number, months: number) => {
-    let url: string | null = null;
+    let result: {
+        payment_id: number;
+        url: string;
+    } | null = null;
+
     if (context.queryData.s === 'cb') {
         const invoice = await cryptoBot.createInvoice({
             currency_type: 'fiat',
@@ -32,7 +36,10 @@ export const createPayment = async (context: CallbackQueryShorthandContext<Bot, 
             return;
         }
 
-        url = invoice.result.pay_url;
+        result = {
+            payment_id: payment.id,
+            url: invoice.result.pay_url
+        };
     } else if (context.queryData.s === 'pl') {
         const transaction = await platega.createTransaction({
             paymentMethod: 2,
@@ -63,8 +70,11 @@ export const createPayment = async (context: CallbackQueryShorthandContext<Bot, 
             return;
         }
 
-        url = transaction.redirect!;
+        result = {
+            payment_id: payment.id,
+            url: transaction.redirect!
+        };
     }
 
-    return url;
+    return result;
 };

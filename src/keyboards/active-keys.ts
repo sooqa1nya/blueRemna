@@ -1,6 +1,6 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
 import { getProfiles } from '../database/user_profiles.js';
-import { backToMainMenuKeyboard } from './main.js';
+import { backToMainMenuKeyboard, sendMainMenuKeyboard } from './main.js';
 import { copyLinkKeyboard, importHappKeyboard } from './other.js';
 import { currentKeysData } from './sub-payment.js';
 import { getLimitExtend } from '../database/settings.js';
@@ -87,7 +87,7 @@ export const extendPaymentMethodKeyboard = async (key: number, refBalance: numbe
 
     return new InlineKeyboard()
         .columns(1)
-        .addIf(refBalance >= price, InlineKeyboard.text('💰 Списать с баланса', refExtendPaymentData.pack({ k: key })))
+        .addIf(refBalance >= price, InlineKeyboard.text('Баланс бота', refExtendPaymentData.pack({ k: key }), { icon_custom_emoji_id: '5357080225463149588' }))
         .text('СБП', extendPaymentData.pack({ s: 'pl', k: key }), { icon_custom_emoji_id: '5447186509029452373' })
         .text('CryptoBot', extendPaymentData.pack({ s: 'cb', k: key }), { icon_custom_emoji_id: '5361914370068613491' })
         .text('Stars', starsExtendPaymentData.pack({ s: 'cb', k: key }), { icon_custom_emoji_id: '5321485469249198987' })
@@ -95,14 +95,15 @@ export const extendPaymentMethodKeyboard = async (key: number, refBalance: numbe
 };
 
 export const extendCheckPaymentData = new CallbackData('extend_cp')
-    .number('k');
-export const extendPaymentInvoiceKeyboard = async (key: number, invoiceUrl: string) => {
+    .number('k') // sub id
+    .number('p'); // payment id
+export const extendPaymentInvoiceKeyboard = async (key: number, paymentId: number, invoiceUrl: string) => {
     return new InlineKeyboard()
         .url('💳 Оплатить', invoiceUrl, { style: 'primary' })
         .row()
-        .text('✅ Проверить оплату', extendCheckPaymentData.pack({ k: key }), { style: 'success' })
+        .text('✅ Проверить оплату', extendCheckPaymentData.pack({ k: key, p: paymentId }), { style: 'success' })
         .row()
-        .combine(backToMainMenuKeyboard);
+        .combine(sendMainMenuKeyboard);
 };
 
 export const deviceInfoData = new CallbackData('di')

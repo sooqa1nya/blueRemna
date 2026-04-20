@@ -48,34 +48,34 @@ export const subPayment = new Composer({ name: 'subPayment' })
 
     .callbackQuery(keyboard.priceData, async context => {
         // Если хватает реф. баланса, то используем его
-        if (context.dbuser && Number(context.dbuser.ref_balance) >= context.queryData.p) {
-            try {
-                await context.send(`💰 Покупка подписки с реферального баланса\n\n- Пользователь: <code>${context.from.id}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Списано: <code>${context.queryData.p}₽</code>`, {
-                    chat_id: process.env.LOG_CHAT_ID!,
-                    parse_mode: 'HTML'
-                });
-            } catch { }
+        // if (context.dbuser && Number(context.dbuser.ref_balance) >= context.queryData.p) {
+        //     try {
+        //         await context.send(`💰 Покупка подписки с реферального баланса\n\n- Пользователь: <code>${context.from.id}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Списано: <code>${context.queryData.p}₽</code>`, {
+        //             chat_id: process.env.LOG_CHAT_ID!,
+        //             parse_mode: 'HTML'
+        //         });
+        //     } catch { }
 
-            // Продление или создание новой подписки
-            if (context.queryData.k == -1) {
-                await newProfile(context, context.queryData.m);
-                return;
-            }
-            await updateProfile(context, context.queryData.m);
+        //     // Продление или создание новой подписки
+        //     if (context.queryData.k == -1) {
+        //         await newProfile(context, context.queryData.m);
+        //         return;
+        //     }
+        //     await updateProfile(context, context.queryData.m);
 
-            await setRefBalance(context.from.id, Number(context.dbuser.ref_balance) - context.queryData.p);
-            return;
-        }
+        //     await setRefBalance(context.from.id, Number(context.dbuser.ref_balance) - context.queryData.p);
+        //     return;
+        // }
 
         await context.editText('💳 Выберите способ оплаты', {
-            reply_markup: await keyboard.paymentSystemKeyboard(context.queryData.k, context.queryData.m, context.queryData.p)
+            reply_markup: await keyboard.paymentSystemKeyboard(context.queryData.k, context.queryData.m, context.queryData.p, Number(context.dbuser?.ref_balance))
         });
     })
 
     .callbackQuery(keyboard.paymentSystemData, async context => {
-        const url = await createPayment(context, context.queryData.p, context.queryData.m);
+        const payment = await createPayment(context, context.queryData.p, context.queryData.m);
 
-        if (!url) {
+        if (!payment) {
             await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
             return;
         }
@@ -92,11 +92,33 @@ export const subPayment = new Composer({ name: 'subPayment' })
             parse_mode: 'HTML',
             reply_markup: await keyboard.paymentInvoiceKeyboard(
                 context.queryData.k,
-                context.queryData.m,
-                context.queryData.p,
-                url
+                payment.payment_id,
+                payment.url
             )
         });
+    })
+
+    .callbackQuery(keyboard.paymentRefBalanceData, async context => {
+        if (!context.dbuser || Number(context.dbuser.ref_balance) < context.queryData.p) {
+            return context.answerCallbackQuery('❌ Недостаточно средств');
+        }
+
+        try {
+            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Реф. Баланс</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Цена: <code>${context.queryData.p}₽</code>\n- Тип: <code>${context.queryData.k == -1 ? 'Новая' : 'Продление'}</code>`, {
+                chat_id: process.env.LOG_CHAT_ID!,
+                parse_mode: 'HTML'
+            });
+        } catch { }
+
+        // Продление или создание новой подписки
+        if (context.queryData.k == -1) {
+            await newProfile(context, context.queryData.m);
+            return;
+        }
+
+        await updateProfile(context, context.queryData.m);
+
+        await setRefBalance(context.from.id, Number(context.dbuser.ref_balance) - context.queryData.p);
     })
 
     .callbackQuery(keyboard.starsSystemData, async context => {
@@ -107,7 +129,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
             currency: 'XTR',
             prices: [
                 {
-                    label: 'Подписка', amount: await finalPrice(context.queryData.p, context.dbuser!.sale, true)
+                    label: 'Подписка', amount: Number(await finalPrice(String(context.queryData.p), context.dbuser!.sale, true))
                 }
             ]
         });
@@ -115,13 +137,13 @@ export const subPayment = new Composer({ name: 'subPayment' })
     })
 
     .callbackQuery(keyboard.checkPaymentData, async context => {
-        const paymentInfo = await checkPayment(context);
-        if (!paymentInfo) {
+        const payment = await checkPayment(context);
+        if (!payment) {
             return;
         }
 
         try {
-            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Цена: <code>${context.queryData.p}₽</code>\n- Тип: <code>${context.queryData.k == -1 ? 'Новая' : 'Продление'}</code>`, {
+            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${payment.service}</code>\n- Срок: <code>${payment.months} мес.</code>\n- Цена: <code>${payment.amount}₽</code>\n- Тип: <code>${context.queryData.k == -1 ? 'Новая' : 'Продление'}</code>`, {
                 chat_id: process.env.LOG_CHAT_ID!,
                 parse_mode: 'HTML'
             });
@@ -129,16 +151,16 @@ export const subPayment = new Composer({ name: 'subPayment' })
 
         // Бонуска
         try {
-            await addRefBalance(context.dbuser?.payload, context.queryData.p);
+            await addRefBalance(context.dbuser?.payload, Number(payment.amount));
         } catch (e) {
             console.error('Ошибка выдачи рефки (sub-payment):', e);
         }
 
         // Продление или создание новой подписки
         if (context.queryData.k == -1) {
-            await newProfile(context, paymentInfo.payment.months);
+            await newProfile(context, payment.months);
             return;
         }
 
-        await updateProfile(context, paymentInfo.payment.months);
+        await updateProfile(context, payment.months);
     });

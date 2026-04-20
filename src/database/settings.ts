@@ -18,15 +18,6 @@ export const getFreeTrial = async () => {
     return Number(result?.duration) || undefined;
 };
 
-export const getSubPlans = async () => {
-    const [result] = await sql<ISetting[]>`
-        SELECT * FROM settings
-        WHERE key = 'plans'
-    `;
-
-    return result?.data.plans || undefined;
-};
-
 export const getLimitExtend = async () => {
     const [result] = await sql<ISetting[]>`
         SELECT * FROM settings

@@ -82,9 +82,9 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         const limit = await getLimitExtend();
         const price = (Number(limit.price));
 
-        const url = await createPayment(context, price, 0);
+        const payment = await createPayment(context, price, 0);
 
-        if (!url) {
+        if (!payment) {
             await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');
             return;
         }
@@ -102,7 +102,8 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
             parse_mode: 'HTML',
             reply_markup: await keyboard.extendPaymentInvoiceKeyboard(
                 context.queryData.k,
-                url
+                payment.payment_id,
+                payment.url
             )
         });
     })
@@ -130,8 +131,8 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
     })
 
     .callbackQuery(keyboard.extendCheckPaymentData, async context => {
-        const paymentInfo = await checkPayment(context);
-        if (!paymentInfo) {
+        const payment = await checkPayment(context);
+        if (!payment) {
             return;
         }
 
@@ -156,7 +157,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         }
 
         try {
-            await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${paymentInfo.payment?.service}</code>\n- Цена: <code>${limit.price}₽</code>`, {
+            await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${payment.service}</code>\n- Цена: <code>${limit.price}₽</code>`, {
                 chat_id: process.env.LOG_CHAT_ID!,
                 parse_mode: 'HTML'
             });

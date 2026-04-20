@@ -11,27 +11,6 @@ const sql = postgres({
 });
 
 const freeTrial = { duration: Number(process.env.FREE_TRIAL_DAYS!) };
-const plans = {
-    plans:
-        [
-            {
-                months: 1,
-                price: Number(process.env.SUB_PRICE_1_MONTH!)
-            },
-            {
-                months: 3,
-                price: Number(process.env.SUB_PRICE_3_MONTHS!)
-            },
-            {
-                months: 6,
-                price: Number(process.env.SUB_PRICE_6_MONTHS!)
-            },
-            {
-                months: 12,
-                price: Number(process.env.SUB_PRICE_12_MONTHS!)
-            }
-        ]
-};
 const limitExtend = {
     devices: Number(process.env.EXTEND_DEVICE_COUNT!),
     price: Number(process.env.EXTEND_DEVICE_PRICE!)
@@ -92,7 +71,6 @@ export const initDatabase = async () => {
             INSERT INTO settings (key, data)
             VALUES
                 ('free_trial', ${sql.json(freeTrial)}),
-                ('plans', ${sql.json(plans)}),
                 ('limit_extend', ${sql.json(limitExtend)}),
                 ('global_sale', ${sql.json(globalSale)})
             ON CONFLICT (key) DO NOTHING
@@ -124,6 +102,22 @@ export const initDatabase = async () => {
                 button_style VARCHAR(32),
                 priority INTEGER DEFAULT 0
             )
+        `;
+        await sql`
+            CREATE TABLE IF NOT EXISTS sub_prices (
+                id SERIAL PRIMARY KEY,
+                months INT UNIQUE NOT NULL,
+                amount NUMERIC(10, 2)
+            )
+        `;
+        await sql`
+            INSERT INTO sub_prices (months, amount)
+            VALUES 
+                (1, ${process.env.SUB_PRICE_1_MONTH!}),
+                (3, ${process.env.SUB_PRICE_3_MONTHS!}),
+                (6, ${process.env.SUB_PRICE_6_MONTHS!}),
+                (12, ${process.env.SUB_PRICE_12_MONTHS!})
+            ON CONFLICT (months) DO NOTHING
         `;
         console.log('✅ База данных инициализирована');
     } catch (error) {

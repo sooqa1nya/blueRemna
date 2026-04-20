@@ -1,8 +1,8 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
 import { getProfiles } from '../database/user_profiles.js';
-import { backToMainMenuKeyboard, mainMenuData } from './main.js';
-import { getSubPlans } from '../database/settings.js';
+import { backToMainMenuKeyboard, mainMenuData, sendMainMenuKeyboard } from './main.js';
 import { finalPrice } from '../utils/final-price.js';
+import { getSubPrices } from '../database/sub_prices.js';
 
 
 // Меню выбора ключа для продления
@@ -32,12 +32,12 @@ export const priceData = new CallbackData('payment_menu')
     .number('m')
     .number('p');
 export const priceKeyboard = async (key: number, sale: number) => {
-    let prices: { months: number, price: number; }[] = await getSubPlans();
+    let prices = await getSubPrices();
     for (const element of prices) {
-        element.price = await finalPrice(element.price, sale);
+        element.amount = await finalPrice(element.amount, sale);
     }
     const getPrice = async (months: number) => {
-        return prices.find(x => x.months == months)!.price;
+        return prices.find(x => x.months == months)!.amount;
     };
     const price = {
         m1: await getPrice(1),
@@ -69,12 +69,17 @@ export const starsSystemData = new CallbackData('stars_system')
     .number('k')
     .number('m')
     .number('p');
-export const paymentSystemKeyboard = async (key: number, months: number, price: number) => {
+export const paymentRefBalanceData = new CallbackData('payment_system_ref')
+    .string('s')
+    .number('k')
+    .number('m')
+    .number('p');
+export const paymentSystemKeyboard = async (key: number, months: number, price: number, refBalance: number) => {
     return new InlineKeyboard()
+        .columns(1)
+        .addIf(refBalance >= price, InlineKeyboard.text('Баланс бота', paymentRefBalanceData.pack({ s: 'ref', k: key, m: months, p: price }), { icon_custom_emoji_id: '5357080225463149588' }))
         .text('СБП', paymentSystemData.pack({ s: 'pl', k: key, m: months, p: price }), { icon_custom_emoji_id: '5447186509029452373' })
-        .row()
         .text('CryptoBot', paymentSystemData.pack({ s: 'cb', k: key, m: months, p: price }), { icon_custom_emoji_id: '5361914370068613491' })
-        .row()
         .text('Stars', starsSystemData.pack({ s: 'st', k: key, m: months, p: price }), { icon_custom_emoji_id: '5321485469249198987' })
         .combine(backToMainMenuKeyboard);
 };
@@ -89,14 +94,13 @@ export const selectNewExtendKeyboard = new InlineKeyboard()
 
 // Кнопки оплаты и проверки оплаты после создания счета
 export const checkPaymentData = new CallbackData('check_payment')
-    .number('k')
-    .number('m')
-    .number('p');
-export const paymentInvoiceKeyboard = async (key: number, months: number, price: number, invoiceUrl: string) => {
+    .number('k') // key
+    .number('p'); // payment id
+export const paymentInvoiceKeyboard = async (key: number, paymentId: number, invoiceUrl: string) => {
     return new InlineKeyboard()
         .url('💳 Оплатить', invoiceUrl, { style: 'primary' })
         .row()
-        .text('✅ Проверить оплату', checkPaymentData.pack({ k: key, m: months, p: price }), { style: 'success' })
+        .text('✅ Проверить оплату', checkPaymentData.pack({ k: key, p: paymentId }), { style: 'success' })
         .row()
-        .combine(backToMainMenuKeyboard);
+        .combine(sendMainMenuKeyboard);
 };

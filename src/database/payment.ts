@@ -16,15 +16,6 @@ export const getPayment = async (id: number) => {
     `;
 };
 
-export const getPayments = async (id: number) => {
-    return await sql<IPayment[]>`
-        SELECT * FROM payments
-        WHERE 
-            user_id = ${id} AND
-            payment_time >= NOW() - INTERVAL '30 minutes'
-    `;
-};
-
 export const changeStatus = async (id: number, status: 'paid' | 'pending'): Promise<void> => {
     await sql<IPayment[]>`
         UPDATE payments

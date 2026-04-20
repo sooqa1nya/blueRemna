@@ -8,4 +8,12 @@ export const mainMenu = new Composer({ name: 'mainMenu' })
             parse_mode: 'HTML',
             reply_markup: await keyboard.mainMenuKeyboard(Boolean(context.dbuser?.trial_key), context.from.id)
         });
+    })
+
+    .callbackQuery('main_menu_send', async context => {
+        await context.send(await mainMenuText(context.dbuser!), {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.mainMenuKeyboard(Boolean(context.dbuser?.trial_key), context.from.id)
+        });
+        await context.answerCallbackQuery();
     });
