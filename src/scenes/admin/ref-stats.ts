@@ -58,12 +58,17 @@ export const refStatsScene = new Scene('ref_stats')
 
             if (user.agreed_policy) {
                 agreedPolicy++;
-                if (user.is_active) {
-                    agreedPolicyActive++;
-                }
             }
 
             try {
+                if (!user.is_active) {
+                    throw new Error;
+                }
+
+                if (user.agreed_policy) {
+                    agreedPolicyActive++;
+                }
+
                 await bot.api.sendChatAction({
                     chat_id: user.id,
                     action: 'typing'
