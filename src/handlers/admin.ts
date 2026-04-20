@@ -277,7 +277,7 @@ ${!lastMailing ? '🔄 Рассылка' : '✅ Рассылка заверше�
 
 🔴 Мертвых: <code>${deathUsers}</code>
 
-🆓 Пробных подписок: <code>${freeTrials}</code>
+🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / users.length).toFixed(2)}%)</code>
 🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2)}%)</code>
             `;
 

@@ -106,7 +106,7 @@ export const refStatsScene = new Scene('ref_stats')
 
 🔴 Мертвых: <code>${deathUsers}</code>
 
-🆓 Пробных подписок: <code>${freeTrials}</code>
+🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / users.length).toFixed(2)}%)</code>
 🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2)}%)</code>
 💳 Оплачено подписок: <code>${(await getPaymentPayload(context.scene.state.ref)).length}</code>
         `;
