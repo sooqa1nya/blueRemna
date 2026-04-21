@@ -133,7 +133,7 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
         date.setDate(date.getDate() + context.queryData.d);
 
         if (date <= currentDate) {
-            date = new Date(currentDate);
+            date = new Date();
             date.setMinutes(date.getMinutes() + 1);
         }
 
