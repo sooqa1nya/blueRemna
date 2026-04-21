@@ -12,17 +12,18 @@ import {
     aChangeUserRefProcData,
     aUserSubData,
     aUserProfileKeyboard,
-    backAUserProfileKeyboard,
     aUserProfilesKeyboard,
     adminUserProfilesData,
     aUserSubKeybard,
     switchDeviceLimitData,
     changeDescriptionData,
-    changeDeviceLimitData
+    changeDeviceLimitData,
+    aChangeDaysData,
+    changeSubDurationData,
+    aChangeDaysKeyboard
 } from '../../keyboards/admin.js';
 import { getProfileByID, setLimitExtended } from '../../database/user_profiles.js';
 import { remnawave } from '../../services/remnawave/index.js';
-import { findUser } from '../../database/users.js';
 import { changeDescriptionScene } from '../../scenes/admin/change-description.js';
 import { aSubProfileText } from '../../utils/text/a-sub-profile-text.js';
 import { changeDeviceLimitScene } from '../../scenes/admin/change-device-limit.js';
@@ -103,4 +104,47 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
         await context.scene.enter(changeDeviceLimitScene, {
             profileId: context.queryData.k
         });
+    })
+
+    .callbackQuery(changeSubDurationData, async context => {
+        const [userProfile] = await getProfileByID(context.queryData.k);
+        if (!userProfile) {
+            return await context.answerCallbackQuery('❌ Не найден userProfile');
+        }
+
+        await context.editText('↘️ Выберите действие (в днях)', {
+            reply_markup: aChangeDaysKeyboard(String(userProfile.user_id), context.queryData.k)
+        });
+    })
+
+    .callbackQuery(aChangeDaysData, async context => {
+        const [userProfile] = await getProfileByID(context.queryData.k);
+        const rw = await remnawave.getUserByUUID(userProfile.uuid);
+        if (!rw) {
+            return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
+        }
+        const sub = rw.response;
+
+        const currentDate = new Date();
+        const expireDate = new Date(sub.expireAt);
+
+        // Выбираем источник: если подписка не истекла, добавляем к её дате, иначе к текущей
+        let date = expireDate >= currentDate ? expireDate : currentDate;
+        date.setDate(date.getDate() + context.queryData.d);
+
+        if (date <= currentDate) {
+            date = new Date(currentDate);
+            date.setMinutes(date.getMinutes() + 1);
+        }
+
+        await remnawave.updateUser({
+            uuid: userProfile.uuid,
+            trafficLimitStrategy: sub.trafficLimitStrategy,
+            expireAt: date.toISOString()
+        });
+
+        await context.editText(`↘️ Выберите действие (в днях)\n\n📆 Дата истечения: ${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`, {
+            reply_markup: aChangeDaysKeyboard(String(userProfile.user_id), context.queryData.k)
+        });
+        await context.answerCallbackQuery('✅ Успешно');
     });

@@ -1,4 +1,4 @@
-import type { Bot, CallbackQueryShorthandContext, SuccessfulPayment, SuccessfulPaymentContext } from 'gramio';
+import type { Bot, CallbackQueryShorthandContext, SuccessfulPaymentContext } from 'gramio';
 import { remnawave } from '../services/remnawave/index.js';
 import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 import { addProfile } from '../database/user_profiles.js';

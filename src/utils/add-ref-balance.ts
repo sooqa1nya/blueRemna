@@ -1,4 +1,3 @@
-import type { Bot, CallbackQueryShorthandContext } from 'gramio';
 import { findUser, updateUserRefBalance } from '../database/users.js';
 
 

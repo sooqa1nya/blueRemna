@@ -234,10 +234,32 @@ export const aUserSubKeybard = (userId: string | number, subProfileId: number, d
         .text('📆 Дни', changeSubDurationData.pack({ k: subProfileId }))
         .text('📱 Лимит устройств', changeDeviceLimitData.pack({ k: subProfileId }))
         .row()
-        .text('Телеграм', changeTgIdData.pack({ k: subProfileId }), { icon_custom_emoji_id: '5420484229198812151' })
+        .text('📝 Описание', changeDescriptionData.pack({ u: String(userId), k: subProfileId }))
         .text((deviceLimit ? '🔴' : '🟢') + ' Доп устройства', switchDeviceLimitData.pack({ k: subProfileId, l: deviceLimit }))
         .row()
-        .text('📝 Описание', changeDescriptionData.pack({ u: String(userId), k: subProfileId }))
+        .text('◀️ Подписки', aUserSubData.pack({ i: String(userId) }))
+        .text('◀️ Пользователь', backAUserProfileData.pack({ i: String(userId) }));
+};
+
+export const aChangeDaysData = new CallbackData('a_change_sub_days')
+    .number('k') // sub profile id
+    .number('d'); // +-days
+export const aChangeDaysKeyboard = (userId: string, subProfileId: number) => {
+    return new InlineKeyboard()
+        .text('➖ 1', aChangeDaysData.pack({ k: subProfileId, d: -1 }), { style: 'danger' })
+        .text('➕ 1', aChangeDaysData.pack({ k: subProfileId, d: 1 }), { style: 'success' })
         .row()
-        .text('◀️ Подписки', aUserSubData.pack({ i: String(userId) }));
+        .text('➖ 3', aChangeDaysData.pack({ k: subProfileId, d: -3 }), { style: 'danger' })
+        .text('➕ 3', aChangeDaysData.pack({ k: subProfileId, d: 3 }), { style: 'success' })
+        .row()
+        .text('➖ 7', aChangeDaysData.pack({ k: subProfileId, d: -7 }), { style: 'danger' })
+        .text('➕ 7', aChangeDaysData.pack({ k: subProfileId, d: 7 }), { style: 'success' })
+        .row()
+        .text('➖ 30', aChangeDaysData.pack({ k: subProfileId, d: -30 }), { style: 'danger' })
+        .text('➕ 30', aChangeDaysData.pack({ k: subProfileId, d: 30 }), { style: 'success' })
+        .row()
+        .text('➖ 90', aChangeDaysData.pack({ k: subProfileId, d: -90 }), { style: 'danger' })
+        .text('➕ 90', aChangeDaysData.pack({ k: subProfileId, d: 90 }), { style: 'success' })
+        .row()
+        .text('◀️ Назад', adminUserProfilesData.pack({ u: userId, k: subProfileId }));
 };
