@@ -22,7 +22,7 @@ export const changeVpnClientNameScene = new Scene('change_vpn_client_name')
                 reply_markup: await adminVpnClientProfileKeyboard(osId, clientId)
             });
             await context.answerCallbackQuery();
-            return context.scene.exit();
+            return await context.scene.exit();
         }
 
         if (!context.text) {

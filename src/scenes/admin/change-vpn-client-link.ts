@@ -22,7 +22,7 @@ export const changeVpnClientLinkScene = new Scene('change_vpn_client_link')
                 reply_markup: await adminVpnClientProfileKeyboard(osId, clientId)
             });
             await context.answerCallbackQuery();
-            return context.scene.exit();
+            return await context.scene.exit();
         }
 
         if (!context.text || !/^https:\/\//.test(context.text)) {

@@ -19,7 +19,7 @@ export const refStatsScene = new Scene('ref_stats')
                 reply_markup: await adminMenuKeyboard()
             });
             await context.answerCallbackQuery();
-            return context.scene.exit();
+            return await context.scene.exit();
         }
 
         if (!context.text) {

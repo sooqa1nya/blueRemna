@@ -18,7 +18,7 @@ export const addVpnClientScene = new Scene('add_vpn_client')
                 reply_markup: await adminlistVpnClientsKeyboard(osId)
             });
             await context.answerCallbackQuery();
-            return context.scene.exit();
+            return await context.scene.exit();
         }
 
         if (!context.text) {

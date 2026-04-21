@@ -16,7 +16,7 @@ export const aFindUserProfileScene = new Scene('a_find_user_profile')
                 reply_markup: await adminMenuKeyboard()
             });
             await context.answerCallbackQuery();
-            return context.scene.exit();
+            return await context.scene.exit();
         }
 
         const userId = Number(context.text);

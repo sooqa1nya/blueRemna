@@ -17,13 +17,15 @@ import {
     adminUserProfilesData,
     aUserSubKeybard,
     switchDeviceLimitData,
-    changeDescriptionData
+    changeDescriptionData,
+    changeDeviceLimitData
 } from '../../keyboards/admin.js';
 import { getProfileByID, setLimitExtended } from '../../database/user_profiles.js';
 import { remnawave } from '../../services/remnawave/index.js';
 import { findUser } from '../../database/users.js';
 import { changeDescriptionScene } from '../../scenes/admin/change-description.js';
 import { aSubProfileText } from '../../utils/text/a-sub-profile-text.js';
+import { changeDeviceLimitScene } from '../../scenes/admin/change-device-limit.js';
 
 export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
     .extend(sceneInit)
@@ -92,6 +94,13 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
     .callbackQuery(changeDescriptionData, async context => {
         await context.answerCallbackQuery();
         await context.scene.enter(changeDescriptionScene, {
+            profileId: context.queryData.k
+        });
+    })
+
+    .callbackQuery(changeDeviceLimitData, async context => {
+        await context.answerCallbackQuery();
+        await context.scene.enter(changeDeviceLimitScene, {
             profileId: context.queryData.k
         });
     });

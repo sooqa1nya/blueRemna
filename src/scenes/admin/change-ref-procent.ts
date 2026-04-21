@@ -20,7 +20,7 @@ export const changeRefProcentScene = new Scene('change_ref_procent')
                 reply_markup: aUserProfileKeyboard(userId)
             });
             await context.answerCallbackQuery();
-            return context.scene.exit();
+            return await context.scene.exit();
         }
 
         const proc = Number(context.text);

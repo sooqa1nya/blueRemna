@@ -6,11 +6,11 @@ import { remnawave } from '../../services/remnawave/index.js';
 import { aSubProfileText } from '../../utils/text/a-sub-profile-text.js';
 
 
-export const changeDescriptionScene = new Scene('change_description')
+export const changeDeviceLimitScene = new Scene('device_limit')
     .params<{ profileId: number; }>()
     .step(['message', 'callback_query'], async (context) => {
         if (context.scene.step.firstTime) {
-            return await context.editText('Отправьте новое описание для подписки', { reply_markup: sceneCancelKeyboard });
+            return await context.editText('Отправьте устройства которые будет добавлены/вычтены из лимита (5, -5..)', { reply_markup: sceneCancelKeyboard });
         }
 
         const [userProfile] = await getProfileByID(context.scene.params.profileId);
@@ -26,16 +26,18 @@ export const changeDescriptionScene = new Scene('change_description')
             return await context.scene.exit();
         }
 
-        const text = context.text;
+        const text = Number(context.text);
 
-        if (!text || !rwProfile) {
+        if (!Number.isInteger(text) || !rwProfile) {
             return await context.delete();
         }
+
+        const limit = (rwProfile.response.hwidDeviceLimit || 0) + text;
 
         await remnawave.updateUser({
             uuid: userProfile.uuid,
             trafficLimitStrategy: rwProfile.response.trafficLimitStrategy,
-            description: text
+            hwidDeviceLimit: limit > 0 ? limit : 0
         });
 
         rwProfile = await remnawave.getUserByUUID(userProfile.uuid);

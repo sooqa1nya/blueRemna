@@ -20,7 +20,7 @@ export const changeSaleScene = new Scene('change_sale')
                 reply_markup: aUserProfileKeyboard(userId)
             });
             await context.answerCallbackQuery();
-            return context.scene.exit();
+            return await context.scene.exit();
         }
 
         const sale = Number(context.text);

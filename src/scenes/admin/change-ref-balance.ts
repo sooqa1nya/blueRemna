@@ -20,7 +20,7 @@ export const changeRefBalanceScene = new Scene('change_ref_balance')
                 reply_markup: aUserProfileKeyboard(userId)
             });
             await context.answerCallbackQuery();
-            return context.scene.exit();
+            return await context.scene.exit();
         }
 
         const amount = Number(context.text);
