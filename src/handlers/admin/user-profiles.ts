@@ -137,11 +137,14 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
             date.setMinutes(date.getMinutes() + 1);
         }
 
-        await remnawave.updateUser({
+        const updateUser = await remnawave.updateUser({
             uuid: userProfile.uuid,
             trafficLimitStrategy: sub.trafficLimitStrategy,
             expireAt: date.toISOString()
         });
+        if (!updateUser) {
+            return await context.answerCallbackQuery('❌ Ошибка обновления пользователя');
+        }
 
         await context.editText(`↘️ Выберите действие (в днях)\n\n📆 Дата истечения: ${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`, {
             reply_markup: aChangeDaysKeyboard(String(userProfile.user_id), context.queryData.k)
