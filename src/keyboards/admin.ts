@@ -1,7 +1,9 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
-import { emptyButtonKeyboard } from './other.js';
+import { copyLinkKeyboard, emptyButtonKeyboard } from './other.js';
 import { getAllOs } from '../database/operating_systems.js';
 import { getVpnClientsByOs } from '../database/vpn_clients.js';
+import { getProfiles } from '../database/user_profiles.js';
+import { remnawave } from '../services/remnawave/index.js';
 
 
 export const adminMenuKeyboard = async () => {
@@ -168,4 +170,74 @@ export const changeStyleButtonKeyboard = async (osId: number, clientId: number) 
         .text('danger', newButtonStyleData.pack({ os: osId, id: clientId, style: 'danger' }), { style: 'danger' })
         .text('default', newButtonStyleData.pack({ os: osId, id: clientId, style: 'default' }))
         .text('◀️ Назад', adminVpnClientData.pack({ os: osId, id: clientId }));
-}; 
+};
+
+export const adminUserProfilesData = new CallbackData('a_user_profiles')
+    .string('u') // user id
+    .number('k'); // id sub profile
+export const aUserProfilesKeyboard = async (userId: string) => {
+    const userProfiles = await getProfiles(Number(userId));
+
+    const userWithStatus = await Promise.all(userProfiles.map(async x => {
+        const remoteUser = await remnawave.getUserByUUID(x.uuid);
+        return {
+            profile: x,
+            status: remoteUser?.response?.status ?? 'UNKNOWN'
+        };
+    }));
+
+    const buttons = userWithStatus.map(({ profile, status }) => {
+        let statusPrefix = '';
+        switch (status) {
+            case 'ACTIVE':
+                statusPrefix = '🟢';
+                break;
+            case 'DISABLED':
+                statusPrefix = '🔴';
+                break;
+            case 'EXPIRED':
+                statusPrefix = '🟡';
+                break;
+            case 'LIMITED':
+                statusPrefix = '⚠️';
+                break;
+            default:
+                statusPrefix = '❔';
+        }
+
+        return InlineKeyboard.text(`${statusPrefix} ${profile.username}`, adminUserProfilesData.pack({ u: userId, k: profile.id }));
+    });
+
+    return new InlineKeyboard()
+        .add(...buttons)
+        .combine(backAUserProfileKeyboard(userId))
+        .columns(1);
+};
+
+export const changeDeviceLimitData = new CallbackData('a_change_device_lim')
+    .number('k'); // sub profile id
+export const switchDeviceLimitData = new CallbackData('a_switch_device_lim')
+    .number('k') // sub profile id
+    .boolean('l'); // device limit status 
+export const changeSubDurationData = new CallbackData('a_change_sub_dur')
+    .number('k'); // sub profile id
+export const changeTgIdData = new CallbackData('a_change_tg')
+    .number('k'); // sub profile id
+export const changeDescriptionData = new CallbackData('a_change_description')
+    .string('u') // user profile id
+    .number('k'); // sub profile id
+export const aUserSubKeybard = (userId: string | number, subProfileId: number, deviceLimit: boolean, subUrl: string) => {
+    return new InlineKeyboard()
+        .combine(copyLinkKeyboard(subUrl))
+        .webApp('👤 Профиль', subUrl, { style: 'primary' })
+        .row()
+        .text('📆 Дни', changeSubDurationData.pack({ k: subProfileId }))
+        .text('📱 Лимит устройств', changeDeviceLimitData.pack({ k: subProfileId }))
+        .row()
+        .text('Телеграм', changeTgIdData.pack({ k: subProfileId }), { icon_custom_emoji_id: '5420484229198812151' })
+        .text((deviceLimit ? '🔴' : '🟢') + ' Доп устройства', switchDeviceLimitData.pack({ k: subProfileId, l: deviceLimit }))
+        .row()
+        .text('📝 Описание', changeDescriptionData.pack({ u: String(userId), k: subProfileId }))
+        .row()
+        .text('◀️ Подписки', aUserSubData.pack({ i: String(userId) }));
+};

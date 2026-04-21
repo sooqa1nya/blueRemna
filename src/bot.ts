@@ -9,11 +9,11 @@ import { help } from './handlers/help.js';
 import { aboutUs } from './handlers/about-us.js';
 import { authMiddleware } from './middlewares/auth-middleware.js';
 import { start } from './handlers/start.js';
-import { admin } from './handlers/admin.js';
 import { sceneCancel } from './handlers/scene-cancel.js';
 import { emptyButton } from './handlers/other.js';
 import { starsPayment } from './handlers/stars-payment.js';
 import { findUser } from './database/users.js';
+import { admin } from './handlers/admin/index.js';
 
 
 export const bot = new Bot(process.env.BOT_TOKEN as string)
