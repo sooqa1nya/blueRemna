@@ -238,6 +238,7 @@ export const aUserSubKeybard = (userId: string | number, subProfileId: number, d
         .text((deviceLimit ? '🔴' : '🟢') + ' Доп устройства', switchDeviceLimitData.pack({ k: subProfileId, l: deviceLimit }))
         .row()
         .text('◀️ Подписки', aUserSubData.pack({ i: String(userId) }))
+        .row()
         .text('◀️ Пользователь', backAUserProfileData.pack({ i: String(userId) }));
 };
 
