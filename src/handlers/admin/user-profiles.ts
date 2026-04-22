@@ -20,7 +20,8 @@ import {
     changeDeviceLimitData,
     aChangeDaysData,
     changeSubDurationData,
-    aChangeDaysKeyboard
+    aChangeDaysKeyboard,
+    switchSubStatus
 } from '../../keyboards/admin.js';
 import { getProfileByID, setLimitExtended } from '../../database/user_profiles.js';
 import { remnawave } from '../../services/remnawave/index.js';
@@ -149,5 +150,37 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
         await context.editText(`↘️ Выберите действие (в днях)\n\n📆 Дата истечения: ${date.toLocaleDateString('ru-RU')} ${date.toLocaleTimeString('ru-RU')}`, {
             reply_markup: aChangeDaysKeyboard(String(userProfile.user_id), context.queryData.k)
         });
+        await context.answerCallbackQuery('✅ Успешно');
+    })
+
+    .callbackQuery(switchSubStatus, async context => {
+        const [userProfile] = await getProfileByID(context.queryData.k);
+        let rw = await remnawave.getUserByUUID(userProfile.uuid);
+        if (!rw) {
+            return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
+        }
+        const sub = rw.response;
+
+        const updateUser = await remnawave.updateUser({
+            uuid: userProfile.uuid,
+            trafficLimitStrategy: sub.trafficLimitStrategy,
+            status: sub.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE'
+        });
+
+        if (!updateUser) {
+            return await context.answerCallbackQuery('❌ Ошибка обновления пользователя');
+        }
+
+        rw = await remnawave.getUserByUUID(userProfile.uuid);
+        if (!rw) {
+            return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
+        }
+
+        await context.editText(aSubProfileText(rw), {
+            parse_mode: 'HTML',
+            link_preview_options: { is_disabled: true },
+            reply_markup: aUserSubKeybard(userProfile.user_id, context.queryData.k, userProfile.is_limit_extended, sub.subscriptionUrl)
+        });
+
         await context.answerCallbackQuery('✅ Успешно');
     });

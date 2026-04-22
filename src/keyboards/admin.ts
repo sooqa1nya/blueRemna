@@ -219,6 +219,8 @@ export const aUserProfilesKeyboard = async (userId: string) => {
 
 export const changeDeviceLimitData = new CallbackData('a_change_device_lim')
     .number('k'); // sub profile id
+export const switchSubStatus = new CallbackData('a_switch_sub_status')
+    .number('k'); // sub profile id
 export const switchDeviceLimitData = new CallbackData('a_switch_device_lim')
     .number('k') // sub profile id
     .boolean('l'); // device limit status 
@@ -231,6 +233,8 @@ export const changeDescriptionData = new CallbackData('a_change_description')
     .number('k'); // sub profile id
 export const aUserSubKeybard = (userId: string | number, subProfileId: number, deviceLimit: boolean, subUrl: string) => {
     return new InlineKeyboard()
+        .text('ACTIVE/DISABLED', switchSubStatus.pack({ k: subProfileId }), { style: 'danger' })
+        .row()
         .combine(copyLinkKeyboard(subUrl))
         .webApp('👤 Профиль', subUrl, { style: 'primary' })
         .row()
