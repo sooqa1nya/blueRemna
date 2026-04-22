@@ -36,6 +36,9 @@ export const broadcastMenuKeyboard = (copyMessageId: number = 0) => {
         .combine(backAdminMenuKeyboard);
 };
 
+export const cancelMailingKeyboard = new InlineKeyboard()
+    .text('Отмена', 'cancel_mailing', { style: 'danger' });
+
 export const statsKeyboard = new InlineKeyboard()
     .columns(1)
     .text('👤 Пользователи', 'general_stats')
