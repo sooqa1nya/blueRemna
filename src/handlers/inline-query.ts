@@ -22,9 +22,11 @@ export const inlineQuery = new Composer({ name: 'inlineQuery' })
                         parse_mode: 'HTML',
                         link_preview_options: { is_disabled: true }
                     }
-                ), {
-                reply_markup: new InlineKeyboard().text('⏳ Подготовка..', '__empty_button')
-            }
+                ),
+                {
+                    reply_markup: new InlineKeyboard().text('⏳ Подготовка..', '__empty_button'),
+                    thumbnail_url: process.env.THUMBNAIL_IMAGE!
+                }
             )
         ], {
             cache_time: 0
@@ -149,7 +151,8 @@ export const inlineQuery = new Composer({ name: 'inlineQuery' })
                 ),
                 {
                     reply_markup: new InlineKeyboard().url('🎁 Забрать пробный период', refUrl, { style: 'success' }),
-                    description: 'Синий VPN сервис'
+                    description: 'Синий VPN сервис',
+                    thumbnail_url: process.env.THUMBNAIL_IMAGE!
                 }
             ),
             InlineQueryResult.article(
@@ -164,7 +167,8 @@ export const inlineQuery = new Composer({ name: 'inlineQuery' })
                 ),
                 {
                     reply_markup: new InlineKeyboard().url('🎁 Забрать пробный период', refUrl, { style: 'success' }),
-                    description: 'Просто попробуй'
+                    description: 'Просто попробуй',
+                    thumbnail_url: process.env.THUMBNAIL_IMAGE!
                 }
             ),
             InlineQueryResult.article(
@@ -179,7 +183,8 @@ export const inlineQuery = new Composer({ name: 'inlineQuery' })
                 ),
                 {
                     reply_markup: new InlineKeyboard().url('🎁 Забрать пробный период', refUrl, { style: 'success' }),
-                    description: 'Видео в 4К без задержек'
+                    description: 'Видео в 4К без задержек',
+                    thumbnail_url: process.env.THUMBNAIL_IMAGE!
                 }
             ),
             InlineQueryResult.article(
@@ -194,7 +199,8 @@ export const inlineQuery = new Composer({ name: 'inlineQuery' })
                 ),
                 {
                     reply_markup: new InlineKeyboard().url('🎁 Забрать пробный период', refUrl, { style: 'success' }),
-                    description: 'Всегда оставайся на связи'
+                    description: 'Всегда оставайся на связи',
+                    thumbnail_url: process.env.THUMBNAIL_IMAGE!
                 }
             )
         ]);
