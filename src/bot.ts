@@ -14,6 +14,7 @@ import { emptyButton } from './handlers/other.js';
 import { starsPayment } from './handlers/stars-payment.js';
 import { findUser } from './database/users.js';
 import { admin } from './handlers/admin/index.js';
+import { inlineQuery } from './handlers/inline-query.js';
 
 
 export const bot = new Bot(process.env.BOT_TOKEN as string)
@@ -37,4 +38,5 @@ export const bot = new Bot(process.env.BOT_TOKEN as string)
     .extend(starsPayment)
     .extend(admin)
     .extend(sceneCancel)
-    .extend(emptyButton);
+    .extend(emptyButton)
+    .extend(inlineQuery);

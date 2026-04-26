@@ -1,15 +1,9 @@
 import { InlineKeyboard } from 'gramio';
 import { backToMainMenuKeyboard } from './main.js';
 
-export const refKeyboard = (url: string) => {
-    const text = `https://t.me/share/url?url=💙 blueVPN — моя защита в сети  
-бесплатный пробный период по моей ссылке
-${url}
-
-Попробуй, скорость и приватность реально радуют ⚡🔒`;
-
+export const refKeyboard = () => {
     return new InlineKeyboard()
-        .url('🫂 Пригласить друга', text, { style: 'primary' })
+        .switchToChat('🫂 Пригласить друга', undefined, { style: 'primary' })
         .combine(backToMainMenuKeyboard)
         .columns(1);
 };

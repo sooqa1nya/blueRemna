@@ -24,7 +24,7 @@ export const affilianteProgram = new Composer({ name: 'affilianteProgram' })
 `;
 
         await context.editText(text, {
-            reply_markup: refKeyboard(refUrl),
+            reply_markup: refKeyboard(),
             parse_mode: 'HTML'
         });
     });
