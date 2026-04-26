@@ -78,16 +78,16 @@ export const statsAdmin = new Composer({ name: 'admin-stats' })
 
             const text = `
 👤 Всего: <code>${usersCount}</code>
-  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / usersCount).toFixed(2) || 0}%)</code>
+  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / usersCount).toFixed(2)}%)</code>
 
 
-🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / usersCount).toFixed(2) || 0}%)</code>
-  └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2) || 0}%)</code>
+🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / usersCount).toFixed(2)}%)</code>
+  └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2)}%)</code>
 
 🔴 Мертвых: <code>${deathUsers}</code>
 
-🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2) || 0}%)</code>
-🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2) || 0}%)</code>
+🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2)}%)</code>
+🌐 Подключений: <code>${onlineAt} (${freeTrials ? (onlineAt * 100 / freeTrials).toFixed(2) : '0.00'}%)</code>
             `;
 
             await context.editText(text, {

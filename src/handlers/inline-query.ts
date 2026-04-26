@@ -106,15 +106,15 @@ export const inlineQuery = new Composer({ name: 'inlineQuery' })
 🔗 Реферальная ссылка: <code>${ref}</code>
 
 👤 Всего: <code>${usersCount}</code>
-  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / usersCount).toFixed(2) || 0}%)</code>
+  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / usersCount).toFixed(2)}%)</code>
 
-🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / usersCount).toFixed(2) || 0}%)</code>
-  └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2) || 0}%)</code>
+🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / usersCount).toFixed(2)}%)</code>
+  └ Активных: <code>${agreedPolicyActive} (${liveUsers ? (agreedPolicyActive * 100 / liveUsers).toFixed(2) : '0.00'}%)</code>
 
 🔴 Мертвых: <code>${deathUsers}</code>
 
-🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2) || 0}%)</code>
-🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2) || 0}%)</code>
+🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2)}%)</code>
+🌐 Подключений: <code>${onlineAt} (${freeTrials ? (onlineAt * 100 / freeTrials).toFixed(2) : '0.00'}%)</code>
 💳 Оплачено подписок: <code>${(await getPaymentPayload(ref)).length}</code>
                     `;
 

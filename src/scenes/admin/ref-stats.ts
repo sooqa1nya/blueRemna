@@ -102,15 +102,15 @@ export const refStatsScene = new Scene('ref_stats')
 🔗 Реферальная ссылка: <code>${context.scene.state.ref}</code>
 
 👤 Всего: <code>${usersCount}</code>
-  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / usersCount).toFixed(2) || 0}%)</code>
+  └ Активных: <code>${agreedPolicy} (${(agreedPolicy * 100 / usersCount).toFixed(2)}%)</code>
 
-🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / usersCount).toFixed(2) || 0}%)</code>
-  └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2) || 0}%)</code>
+🟢 Живых: <code>${liveUsers} (${(liveUsers * 100 / usersCount).toFixed(2)}%)</code>
+  └ Активных: <code>${agreedPolicyActive} (${(agreedPolicyActive * 100 / liveUsers).toFixed(2)}%)</code>
 
 🔴 Мертвых: <code>${deathUsers}</code>
 
-🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2) || 0}%)</code>
-🌐 Подключений: <code>${onlineAt} (${(onlineAt * 100 / freeTrials).toFixed(2) || 0}%)</code>
+🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2)}%)</code>
+🌐 Подключений: <code>${onlineAt} (${freeTrials ? (onlineAt * 100 / freeTrials).toFixed(2) : '0.00'}%)</code>
 💳 Оплачено подписок: <code>${(await getPaymentPayload(context.scene.state.ref)).length}</code>
         `;
 
