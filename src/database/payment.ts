@@ -16,11 +16,37 @@ export const getPayment = async (id: number) => {
     `;
 };
 
-export const changeStatus = async (id: number, status: 'paid' | 'pending'): Promise<void> => {
+export const changeStatus = async (id: number, status: 'pending' | 'process' | 'paid'): Promise<void> => {
     await sql<IPayment[]>`
         UPDATE payments
         SET status = ${status}
         WHERE id = ${id}
+    `;
+};
+
+export const lockPaymentForProcessing = async (id: number): Promise<boolean> => {
+    const result = await sql<IPayment[]>`
+        UPDATE payments
+        SET status = 'process'
+        WHERE id = ${id} AND status = 'pending'
+    `;
+
+    return result.count > 0;
+};
+
+export const completePaymentProcessing = async (id: number): Promise<void> => {
+    await sql<IPayment[]>`
+        UPDATE payments
+        SET status = 'paid'
+        WHERE id = ${id} AND status = 'process'
+    `;
+};
+
+export const revertPaymentProcessing = async (id: number): Promise<void> => {
+    await sql<IPayment[]>`
+        UPDATE payments
+        SET status = 'pending'
+        WHERE id = ${id} AND status = 'process'
     `;
 };
 
