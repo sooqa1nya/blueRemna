@@ -15,6 +15,7 @@ type RemnawaveWebhookTorrentBlockerEventsDto = components['schemas']['RemnawaveW
 type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto | RemnawaveWebhookTorrentBlockerEventsDto;
 type EventHandler = (body: any) => Promise<void>;
 
+
 const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
@@ -27,16 +28,25 @@ const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
     });
 };
 
-const handleUserExpires24h = async (body: RemnawaveWebhookUserEventsDto) => {
+const handleUserExpiration = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
     const [sub] = await getProfile(body.data.uuid);
-    await bot.api.sendMessage({
-        chat_id: body.data.telegramId,
-        text: `⏳ Внимание!\n\nВаша подписка <code>${body.data.username}</code> истекает через 1 день. Продлите её заранее, чтобы не потерять защиту и сохранить анонимность. 🔐⚡️`,
-        parse_mode: 'HTML',
-        reply_markup: await extendSubKeyboard(sub.id)
-    });
+    if (body.meta?.expiration == -24) {
+        await bot.api.sendMessage({
+            chat_id: body.data.telegramId,
+            text: `⏳ Внимание!\n\nВаша подписка <code>${body.data.username}</code> истекает через 1 день. Продлите её заранее, чтобы не потерять защиту и сохранить анонимность. 🔐⚡️`,
+            parse_mode: 'HTML',
+            reply_markup: await extendSubKeyboard(sub.id)
+        });
+    } else if (body.meta?.expiration == -72) {
+        await bot.api.sendMessage({
+            chat_id: body.data.telegramId,
+            text: `⏳ Внимание!\n\nВаша подписка <code>${body.data.username}</code> истекает через 3 дня. Продлите её заранее, чтобы не потерять защиту и сохранить анонимность. 🔐⚡️`,
+            parse_mode: 'HTML',
+            reply_markup: await extendSubKeyboard(sub.id)
+        });
+    }
 };
 
 const handleUserNotConnected = async (body: RemnawaveWebhookUserEventsDto) => {
@@ -105,7 +115,7 @@ const webhookHandlers: Record<string, Record<string, EventHandler>> = {
     user: {
         'user.not_connected': handleUserNotConnected,
         'user.expired': handleUserExpired,
-        'user.expires_in_24_hours': handleUserExpires24h
+        'user.expiration': handleUserExpiration
     },
     crm: {
         'crm.infra_billing_node_payment_in_48hrs': handleCrmBilling

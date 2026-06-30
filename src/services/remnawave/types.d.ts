@@ -272,7 +272,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all users */
+        /** Get all users using offset-based pagination */
         get: operations["UsersController_getAllUsers"];
         put?: never;
         /** Create a new user */
@@ -297,6 +297,23 @@ export interface paths {
         post?: never;
         /** Delete user */
         delete: operations["UsersController_deleteUser"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all users using cursor-based (keyset) pagination */
+        get: operations["UsersController_getUsersStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -980,6 +997,26 @@ export interface paths {
          * @description This endpoint is forbidden to use via "API-key". It can be used only with an admin JWT-token.
          */
         delete: operations["ApiTokensController_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tokens/scopes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get available API token scopes
+         * @description Returns the catalog of scopes that can be granted to an API token, grouped by resource. Forbidden via "API-key", admin JWT only.
+         */
+        get: operations["ApiTokensController_getScopes"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1788,7 +1825,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/hosts/bulk/set-inbound": {
+    "/api/hosts/bulk/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -1797,29 +1834,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Set inbound to hosts by UUIDs */
-        post: operations["HostsBulkActionsController_setInboundToHosts"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/hosts/bulk/set-port": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Set port to hosts by UUIDs */
-        post: operations["HostsBulkActionsController_setPortToHosts"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
+        /** Update many hosts */
+        patch: operations["HostsBulkActionsController_setPortToHosts"];
         trace?: never;
     };
     "/api/bandwidth-stats/nodes/{uuid}/users/legacy": {
@@ -1850,6 +1870,23 @@ export interface paths {
         get: operations["BandwidthStatsNodesController_getStatsNodeUsersUsage"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bandwidth-stats/nodes/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get Nodes Users Usage by Nodes UUIDs */
+        post: operations["BandwidthStatsNodesController_getStatsNodesUsersUsage"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2265,23 +2302,6 @@ export interface paths {
         get: operations["SystemController_getX25519Keypairs"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/system/tools/happ/encrypt": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Encrypt Happ Crypto Link */
-        post: operations["SystemController_encryptHappCryptoLink"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3280,6 +3300,74 @@ export interface components {
                 total: number;
             };
         };
+        GetUsersStreamResponseDto: {
+            response: {
+                users: {
+                    /** Format: uuid */
+                    uuid: string;
+                    id: number;
+                    shortUuid: string;
+                    username: string;
+                    /**
+                     * @default ACTIVE
+                     * @enum {string}
+                     */
+                    status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
+                    /** @default 0 */
+                    trafficLimitBytes: number;
+                    /**
+                     * @description Available reset periods
+                     * @default NO_RESET
+                     * @enum {string}
+                     */
+                    trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
+                    /** Format: date-time */
+                    expireAt: string;
+                    telegramId: number | null;
+                    /** Format: email */
+                    email: string | null;
+                    description: string | null;
+                    tag: string | null;
+                    hwidDeviceLimit: number | null;
+                    /** Format: uuid */
+                    externalSquadUuid: string | null;
+                    trojanPassword: string;
+                    /** Format: uuid */
+                    vlessUuid: string;
+                    ssPassword: string;
+                    /** @default 0 */
+                    lastTriggeredThreshold: number;
+                    /** Format: date-time */
+                    subRevokedAt: string | null;
+                    /** Format: date-time */
+                    lastTrafficResetAt: string | null;
+                    /** Format: date-time */
+                    createdAt: string;
+                    /** Format: date-time */
+                    updatedAt: string;
+                    subscriptionUrl: string;
+                    activeInternalSquads: {
+                        /** Format: uuid */
+                        uuid: string;
+                        name: string;
+                    }[];
+                    userTraffic: {
+                        usedTrafficBytes: number;
+                        lifetimeUsedTrafficBytes: number;
+                        /** Format: date-time */
+                        onlineAt: string | null;
+                        /** Format: date-time */
+                        firstConnectedAt: string | null;
+                        /** Format: uuid */
+                        lastConnectedNodeUuid: string | null;
+                    };
+                }[];
+                /** @description Cursor to fetch the next page, or null if there are no more results */
+                nextCursor: string | null;
+                /** @description Whether there are more results to fetch */
+                hasMore: boolean;
+            };
+        };
         GetAllTagsResponseDto: {
             response: {
                 tags: string[];
@@ -3309,8 +3397,7 @@ export interface components {
                 total: number;
                 records: {
                     id: number;
-                    /** Format: uuid */
-                    userUuid: string;
+                    userId: number;
                     /** Format: date-time */
                     requestAt: string;
                     requestIp: string | null;
@@ -4370,7 +4457,12 @@ export interface components {
                     trafficLimit: string;
                     trafficUsed: string;
                     lifetimeTrafficUsed: string;
-                    isHwidLimited: boolean;
+                    hwidCheckup: {
+                        subscriptionAllowed: boolean;
+                        maxDeviceReached: boolean;
+                        hwidNotSupported: boolean;
+                        limitBypassed: boolean;
+                    } | null;
                 };
                 headers: {
                     [key: string]: string;
@@ -4449,7 +4541,7 @@ export interface components {
                         multiMode: boolean;
                     } | {
                         clientMtu: number;
-                        tti: number;
+                        clientTti: number;
                         congestion: boolean;
                     } | {
                         version: number;
@@ -4458,7 +4550,8 @@ export interface components {
                     /** @enum {string} */
                     security: "tls" | "reality" | "none";
                     securityOptions?: {
-                        allowInsecure: boolean;
+                        pinnedPeerCertSha256: string | null;
+                        verifyPeerCertByName: string | null;
                         alpn: string | null;
                         enableSessionResumption: boolean;
                         fingerprint: string | null;
@@ -4481,13 +4574,15 @@ export interface components {
                     clientOverrides: {
                         shuffleHost: boolean;
                         mihomoX25519: boolean;
+                        /** @enum {string|null} */
+                        mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                         serverDescription: string | null;
                         xrayJsonTemplate: unknown;
                     };
                     metadata: {
                         /** Format: uuid */
                         uuid: string;
-                        tag: string | null;
+                        tags: string[];
                         excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
                         inboundTag: string;
                         /** Format: uuid */
@@ -4614,31 +4709,66 @@ export interface components {
             };
         };
         CreateApiTokenRequestDto: {
-            tokenName: string;
+            name: string;
+            expiresInDays: number;
+            /**
+             * @default [
+             *       "*"
+             *     ]
+             */
+            scopes: string[];
         };
         CreateApiTokenResponseDto: {
             response: {
-                token: string;
+                /** Format: uuid */
                 uuid: string;
+                name: string;
+                /** Format: date-time */
+                expireAt: string;
+                scopes: string[];
+                /** Format: date-time */
+                createdAt: string;
+                /** Format: date-time */
+                updatedAt: string;
+                token: string;
             };
         };
         DeleteApiTokenResponseDto: {
             response: boolean;
         };
+        GetApiTokenScopesResponseDto: {
+            response: {
+                wildcard: string;
+                resources: {
+                    resource: string;
+                    resourceScopes: string[];
+                    endpoints: {
+                        key: string;
+                        /** @enum {string} */
+                        kind: "read" | "write";
+                        method: string;
+                        path: string;
+                        description: string;
+                    }[];
+                }[];
+            };
+        };
         FindAllApiTokensResponseDto: {
             response: {
-                apiKeys: {
+                tokens: {
                     /** Format: uuid */
                     uuid: string;
-                    token: string;
-                    tokenName: string;
+                    name: string;
+                    /** Format: date-time */
+                    expireAt: string;
+                    scopes: string[];
                     /** Format: date-time */
                     createdAt: string;
                     /** Format: date-time */
                     updatedAt: string;
                 }[];
                 docs: {
-                    isDocsEnabled: boolean;
+                    enabled: boolean;
                     scalarPath: string | null;
                     swaggerPath: string | null;
                 };
@@ -5494,6 +5624,7 @@ export interface components {
             name: string;
             address: string;
             port?: number;
+            proxyUrl?: string | null;
             /** @default false */
             isTrafficTrackingActive: boolean;
             trafficLimitBytes?: number;
@@ -5502,6 +5633,7 @@ export interface components {
             /** @default XX */
             countryCode: string;
             consumptionMultiplier?: number;
+            nodeConsumptionMultiplier?: number;
             configProfile: {
                 /** Format: uuid */
                 activeConfigProfileUuid: string;
@@ -5512,6 +5644,7 @@ export interface components {
             tags?: string[];
             /** Format: uuid */
             activePluginUuid?: string | null;
+            note?: string;
         };
         CreateNodeResponseDto: {
             response: {
@@ -5520,6 +5653,7 @@ export interface components {
                 name: string;
                 address: string;
                 port: number | null;
+                proxyUrl: string | null;
                 isConnected: boolean;
                 isDisabled: boolean;
                 isConnecting: boolean;
@@ -5534,6 +5668,7 @@ export interface components {
                 viewPosition: number;
                 countryCode: string;
                 consumptionMultiplier: number;
+                nodeConsumptionMultiplier: number;
                 tags: string[];
                 /** Format: date-time */
                 createdAt: string;
@@ -5603,6 +5738,7 @@ export interface components {
                 } | null;
                 xrayUptime: number;
                 usersOnline: number;
+                note: string | null;
             };
         };
         GetAllNodesResponseDto: {
@@ -5612,6 +5748,7 @@ export interface components {
                 name: string;
                 address: string;
                 port: number | null;
+                proxyUrl: string | null;
                 isConnected: boolean;
                 isDisabled: boolean;
                 isConnecting: boolean;
@@ -5626,6 +5763,7 @@ export interface components {
                 viewPosition: number;
                 countryCode: string;
                 consumptionMultiplier: number;
+                nodeConsumptionMultiplier: number;
                 tags: string[];
                 /** Format: date-time */
                 createdAt: string;
@@ -5695,6 +5833,7 @@ export interface components {
                 } | null;
                 xrayUptime: number;
                 usersOnline: number;
+                note: string | null;
             }[];
         };
         GetOneNodeResponseDto: {
@@ -5704,6 +5843,7 @@ export interface components {
                 name: string;
                 address: string;
                 port: number | null;
+                proxyUrl: string | null;
                 isConnected: boolean;
                 isDisabled: boolean;
                 isConnecting: boolean;
@@ -5718,6 +5858,7 @@ export interface components {
                 viewPosition: number;
                 countryCode: string;
                 consumptionMultiplier: number;
+                nodeConsumptionMultiplier: number;
                 tags: string[];
                 /** Format: date-time */
                 createdAt: string;
@@ -5787,6 +5928,7 @@ export interface components {
                 } | null;
                 xrayUptime: number;
                 usersOnline: number;
+                note: string | null;
             };
         };
         EnableNodeResponseDto: {
@@ -5796,6 +5938,7 @@ export interface components {
                 name: string;
                 address: string;
                 port: number | null;
+                proxyUrl: string | null;
                 isConnected: boolean;
                 isDisabled: boolean;
                 isConnecting: boolean;
@@ -5810,6 +5953,7 @@ export interface components {
                 viewPosition: number;
                 countryCode: string;
                 consumptionMultiplier: number;
+                nodeConsumptionMultiplier: number;
                 tags: string[];
                 /** Format: date-time */
                 createdAt: string;
@@ -5879,6 +6023,7 @@ export interface components {
                 } | null;
                 xrayUptime: number;
                 usersOnline: number;
+                note: string | null;
             };
         };
         DisableNodeResponseDto: {
@@ -5888,6 +6033,7 @@ export interface components {
                 name: string;
                 address: string;
                 port: number | null;
+                proxyUrl: string | null;
                 isConnected: boolean;
                 isDisabled: boolean;
                 isConnecting: boolean;
@@ -5902,6 +6048,7 @@ export interface components {
                 viewPosition: number;
                 countryCode: string;
                 consumptionMultiplier: number;
+                nodeConsumptionMultiplier: number;
                 tags: string[];
                 /** Format: date-time */
                 createdAt: string;
@@ -5971,6 +6118,7 @@ export interface components {
                 } | null;
                 xrayUptime: number;
                 usersOnline: number;
+                note: string | null;
             };
         };
         DeleteNodeResponseDto: {
@@ -5984,12 +6132,14 @@ export interface components {
             name?: string;
             address?: string;
             port?: number;
+            proxyUrl?: string | null;
             isTrafficTrackingActive?: boolean;
             trafficLimitBytes?: number;
             notifyPercent?: number;
             trafficResetDay?: number;
             countryCode?: string;
             consumptionMultiplier?: number;
+            nodeConsumptionMultiplier?: number;
             configProfile?: {
                 /** Format: uuid */
                 activeConfigProfileUuid: string;
@@ -6000,6 +6150,7 @@ export interface components {
             tags?: string[];
             /** Format: uuid */
             activePluginUuid?: string | null;
+            note?: string | null;
         };
         UpdateNodeResponseDto: {
             response: {
@@ -6008,6 +6159,7 @@ export interface components {
                 name: string;
                 address: string;
                 port: number | null;
+                proxyUrl: string | null;
                 isConnected: boolean;
                 isDisabled: boolean;
                 isConnecting: boolean;
@@ -6022,6 +6174,7 @@ export interface components {
                 viewPosition: number;
                 countryCode: string;
                 consumptionMultiplier: number;
+                nodeConsumptionMultiplier: number;
                 tags: string[];
                 /** Format: date-time */
                 createdAt: string;
@@ -6091,7 +6244,11 @@ export interface components {
                 } | null;
                 xrayUptime: number;
                 usersOnline: number;
+                note: string | null;
             };
+        };
+        RestartNodeRequestBodyDto: {
+            forceRestart: boolean;
         };
         RestartNodeResponseDto: {
             response: {
@@ -6104,7 +6261,7 @@ export interface components {
             };
         };
         RestartAllNodesRequestBodyDto: {
-            forceRestart?: boolean;
+            forceRestart: boolean;
         };
         RestartAllNodesResponseDto: {
             response: {
@@ -6125,6 +6282,7 @@ export interface components {
                 name: string;
                 address: string;
                 port: number | null;
+                proxyUrl: string | null;
                 isConnected: boolean;
                 isDisabled: boolean;
                 isConnecting: boolean;
@@ -6139,6 +6297,7 @@ export interface components {
                 viewPosition: number;
                 countryCode: string;
                 consumptionMultiplier: number;
+                nodeConsumptionMultiplier: number;
                 tags: string[];
                 /** Format: date-time */
                 createdAt: string;
@@ -6208,6 +6367,7 @@ export interface components {
                 } | null;
                 xrayUptime: number;
                 usersOnline: number;
+                note: string | null;
             }[];
         };
         ProfileModificationRequestDto: {
@@ -6238,11 +6398,13 @@ export interface components {
             fields: {
                 countryCode?: string;
                 consumptionMultiplier?: number;
+                nodeConsumptionMultiplier?: number;
                 /** Format: uuid */
                 providerUuid?: string | null;
                 tags?: string[];
                 /** Format: uuid */
                 activePluginUuid?: string | null;
+                note?: string | null;
             };
         };
         BulkNodesUpdateResponseDto: {
@@ -6505,13 +6667,12 @@ export interface components {
             remark: string;
             address: string;
             port: number;
-            path?: string;
-            sni?: string;
-            host?: string;
+            path?: string | null;
+            sni?: string | null;
+            host?: string | null;
             /** @enum {string|null} */
             alpn?: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
-            /** @enum {string|null} */
-            fingerprint?: "chrome" | "firefox" | "safari" | "ios" | "android" | "edge" | "qq" | "random" | "randomized" | null;
+            fingerprint?: string | null;
             /** @default false */
             isDisabled: boolean;
             /**
@@ -6519,26 +6680,27 @@ export interface components {
              * @enum {string}
              */
             securityLayer: "DEFAULT" | "TLS" | "NONE";
-            xHttpExtraParams?: unknown;
+            xhttpExtraParams?: unknown;
             muxParams?: unknown;
             sockoptParams?: unknown;
             finalMask?: unknown;
             serverDescription?: string | null;
-            /** @description Optional. Host tag for categorization. Max 32 characters, uppercase letters, numbers, underscores and colons are allowed. */
-            tag?: string | null;
+            tags?: string[];
             /** @default false */
             isHidden: boolean;
             /** @default false */
             overrideSniFromAddress: boolean;
             /** @default false */
             keepSniBlank: boolean;
-            /** @default false */
-            allowInsecure: boolean;
+            pinnedPeerCertSha256?: string | null;
+            verifyPeerCertByName?: string | null;
             vlessRouteId?: number | null;
             /** @default false */
             shuffleHost: boolean;
             /** @default false */
             mihomoX25519: boolean;
+            /** @enum {string|null} */
+            mihomoIpVersion?: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
             nodes?: string[];
             /** Format: uuid */
             xrayJsonTemplateUuid?: string | null;
@@ -6558,16 +6720,16 @@ export interface components {
                 path: string | null;
                 sni: string | null;
                 host: string | null;
-                alpn: string | null;
+                /** @enum {string|null} */
+                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
                 fingerprint: string | null;
-                /** @default false */
                 isDisabled: boolean;
                 /**
                  * @default DEFAULT
                  * @enum {string}
                  */
                 securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
+                xhttpExtraParams: unknown;
                 muxParams: unknown;
                 sockoptParams: unknown;
                 finalMask: unknown;
@@ -6578,7 +6740,8 @@ export interface components {
                     configProfileInboundUuid: string | null;
                 };
                 serverDescription: string | null;
-                tag: string | null;
+                /** @default [] */
+                tags: string[];
                 /** @default false */
                 isHidden: boolean;
                 /** @default false */
@@ -6586,15 +6749,17 @@ export interface components {
                 /** @default false */
                 keepSniBlank: boolean;
                 vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
+                pinnedPeerCertSha256: string | null;
+                verifyPeerCertByName: string | null;
                 shuffleHost: boolean;
                 mihomoX25519: boolean;
+                /** @enum {string|null} */
+                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
                 excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             };
         };
         UpdateHostRequestDto: {
@@ -6609,30 +6774,32 @@ export interface components {
             remark?: string;
             address?: string;
             port?: number;
-            path?: string;
-            sni?: string;
-            host?: string;
+            path?: string | null;
+            sni?: string | null;
+            host?: string | null;
             /** @enum {string|null} */
             alpn?: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
-            /** @enum {string|null} */
-            fingerprint?: "chrome" | "firefox" | "safari" | "ios" | "android" | "edge" | "qq" | "random" | "randomized" | null;
-            isDisabled?: boolean;
+            fingerprint?: string | null;
+            /** @default false */
+            isDisabled: boolean;
             /** @enum {string} */
             securityLayer?: "DEFAULT" | "TLS" | "NONE";
-            xHttpExtraParams?: unknown;
+            xhttpExtraParams?: unknown;
             muxParams?: unknown;
             sockoptParams?: unknown;
             finalMask?: unknown;
             serverDescription?: string | null;
-            /** @description Optional. Host tag for categorization. Max 32 characters, uppercase letters, numbers, underscores and colons are allowed. */
-            tag?: string | null;
+            tags?: string[];
             isHidden?: boolean;
             overrideSniFromAddress?: boolean;
             keepSniBlank?: boolean;
             vlessRouteId?: number | null;
-            allowInsecure?: boolean;
+            pinnedPeerCertSha256?: string | null;
+            verifyPeerCertByName?: string | null;
             shuffleHost?: boolean;
             mihomoX25519?: boolean;
+            /** @enum {string|null} */
+            mihomoIpVersion?: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
             nodes?: string[];
             /** Format: uuid */
             xrayJsonTemplateUuid?: string | null;
@@ -6652,16 +6819,16 @@ export interface components {
                 path: string | null;
                 sni: string | null;
                 host: string | null;
-                alpn: string | null;
+                /** @enum {string|null} */
+                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
                 fingerprint: string | null;
-                /** @default false */
                 isDisabled: boolean;
                 /**
                  * @default DEFAULT
                  * @enum {string}
                  */
                 securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
+                xhttpExtraParams: unknown;
                 muxParams: unknown;
                 sockoptParams: unknown;
                 finalMask: unknown;
@@ -6672,7 +6839,8 @@ export interface components {
                     configProfileInboundUuid: string | null;
                 };
                 serverDescription: string | null;
-                tag: string | null;
+                /** @default [] */
+                tags: string[];
                 /** @default false */
                 isHidden: boolean;
                 /** @default false */
@@ -6680,15 +6848,17 @@ export interface components {
                 /** @default false */
                 keepSniBlank: boolean;
                 vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
+                pinnedPeerCertSha256: string | null;
+                verifyPeerCertByName: string | null;
                 shuffleHost: boolean;
                 mihomoX25519: boolean;
+                /** @enum {string|null} */
+                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
                 excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             };
         };
         GetAllHostsResponseDto: {
@@ -6702,16 +6872,16 @@ export interface components {
                 path: string | null;
                 sni: string | null;
                 host: string | null;
-                alpn: string | null;
+                /** @enum {string|null} */
+                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
                 fingerprint: string | null;
-                /** @default false */
                 isDisabled: boolean;
                 /**
                  * @default DEFAULT
                  * @enum {string}
                  */
                 securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
+                xhttpExtraParams: unknown;
                 muxParams: unknown;
                 sockoptParams: unknown;
                 finalMask: unknown;
@@ -6722,7 +6892,8 @@ export interface components {
                     configProfileInboundUuid: string | null;
                 };
                 serverDescription: string | null;
-                tag: string | null;
+                /** @default [] */
+                tags: string[];
                 /** @default false */
                 isHidden: boolean;
                 /** @default false */
@@ -6730,15 +6901,17 @@ export interface components {
                 /** @default false */
                 keepSniBlank: boolean;
                 vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
+                pinnedPeerCertSha256: string | null;
+                verifyPeerCertByName: string | null;
                 shuffleHost: boolean;
                 mihomoX25519: boolean;
+                /** @enum {string|null} */
+                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
                 excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             }[];
         };
         GetOneHostResponseDto: {
@@ -6752,16 +6925,16 @@ export interface components {
                 path: string | null;
                 sni: string | null;
                 host: string | null;
-                alpn: string | null;
+                /** @enum {string|null} */
+                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
                 fingerprint: string | null;
-                /** @default false */
                 isDisabled: boolean;
                 /**
                  * @default DEFAULT
                  * @enum {string}
                  */
                 securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
+                xhttpExtraParams: unknown;
                 muxParams: unknown;
                 sockoptParams: unknown;
                 finalMask: unknown;
@@ -6772,7 +6945,8 @@ export interface components {
                     configProfileInboundUuid: string | null;
                 };
                 serverDescription: string | null;
-                tag: string | null;
+                /** @default [] */
+                tags: string[];
                 /** @default false */
                 isHidden: boolean;
                 /** @default false */
@@ -6780,15 +6954,17 @@ export interface components {
                 /** @default false */
                 keepSniBlank: boolean;
                 vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
+                pinnedPeerCertSha256: string | null;
+                verifyPeerCertByName: string | null;
                 shuffleHost: boolean;
                 mihomoX25519: boolean;
+                /** @enum {string|null} */
+                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
                 excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             };
         };
         ReorderHostRequestDto: {
@@ -6822,16 +6998,16 @@ export interface components {
                 path: string | null;
                 sni: string | null;
                 host: string | null;
-                alpn: string | null;
+                /** @enum {string|null} */
+                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
                 fingerprint: string | null;
-                /** @default false */
                 isDisabled: boolean;
                 /**
                  * @default DEFAULT
                  * @enum {string}
                  */
                 securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
+                xhttpExtraParams: unknown;
                 muxParams: unknown;
                 sockoptParams: unknown;
                 finalMask: unknown;
@@ -6842,7 +7018,8 @@ export interface components {
                     configProfileInboundUuid: string | null;
                 };
                 serverDescription: string | null;
-                tag: string | null;
+                /** @default [] */
+                tags: string[];
                 /** @default false */
                 isHidden: boolean;
                 /** @default false */
@@ -6850,15 +7027,17 @@ export interface components {
                 /** @default false */
                 keepSniBlank: boolean;
                 vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
+                pinnedPeerCertSha256: string | null;
+                verifyPeerCertByName: string | null;
                 shuffleHost: boolean;
                 mihomoX25519: boolean;
+                /** @enum {string|null} */
+                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
                 excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             }[];
         };
         BulkDisableHostsRequestDto: {
@@ -6875,16 +7054,16 @@ export interface components {
                 path: string | null;
                 sni: string | null;
                 host: string | null;
-                alpn: string | null;
+                /** @enum {string|null} */
+                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
                 fingerprint: string | null;
-                /** @default false */
                 isDisabled: boolean;
                 /**
                  * @default DEFAULT
                  * @enum {string}
                  */
                 securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
+                xhttpExtraParams: unknown;
                 muxParams: unknown;
                 sockoptParams: unknown;
                 finalMask: unknown;
@@ -6895,7 +7074,8 @@ export interface components {
                     configProfileInboundUuid: string | null;
                 };
                 serverDescription: string | null;
-                tag: string | null;
+                /** @default [] */
+                tags: string[];
                 /** @default false */
                 isHidden: boolean;
                 /** @default false */
@@ -6903,15 +7083,17 @@ export interface components {
                 /** @default false */
                 keepSniBlank: boolean;
                 vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
+                pinnedPeerCertSha256: string | null;
+                verifyPeerCertByName: string | null;
                 shuffleHost: boolean;
                 mihomoX25519: boolean;
+                /** @enum {string|null} */
+                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
                 excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             }[];
         };
         BulkEnableHostsRequestDto: {
@@ -6928,16 +7110,16 @@ export interface components {
                 path: string | null;
                 sni: string | null;
                 host: string | null;
-                alpn: string | null;
+                /** @enum {string|null} */
+                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
                 fingerprint: string | null;
-                /** @default false */
                 isDisabled: boolean;
                 /**
                  * @default DEFAULT
                  * @enum {string}
                  */
                 securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
+                xhttpExtraParams: unknown;
                 muxParams: unknown;
                 sockoptParams: unknown;
                 finalMask: unknown;
@@ -6948,7 +7130,8 @@ export interface components {
                     configProfileInboundUuid: string | null;
                 };
                 serverDescription: string | null;
-                tag: string | null;
+                /** @default [] */
+                tags: string[];
                 /** @default false */
                 isHidden: boolean;
                 /** @default false */
@@ -6956,25 +7139,65 @@ export interface components {
                 /** @default false */
                 keepSniBlank: boolean;
                 vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
+                pinnedPeerCertSha256: string | null;
+                verifyPeerCertByName: string | null;
                 shuffleHost: boolean;
                 mihomoX25519: boolean;
+                /** @enum {string|null} */
+                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
                 excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             }[];
         };
-        SetInboundToManyHostsRequestDto: {
+        UpdateManyHostsRequestDto: {
+            inbound?: {
+                /** Format: uuid */
+                configProfileUuid: string;
+                /** Format: uuid */
+                configProfileInboundUuid: string;
+            };
+            remark?: string;
+            address?: string;
+            port?: number;
+            path?: string | null;
+            sni?: string | null;
+            host?: string | null;
+            /** @enum {string|null} */
+            alpn?: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
+            fingerprint?: string | null;
+            /** @default false */
+            isDisabled: boolean;
+            /** @enum {string} */
+            securityLayer?: "DEFAULT" | "TLS" | "NONE";
+            xhttpExtraParams?: unknown;
+            muxParams?: unknown;
+            sockoptParams?: unknown;
+            finalMask?: unknown;
+            serverDescription?: string | null;
+            tags?: string[];
+            isHidden?: boolean;
+            overrideSniFromAddress?: boolean;
+            keepSniBlank?: boolean;
+            vlessRouteId?: number | null;
+            pinnedPeerCertSha256?: string | null;
+            verifyPeerCertByName?: string | null;
+            shuffleHost?: boolean;
+            mihomoX25519?: boolean;
+            /** @enum {string|null} */
+            mihomoIpVersion?: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
+            nodes?: string[];
+            /** Format: uuid */
+            xrayJsonTemplateUuid?: string | null;
+            /** @description Optional. Internal squads from which the host will be excluded. */
+            excludedInternalSquads?: string[];
+            /** @description Optional. Subscription types from which the host will be excluded from. */
+            excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             uuids: string[];
-            /** Format: uuid */
-            configProfileUuid: string;
-            /** Format: uuid */
-            configProfileInboundUuid: string;
         };
-        SetInboundToManyHostsResponseDto: {
+        UpdateManyHostsResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -6985,16 +7208,16 @@ export interface components {
                 path: string | null;
                 sni: string | null;
                 host: string | null;
-                alpn: string | null;
+                /** @enum {string|null} */
+                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
                 fingerprint: string | null;
-                /** @default false */
                 isDisabled: boolean;
                 /**
                  * @default DEFAULT
                  * @enum {string}
                  */
                 securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
+                xhttpExtraParams: unknown;
                 muxParams: unknown;
                 sockoptParams: unknown;
                 finalMask: unknown;
@@ -7005,7 +7228,8 @@ export interface components {
                     configProfileInboundUuid: string | null;
                 };
                 serverDescription: string | null;
-                tag: string | null;
+                /** @default [] */
+                tags: string[];
                 /** @default false */
                 isHidden: boolean;
                 /** @default false */
@@ -7013,69 +7237,17 @@ export interface components {
                 /** @default false */
                 keepSniBlank: boolean;
                 vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
+                pinnedPeerCertSha256: string | null;
+                verifyPeerCertByName: string | null;
                 shuffleHost: boolean;
                 mihomoX25519: boolean;
+                /** @enum {string|null} */
+                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
                 excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
-            }[];
-        };
-        SetPortToManyHostsRequestDto: {
-            uuids: string[];
-            port: number;
-        };
-        SetPortToManyHostsResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                viewPosition: number;
-                remark: string;
-                address: string;
-                port: number;
-                path: string | null;
-                sni: string | null;
-                host: string | null;
-                alpn: string | null;
-                fingerprint: string | null;
-                /** @default false */
-                isDisabled: boolean;
-                /**
-                 * @default DEFAULT
-                 * @enum {string}
-                 */
-                securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xHttpExtraParams: unknown;
-                muxParams: unknown;
-                sockoptParams: unknown;
-                finalMask: unknown;
-                inbound: {
-                    /** Format: uuid */
-                    configProfileUuid: string | null;
-                    /** Format: uuid */
-                    configProfileInboundUuid: string | null;
-                };
-                serverDescription: string | null;
-                tag: string | null;
-                /** @default false */
-                isHidden: boolean;
-                /** @default false */
-                overrideSniFromAddress: boolean;
-                /** @default false */
-                keepSniBlank: boolean;
-                vlessRouteId: number | null;
-                /** @default false */
-                allowInsecure: boolean;
-                shuffleHost: boolean;
-                mihomoX25519: boolean;
-                nodes: string[];
-                /** Format: uuid */
-                xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             }[];
         };
         GetLegacyStatsNodesUsersUsageResponseDto: {
@@ -7090,6 +7262,20 @@ export interface components {
             }[];
         };
         GetStatsNodeUsersUsageResponseDto: {
+            response: {
+                categories: string[];
+                sparklineData: number[];
+                topUsers: {
+                    color: string;
+                    username: string;
+                    total: number;
+                }[];
+            };
+        };
+        GetStatsNodesUsersUsageRequestDto: {
+            nodesUuids: string[];
+        };
+        GetStatsNodesUsersUsageResponseDto: {
             response: {
                 categories: string[];
                 sparklineData: number[];
@@ -7139,12 +7325,12 @@ export interface components {
             response: {
                 devices: {
                     hwid: string;
-                    /** Format: uuid */
-                    userUuid: string;
+                    userId: number;
                     platform: string | null;
                     osVersion: string | null;
                     deviceModel: string | null;
                     userAgent: string | null;
+                    requestIp: string | null;
                     /** Format: date-time */
                     createdAt: string;
                     /** Format: date-time */
@@ -7161,18 +7347,19 @@ export interface components {
             osVersion?: string;
             deviceModel?: string;
             userAgent?: string;
+            requestIp?: string;
         };
         CreateUserHwidDeviceResponseDto: {
             response: {
                 total: number;
                 devices: {
                     hwid: string;
-                    /** Format: uuid */
-                    userUuid: string;
+                    userId: number;
                     platform: string | null;
                     osVersion: string | null;
                     deviceModel: string | null;
                     userAgent: string | null;
+                    requestIp: string | null;
                     /** Format: date-time */
                     createdAt: string;
                     /** Format: date-time */
@@ -7190,12 +7377,12 @@ export interface components {
                 total: number;
                 devices: {
                     hwid: string;
-                    /** Format: uuid */
-                    userUuid: string;
+                    userId: number;
                     platform: string | null;
                     osVersion: string | null;
                     deviceModel: string | null;
                     userAgent: string | null;
+                    requestIp: string | null;
                     /** Format: date-time */
                     createdAt: string;
                     /** Format: date-time */
@@ -7212,12 +7399,12 @@ export interface components {
                 total: number;
                 devices: {
                     hwid: string;
-                    /** Format: uuid */
-                    userUuid: string;
+                    userId: number;
                     platform: string | null;
                     osVersion: string | null;
                     deviceModel: string | null;
                     userAgent: string | null;
+                    requestIp: string | null;
                     /** Format: date-time */
                     createdAt: string;
                     /** Format: date-time */
@@ -7230,10 +7417,10 @@ export interface components {
                 byPlatform: {
                     platform: string;
                     count: number;
-                }[];
-                byApp: {
-                    app: string;
-                    count: number;
+                    byApp: {
+                        app: string;
+                        count: number;
+                    }[];
                 }[];
                 stats: {
                     totalUniqueDevices: number;
@@ -7259,12 +7446,12 @@ export interface components {
                 total: number;
                 devices: {
                     hwid: string;
-                    /** Format: uuid */
-                    userUuid: string;
+                    userId: number;
                     platform: string | null;
                     osVersion: string | null;
                     deviceModel: string | null;
                     userAgent: string | null;
+                    requestIp: string | null;
                     /** Format: date-time */
                     createdAt: string;
                     /** Format: date-time */
@@ -7313,10 +7500,12 @@ export interface components {
                         totalBills: number;
                     };
                     billingNodes: {
-                        /** Format: uuid */
-                        nodeUuid: string;
                         name: string;
-                        countryCode: string;
+                        details: {
+                            /** Format: uuid */
+                            nodeUuid: string;
+                            countryCode: string;
+                        } | null;
                     }[];
                 }[];
             };
@@ -7337,10 +7526,12 @@ export interface components {
                     totalBills: number;
                 };
                 billingNodes: {
-                    /** Format: uuid */
-                    nodeUuid: string;
                     name: string;
-                    countryCode: string;
+                    details: {
+                        /** Format: uuid */
+                        nodeUuid: string;
+                        countryCode: string;
+                    } | null;
                 }[];
             };
         };
@@ -7372,10 +7563,12 @@ export interface components {
                     totalBills: number;
                 };
                 billingNodes: {
-                    /** Format: uuid */
-                    nodeUuid: string;
                     name: string;
-                    countryCode: string;
+                    details: {
+                        /** Format: uuid */
+                        nodeUuid: string;
+                        countryCode: string;
+                    } | null;
                 }[];
             };
         };
@@ -7404,10 +7597,12 @@ export interface components {
                     totalBills: number;
                 };
                 billingNodes: {
-                    /** Format: uuid */
-                    nodeUuid: string;
                     name: string;
-                    countryCode: string;
+                    details: {
+                        /** Format: uuid */
+                        nodeUuid: string;
+                        countryCode: string;
+                    } | null;
                 }[];
             };
         };
@@ -7488,7 +7683,8 @@ export interface components {
                     /** Format: uuid */
                     uuid: string;
                     /** Format: uuid */
-                    nodeUuid: string;
+                    nodeUuid: string | null;
+                    name: string | null;
                     /** Format: uuid */
                     providerUuid: string;
                     provider: {
@@ -7503,7 +7699,7 @@ export interface components {
                         uuid: string;
                         name: string;
                         countryCode: string;
-                    };
+                    } | null;
                     /** Format: date-time */
                     nextBillingAt: string;
                     /** Format: date-time */
@@ -7537,7 +7733,8 @@ export interface components {
                     /** Format: uuid */
                     uuid: string;
                     /** Format: uuid */
-                    nodeUuid: string;
+                    nodeUuid: string | null;
+                    name: string | null;
                     /** Format: uuid */
                     providerUuid: string;
                     provider: {
@@ -7552,7 +7749,7 @@ export interface components {
                         uuid: string;
                         name: string;
                         countryCode: string;
-                    };
+                    } | null;
                     /** Format: date-time */
                     nextBillingAt: string;
                     /** Format: date-time */
@@ -7578,12 +7775,13 @@ export interface components {
             /** Format: uuid */
             providerUuid: string;
             /** Format: uuid */
-            nodeUuid: string;
+            nodeUuid: string | null;
+            name: string | null;
             /**
              * Format: date-time
              * @description Next billing date. Format: 2025-01-17T15:38:45.065Z
              */
-            nextBillingAt?: string;
+            nextBillingAt: string;
         };
         CreateInfraBillingNodeResponseDto: {
             response: {
@@ -7592,7 +7790,8 @@ export interface components {
                     /** Format: uuid */
                     uuid: string;
                     /** Format: uuid */
-                    nodeUuid: string;
+                    nodeUuid: string | null;
+                    name: string | null;
                     /** Format: uuid */
                     providerUuid: string;
                     provider: {
@@ -7607,7 +7806,7 @@ export interface components {
                         uuid: string;
                         name: string;
                         countryCode: string;
-                    };
+                    } | null;
                     /** Format: date-time */
                     nextBillingAt: string;
                     /** Format: date-time */
@@ -7636,7 +7835,8 @@ export interface components {
                     /** Format: uuid */
                     uuid: string;
                     /** Format: uuid */
-                    nodeUuid: string;
+                    nodeUuid: string | null;
+                    name: string | null;
                     /** Format: uuid */
                     providerUuid: string;
                     provider: {
@@ -7651,7 +7851,7 @@ export interface components {
                         uuid: string;
                         name: string;
                         countryCode: string;
-                    };
+                    } | null;
                     /** Format: date-time */
                     nextBillingAt: string;
                     /** Format: date-time */
@@ -7677,8 +7877,7 @@ export interface components {
             response: {
                 records: {
                     id: number;
-                    /** Format: uuid */
-                    userUuid: string;
+                    userId: number;
                     requestIp: string | null;
                     userAgent: string | null;
                     /** Format: date-time */
@@ -7836,15 +8035,6 @@ export interface components {
                 }[];
             };
         };
-        EncryptHappCryptoLinkRequestDto: {
-            /** Format: uri */
-            linkToEncrypt: string;
-        };
-        EncryptHappCryptoLinkResponseDto: {
-            response: {
-                encryptedLink: string;
-            };
-        };
         DebugSrrMatcherRequestDto: {
             responseRules: {
                 /**
@@ -7908,6 +8098,16 @@ export interface components {
                         ignoreServeJsonAtBaseSubscription?: boolean;
                         /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                         additionalExtendedClientsRegex?: string[];
+                        /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                        disableHwidCheck?: boolean;
+                        /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                        encryption?: {
+                            /** @enum {string} */
+                            method: "age1" | "age1pq1";
+                            key: string;
+                        };
+                        /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                        excludeHostsByTags?: string[];
                     };
                 }[];
             };
@@ -7968,6 +8168,16 @@ export interface components {
                         ignoreServeJsonAtBaseSubscription?: boolean;
                         /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                         additionalExtendedClientsRegex?: string[];
+                        /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                        disableHwidCheck?: boolean;
+                        /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                        encryption?: {
+                            /** @enum {string} */
+                            method: "age1" | "age1pq1";
+                            key: string;
+                        };
+                        /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                        excludeHostsByTags?: string[];
                     };
                 } | null;
                 inputHeaders: {
@@ -8083,6 +8293,16 @@ export interface components {
                             ignoreServeJsonAtBaseSubscription?: boolean;
                             /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                             additionalExtendedClientsRegex?: string[];
+                            /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                            disableHwidCheck?: boolean;
+                            /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                            encryption?: {
+                                /** @enum {string} */
+                                method: "age1" | "age1pq1";
+                                key: string;
+                            };
+                            /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                            excludeHostsByTags?: string[];
                         };
                     }[];
                 } | null;
@@ -8182,6 +8402,16 @@ export interface components {
                         ignoreServeJsonAtBaseSubscription?: boolean;
                         /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                         additionalExtendedClientsRegex?: string[];
+                        /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                        disableHwidCheck?: boolean;
+                        /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                        encryption?: {
+                            /** @enum {string} */
+                            method: "age1" | "age1pq1";
+                            key: string;
+                        };
+                        /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                        excludeHostsByTags?: string[];
                     };
                 }[];
             };
@@ -8277,6 +8507,16 @@ export interface components {
                             ignoreServeJsonAtBaseSubscription?: boolean;
                             /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                             additionalExtendedClientsRegex?: string[];
+                            /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                            disableHwidCheck?: boolean;
+                            /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                            encryption?: {
+                                /** @enum {string} */
+                                method: "age1" | "age1pq1";
+                                key: string;
+                            };
+                            /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                            excludeHostsByTags?: string[];
                         };
                     }[];
                 } | null;
@@ -8402,7 +8642,7 @@ export interface components {
             /** @enum {string} */
             scope: "user";
             /** @enum {string} */
-            event: "user.created" | "user.modified" | "user.deleted" | "user.revoked" | "user.disabled" | "user.enabled" | "user.limited" | "user.expired" | "user.traffic_reset" | "user.expires_in_72_hours" | "user.expires_in_48_hours" | "user.expires_in_24_hours" | "user.expired_24_hours_ago" | "user.first_connected" | "user.bandwidth_usage_threshold_reached" | "user.not_connected";
+            event: "user.created" | "user.modified" | "user.deleted" | "user.revoked" | "user.disabled" | "user.enabled" | "user.limited" | "user.expired" | "user.traffic_reset" | "user.first_connected" | "user.bandwidth_usage_threshold_reached" | "user.not_connected" | "user.expiration";
             /** Format: date-time */
             timestamp: string;
             data: {
@@ -8467,6 +8707,7 @@ export interface components {
             };
             meta: {
                 notConnectedAfterHours?: number | null;
+                expiration?: number | null;
             } | null;
         };
         RemnawaveWebhookUserHwidDevicesEventsDto: {
@@ -8539,12 +8780,12 @@ export interface components {
                 };
                 hwidUserDevice: {
                     hwid: string;
-                    /** Format: uuid */
-                    userUuid: string;
+                    userId: number;
                     platform: string | null;
                     osVersion: string | null;
                     deviceModel: string | null;
                     userAgent: string | null;
+                    requestIp: string | null;
                     /** Format: date-time */
                     createdAt: string;
                     /** Format: date-time */
@@ -8565,6 +8806,7 @@ export interface components {
                 name: string;
                 address: string;
                 port: number | null;
+                proxyUrl: string | null;
                 isConnected: boolean;
                 isDisabled: boolean;
                 isConnecting: boolean;
@@ -8579,6 +8821,7 @@ export interface components {
                 viewPosition: number;
                 countryCode: string;
                 consumptionMultiplier: number;
+                nodeConsumptionMultiplier: number;
                 tags: string[];
                 /** Format: date-time */
                 createdAt: string;
@@ -8648,13 +8891,14 @@ export interface components {
                 } | null;
                 xrayUptime: number;
                 usersOnline: number;
+                note: string | null;
             };
         };
         RemnawaveWebhookServiceEventsDto: {
             /** @enum {string} */
             scope: "service";
             /** @enum {string} */
-            event: "service.panel_started" | "service.login_attempt_failed" | "service.login_attempt_success" | "service.subpage_config_changed";
+            event: "service.panel_started" | "service.login_attempt_failed" | "service.login_attempt_success" | "service.subpage_config_changed" | "service.api_token_created" | "service.api_token_deleted";
             /** Format: date-time */
             timestamp: string;
             data: {
@@ -8671,6 +8915,14 @@ export interface components {
                     action: "CREATED" | "UPDATED" | "DELETED";
                     /** Format: uuid */
                     uuid: string;
+                };
+                apiToken?: {
+                    name: string;
+                    /** Format: uuid */
+                    uuid: string;
+                    /** Format: date-time */
+                    expireAt: string;
+                    scopes: string[];
                 };
             };
         };
@@ -8714,6 +8966,7 @@ export interface components {
                     name: string;
                     address: string;
                     port: number | null;
+                    proxyUrl: string | null;
                     isConnected: boolean;
                     isDisabled: boolean;
                     isConnecting: boolean;
@@ -8728,6 +8981,7 @@ export interface components {
                     viewPosition: number;
                     countryCode: string;
                     consumptionMultiplier: number;
+                    nodeConsumptionMultiplier: number;
                     tags: string[];
                     /** Format: date-time */
                     createdAt: string;
@@ -8797,6 +9051,7 @@ export interface components {
                     } | null;
                     xrayUptime: number;
                     usersOnline: number;
+                    note: string | null;
                 };
                 user: {
                     /** Format: uuid */
@@ -10900,6 +11155,84 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        timestamp?: string;
+                        path?: string;
+                        message?: string;
+                        errorCode?: string;
+                    };
+                };
+            };
+        };
+    };
+    UsersController_getUsersStream: {
+        parameters: {
+            query?: {
+                /** @description Page size, no more than 1000 (default 250) */
+                size?: number;
+                /** @description Cursor from the previous response (nextCursor). Omit on the first request */
+                cursor?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Users fetched successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetUsersStreamResponseDto"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                        /** @example 400 */
+                        statusCode?: number;
+                        /**
+                         * @example [
+                         *       {
+                         *         "validation": "uuid",
+                         *         "code": "invalid_string",
+                         *         "message": "Invalid uuid",
+                         *         "path": [
+                         *           "uuid"
+                         *         ]
+                         *       }
+                         *     ]
+                         */
+                        errors?: {
+                            /** @example uuid */
+                            validation: string;
+                            /** @example invalid_string */
+                            code: string;
+                            /** @example Invalid uuid */
+                            message: string;
+                            /**
+                             * @example [
+                             *       "uuid"
+                             *     ]
+                             */
+                            path: string[];
+                        }[];
+                    };
+                };
             };
             /** @description Server error */
             500: {
@@ -14205,6 +14538,79 @@ export interface operations {
             };
         };
     };
+    ApiTokensController_getScopes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Available API token scopes fetched successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetApiTokenScopesResponseDto"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                        /** @example 400 */
+                        statusCode?: number;
+                        /**
+                         * @example [
+                         *       {
+                         *         "validation": "uuid",
+                         *         "code": "invalid_string",
+                         *         "message": "Invalid uuid",
+                         *         "path": [
+                         *           "uuid"
+                         *         ]
+                         *       }
+                         *     ]
+                         */
+                        errors?: {
+                            /** @example uuid */
+                            validation: string;
+                            /** @example invalid_string */
+                            code: string;
+                            /** @example Invalid uuid */
+                            message: string;
+                            /**
+                             * @example [
+                             *       "uuid"
+                             *     ]
+                             */
+                            path: string[];
+                        }[];
+                    };
+                };
+            };
+            /** @description Server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        timestamp?: string;
+                        path?: string;
+                        message?: string;
+                        errorCode?: string;
+                    };
+                };
+            };
+        };
+    };
     ConfigProfileController_getConfigProfiles: {
         parameters: {
             query?: never;
@@ -17325,7 +17731,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RestartNodeRequestBodyDto"];
+            };
+        };
         responses: {
             /** @description Node restarted */
             200: {
@@ -19453,83 +19863,6 @@ export interface operations {
             };
         };
     };
-    HostsBulkActionsController_setInboundToHosts: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SetInboundToManyHostsRequestDto"];
-            };
-        };
-        responses: {
-            /** @description Hosts inbound set successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SetInboundToManyHostsResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
     HostsBulkActionsController_setPortToHosts: {
         parameters: {
             query?: never;
@@ -19539,17 +19872,17 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SetPortToManyHostsRequestDto"];
+                "application/json": components["schemas"]["UpdateManyHostsRequestDto"];
             };
         };
         responses: {
-            /** @description Hosts port set successfully */
+            /** @description Hosts updated successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SetPortToManyHostsResponseDto"];
+                    "application/json": components["schemas"]["UpdateManyHostsResponseDto"];
                 };
             };
             /** @description Validation error */
@@ -19714,6 +20047,90 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GetStatsNodeUsersUsageResponseDto"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                        /** @example 400 */
+                        statusCode?: number;
+                        /**
+                         * @example [
+                         *       {
+                         *         "validation": "uuid",
+                         *         "code": "invalid_string",
+                         *         "message": "Invalid uuid",
+                         *         "path": [
+                         *           "uuid"
+                         *         ]
+                         *       }
+                         *     ]
+                         */
+                        errors?: {
+                            /** @example uuid */
+                            validation: string;
+                            /** @example invalid_string */
+                            code: string;
+                            /** @example Invalid uuid */
+                            message: string;
+                            /**
+                             * @example [
+                             *       "uuid"
+                             *     ]
+                             */
+                            path: string[];
+                        }[];
+                    };
+                };
+            };
+            /** @description Server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        timestamp?: string;
+                        path?: string;
+                        message?: string;
+                        errorCode?: string;
+                    };
+                };
+            };
+        };
+    };
+    BandwidthStatsNodesController_getStatsNodesUsersUsage: {
+        parameters: {
+            query: {
+                /** @description Limit of top users to return */
+                topUsersLimit: number;
+                /** @description Start date (YYYY-MM-DD) */
+                start: string;
+                /** @description End date (YYYY-MM-DD) */
+                end: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetStatsNodesUsersUsageRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Stats node users usage fetched successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetStatsNodesUsersUsageResponseDto"];
                 };
             };
             /** @description Validation error */
@@ -22102,83 +22519,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GenerateX25519ResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    SystemController_encryptHappCryptoLink: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["EncryptHappCryptoLinkRequestDto"];
-            };
-        };
-        responses: {
-            /** @description Returns encrypted Happ crypto link */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EncryptHappCryptoLinkResponseDto"];
                 };
             };
             /** @description Validation error */
