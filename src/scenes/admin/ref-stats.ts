@@ -98,6 +98,9 @@ export const refStatsScene = new Scene('ref_stats')
             }
         }
 
+        const payments = await getPaymentPayload(context.scene.state.ref);
+        const totalAmount = payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
+
         const text = `
 🔗 Реферальная ссылка: <code>${context.scene.state.ref}</code>
 
@@ -111,7 +114,7 @@ export const refStatsScene = new Scene('ref_stats')
 
 🆓 Пробных подписок: <code>${freeTrials} (${(freeTrials * 100 / usersCount).toFixed(2)}%)</code>
 🌐 Подключений: <code>${onlineAt} (${freeTrials ? (onlineAt * 100 / freeTrials).toFixed(2) : '0.00'}%)</code>
-💳 Оплачено подписок: <code>${(await getPaymentPayload(context.scene.state.ref)).length}</code>
+💳 Оплат: <code>${totalAmount}₽</code> <code>(${payments.length})</code>
         `;
 
         await message.editText(text, {
