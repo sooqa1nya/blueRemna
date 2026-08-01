@@ -73,13 +73,12 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
         try {
             await addProfile(
                 context.from.id,
-                user.response.uuid,
                 user.response.id,
                 profile
             );
         } catch (error) {
             await context.answerCallbackQuery('❌ Ошибка при добавлении профиля в БД. Обратитесь в поддержку.');
-            await remnawave.deleteUser(user.response.uuid);
+            await remnawave.deleteUser(user.response.id);
             console.error('[free-trial]: ❌ Ошибка при добавлении профиля в БД. UUID: ' + error);
             return;
         }

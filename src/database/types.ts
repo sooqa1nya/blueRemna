@@ -26,7 +26,6 @@ export interface INode {
 export interface IUserProfiles {
     id: number;
     user_id: number;
-    uuid: string; // TEMP
     rw_user_id: number;
     username: string;
     is_limit_extended: boolean;

@@ -14,7 +14,7 @@ export const changeDeviceLimitScene = new Scene('device_limit')
         }
 
         const [userProfile] = await getProfileByID(context.scene.params.profileId);
-        let rwProfile = await remnawave.getUserByUUID(userProfile.uuid);
+        let rwProfile = await remnawave.getUserByUserId(userProfile.rw_user_id);
 
         if (context.is("callback_query")) {
             await context.send(aSubProfileText(rwProfile!), {
@@ -35,12 +35,12 @@ export const changeDeviceLimitScene = new Scene('device_limit')
         const limit = (rwProfile.response.hwidDeviceLimit || 0) + text;
 
         await remnawave.updateUser({
-            uuid: userProfile.uuid,
+            id: userProfile.rw_user_id,
             trafficLimitStrategy: rwProfile.response.trafficLimitStrategy,
             hwidDeviceLimit: limit > 0 ? limit : 0
         });
 
-        rwProfile = await remnawave.getUserByUUID(userProfile.uuid);
+        rwProfile = await remnawave.getUserByUserId(userProfile.rw_user_id);
 
         await context.send(aSubProfileText(rwProfile!), {
             parse_mode: 'HTML',

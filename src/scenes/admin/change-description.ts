@@ -14,7 +14,7 @@ export const changeDescriptionScene = new Scene('change_description')
         }
 
         const [userProfile] = await getProfileByID(context.scene.params.profileId);
-        let rwProfile = await remnawave.getUserByUUID(userProfile.uuid);
+        let rwProfile = await remnawave.getUserByUserId(userProfile.rw_user_id);
 
         if (context.is("callback_query")) {
             await context.send(aSubProfileText(rwProfile!), {
@@ -33,12 +33,12 @@ export const changeDescriptionScene = new Scene('change_description')
         }
 
         await remnawave.updateUser({
-            uuid: userProfile.uuid,
+            id: userProfile.rw_user_id,
             trafficLimitStrategy: rwProfile.response.trafficLimitStrategy,
             description: text
         });
 
-        rwProfile = await remnawave.getUserByUUID(userProfile.uuid);
+        rwProfile = await remnawave.getUserByUserId(userProfile.rw_user_id);
 
         await context.send(aSubProfileText(rwProfile!), {
             parse_mode: 'HTML',
