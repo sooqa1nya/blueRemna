@@ -63,7 +63,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all passkeys */
+        /** Get passkeys */
         get: operations["PasskeyController_getActivePasskeys"];
         put?: never;
         post?: never;
@@ -272,27 +272,33 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all users using offset-based pagination */
-        get: operations["UsersController_getAllUsers"];
+        /**
+         * Get all users using offset-based pagination
+         * @description Please note that the filters here are primarily intended for use by the frontend and rely on expensive operators such as LIKE under the hood. Misusing these filters may negatively impact the performance of your database.
+         */
+        get: operations["UsersController_getUsers"];
         put?: never;
         /** Create a new user */
         post: operations["UsersController_createUser"];
         delete?: never;
         options?: never;
         head?: never;
-        /** Update a user by UUID or username */
+        /**
+         * Update a user
+         * @description Update a user by ID or username. Exactly one of the fields must be provided.
+         */
         patch: operations["UsersController_updateUser"];
         trace?: never;
     };
-    "/api/users/{uuid}": {
+    "/api/users/{userId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get user by UUID */
-        get: operations["UsersController_getUserByUuid"];
+        /** Get user by ID */
+        get: operations["UsersController_getUserById"];
         put?: never;
         post?: never;
         /** Delete user */
@@ -309,7 +315,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all users using cursor-based (keyset) pagination */
+        /** Get all users using cursor-based (keyset) pagination with filtering options */
         get: operations["UsersController_getUsersStream"];
         put?: never;
         post?: never;
@@ -326,8 +332,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all existing user tags */
-        get: operations["UsersController_getAllTags"];
+        /** Get users tags */
+        get: operations["UsersController_getUsersTags"];
         put?: never;
         post?: never;
         delete?: never;
@@ -336,7 +342,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/users/{uuid}/accessible-nodes": {
+    "/api/users/{userId}/accessible-nodes": {
         parameters: {
             query?: never;
             header?: never;
@@ -353,7 +359,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/users/{uuid}/subscription-request-history": {
+    "/api/users/{userId}/subscription-request-history": {
         parameters: {
             query?: never;
             header?: never;
@@ -404,75 +410,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/users/by-id/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get user by ID */
-        get: operations["UsersController_getUserById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/users/by-telegram-id/{telegramId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get users by telegram ID */
-        get: operations["UsersController_getUserByTelegramId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/users/by-email/{email}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get users by email */
-        get: operations["UsersController_getUsersByEmail"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/users/by-tag/{tag}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get users by tag */
-        get: operations["UsersController_getUsersByTag"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/users/{uuid}/actions/revoke": {
+    "/api/users/{userId}/actions/revoke": {
         parameters: {
             query?: never;
             header?: never;
@@ -489,7 +427,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/users/{uuid}/actions/disable": {
+    "/api/users/{userId}/actions/disable": {
         parameters: {
             query?: never;
             header?: never;
@@ -506,7 +444,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/users/{uuid}/actions/enable": {
+    "/api/users/{userId}/actions/enable": {
         parameters: {
             query?: never;
             header?: never;
@@ -523,7 +461,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/users/{uuid}/actions/reset-traffic": {
+    "/api/users/{userId}/actions/reset-traffic": {
         parameters: {
             query?: never;
             header?: never;
@@ -540,6 +478,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/{userId}/actions/extend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Extend user expiration date
+         * @description If user status is EXPIRED, the new expiration date is calculated from the current date and the user becomes ACTIVE. If user status is ACTIVE, the given number of days is added to the existing expiration date. DISABLED and LIMITED users will be extended, but their status will not change.
+         */
+        post: operations["UsersController_extendUserExpirationDate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/users/resolve": {
         parameters: {
             query?: never;
@@ -549,7 +507,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Resolve a user */
+        /**
+         * Resolve a user
+         * @description Resolve a user by ID, Short UUID or username. Exactly one of the fields must be provided.
+         */
         post: operations["UsersController_resolveUser"];
         delete?: never;
         options?: never;
@@ -583,7 +544,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Bulk delete users by UUIDs */
+        /** Bulk delete users by User IDs */
         post: operations["UsersBulkActionsController_bulkDeleteUsers"];
         delete?: never;
         options?: never;
@@ -600,7 +561,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Revoke users subscription by User UUIDs */
+        /** Revoke users subscription by User IDs */
         post: operations["UsersBulkActionsController_bulkRevokeUsersSubscription"];
         delete?: never;
         options?: never;
@@ -617,7 +578,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Bulk reset traffic users by UUIDs */
+        /** Bulk reset traffic users by User IDs */
         post: operations["UsersBulkActionsController_bulkResetUserTraffic"];
         delete?: never;
         options?: never;
@@ -634,7 +595,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Bulk update users by UUIDs */
+        /** Bulk update users by User IDs */
         post: operations["UsersBulkActionsController_bulkUpdateUsers"];
         delete?: never;
         options?: never;
@@ -651,7 +612,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Bulk update users internal squads by UUIDs */
+        /** Bulk update users internal squads by User IDs */
         post: operations["UsersBulkActionsController_bulkUpdateUsersInternalSquads"];
         delete?: never;
         options?: never;
@@ -668,10 +629,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Bulk Extend Users Expiration Date
-         * @description Bulk extend all users expiration date
-         */
+        /** Extend expiration date for specified users by days */
         post: operations["UsersBulkActionsController_bulkExtendExpirationDate"];
         delete?: never;
         options?: never;
@@ -705,10 +663,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Bulk Reset All Users Traffic
-         * @description Bulk reset all users traffic
-         */
+        /** Reset user used traffic for all users */
         post: operations["UsersBulkActionsController_bulkAllResetUserTraffic"];
         delete?: never;
         options?: never;
@@ -725,10 +680,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Bulk Extend All Users Expiration Date
-         * @description Bulk extend all users expiration date
-         */
+        /** Extend expiration date for all users by days */
         post: operations["UsersBulkActionsController_bulkAllExtendExpirationDate"];
         delete?: never;
         options?: never;
@@ -836,14 +788,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/subscriptions/by-uuid/{uuid}": {
+    "/api/subscriptions/by-id/{userId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get subscription by uuid */
+        /** Get subscription by User ID */
         get: operations["SubscriptionsController_getSubscriptionByUuid"];
         put?: never;
         post?: never;
@@ -887,15 +839,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/subscriptions/connection-keys/{uuid}": {
+    "/api/subscriptions/connection-keys/{userId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get connection keys (base64 format) by uuid */
-        get: operations["SubscriptionsController_getConnectionKeysByUuid"];
+        /** Get connection keys (base64 format) by user id */
+        get: operations["SubscriptionsController_getConnectionKeysByUserId"];
         put?: never;
         post?: never;
         delete?: never;
@@ -969,13 +921,13 @@ export interface paths {
          * Get all API tokens
          * @description This endpoint is forbidden to use via "API-key". It can only be used with admin JWT-token.
          */
-        get: operations["ApiTokensController_findAll"];
+        get: operations["ApiTokensController_getApiTokens"];
         put?: never;
         /**
          * Create a new API token
          * @description This endpoint is forbidden to use via "API-key". It can only be used with an admin JWT-token.
          */
-        post: operations["ApiTokensController_create"];
+        post: operations["ApiTokensController_createApiToken"];
         delete?: never;
         options?: never;
         head?: never;
@@ -993,10 +945,10 @@ export interface paths {
         put?: never;
         post?: never;
         /**
-         * Delete an API token by UUID
+         * Delete API token
          * @description This endpoint is forbidden to use via "API-key". It can be used only with an admin JWT-token.
          */
-        delete: operations["ApiTokensController_delete"];
+        delete: operations["ApiTokensController_deleteApiToken"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1201,6 +1153,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/internal-squads/{uuid}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get internal squad users traffic usage for a period
+         * @description Returns users whose total usage over the period on the given nodes is >= minTotalBytes, scoped to the nodes reachable via the internal squad inbounds. Underlying usage data is flushed to the database roughly every 2 minutes.
+         */
+        get: operations["InternalSquadController_getInternalSquadUsage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/internal-squads/{uuid}/bulk-actions/add-users": {
         parameters: {
             query?: never;
@@ -1246,6 +1218,80 @@ export interface paths {
         put?: never;
         /** Reorder internal squads */
         post: operations["InternalSquadController_reorderInternalSquads"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/internal-squads/{uuid}/bulk-actions/add-many-users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add many users to internal squad */
+        post: operations["InternalSquadController_addManyUsersToInternalSquad"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/internal-squads/{uuid}/bulk-actions/remove-many-users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete many users from internal squad */
+        delete: operations["InternalSquadController_removeManyUsersFromInternalSquad"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bandwidth-stats/internal-squads/{uuid}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get internal squad users traffic usage for a period
+         * @description Returns users whose total usage over the period on the given nodes is >= minTotalBytes, scoped to the nodes reachable via the internal squad inbounds. Underlying usage data is flushed to the database roughly every 2 minutes.
+         */
+        get: operations["InternalSquadStatsController_getInternalSquadUsage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bandwidth-stats/internal-squads/{squadUuid}/users/{userId}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a single user daily traffic usage on the internal squad nodes for a period
+         * @description Returns users whose total usage over the period on the given nodes is >= minTotalBytes, scoped to the nodes reachable via the Internal Squad inbounds. Every day in the range is present (zero-filled). Underlying usage data is flushed to the database roughly every 2 minutes.
+         */
+        get: operations["InternalSquadStatsController_getInternalSquadUserUsage"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1364,8 +1410,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all existing nodes tags */
-        get: operations["NodesController_getAllNodesTags"];
+        /** Get nodes tags */
+        get: operations["NodesController_getNodesTags"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1381,8 +1427,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all nodes */
-        get: operations["NodesController_getAllNodes"];
+        /** Get nodes */
+        get: operations["NodesController_getNodes"];
         put?: never;
         /** Create a new node */
         post: operations["NodesController_createNode"];
@@ -1401,7 +1447,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get node by UUID */
-        get: operations["NodesController_getOneNode"];
+        get: operations["NodesController_getNode"];
         put?: never;
         post?: never;
         /** Delete a node */
@@ -1571,7 +1617,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get Torrent Blocker Reports */
+        /**
+         * Get Torrent Blocker Reports
+         * @description Please note that the filters here are primarily intended for use by the frontend and rely on expensive operators such as LIKE under the hood. Misusing these filters may negatively impact the performance of your database.
+         */
         get: operations["TorrentBlockerReportsController_getTorrentBlockerReports"];
         put?: never;
         post?: never;
@@ -1710,8 +1759,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all existing host tags */
-        get: operations["HostsController_getAllHostTags"];
+        /** Get tags of hosts */
+        get: operations["HostsController_getHostsTags"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1727,8 +1776,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all hosts */
-        get: operations["HostsController_getAllHosts"];
+        /** Get hosts */
+        get: operations["HostsController_getHosts"];
         put?: never;
         /** Create a new host */
         post: operations["HostsController_createHost"];
@@ -1842,17 +1891,20 @@ export interface paths {
         patch: operations["HostsBulkActionsController_setPortToHosts"];
         trace?: never;
     };
-    "/api/bandwidth-stats/nodes/{uuid}/users/legacy": {
+    "/api/bandwidth-stats/nodes/usage": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Node User Usage by Range and Node UUID (Legacy) */
-        get: operations["BandwidthStatsNodesController_getNodeUserUsage"];
+        get?: never;
         put?: never;
-        post?: never;
+        /**
+         * Get users exceeding a traffic threshold on the given nodes for a period
+         * @description Returns users whose total usage over the period on the given nodes is >= minTotalBytes. Underlying usage data is flushed to the database roughly every 2 minutes.
+         */
+        post: operations["BandwidthStatsNodesController_getNodeUsage"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1893,24 +1945,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/bandwidth-stats/users/{uuid}/legacy": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get User Usage by Range (Legacy) */
-        get: operations["BandwidthStatsUsersController_getUserUsageByRange"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/bandwidth-stats/users/{uuid}": {
+    "/api/bandwidth-stats/users/{userId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1934,7 +1969,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all HWID devices */
+        /**
+         * Get HWID devices
+         * @description Please note that the filters here are primarily intended for use by the frontend and rely on expensive operators such as LIKE under the hood. Misusing these filters may negatively impact the performance of your database.
+         */
         get: operations["HwidUserDevicesController_getAllUsers"];
         put?: never;
         /** Create a user HWID device */
@@ -2013,7 +2051,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/hwid/devices/{userUuid}": {
+    "/api/hwid/devices/{userId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2074,11 +2112,11 @@ export interface paths {
             cookie?: never;
         };
         /** Get infra provider by uuid */
-        get: operations["InfraBillingController_getInfraProviderByUuid"];
+        get: operations["InfraBillingController_getInfraProvider"];
         put?: never;
         post?: never;
         /** Delete infra provider by uuid */
-        delete: operations["InfraBillingController_deleteInfraProviderByUuid"];
+        delete: operations["InfraBillingController_delteInfraProvider"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2092,10 +2130,10 @@ export interface paths {
             cookie?: never;
         };
         /** Get infra billing history */
-        get: operations["InfraBillingController_getInfraBillingHistoryRecords"];
+        get: operations["InfraBillingController_getInfraBillingRecords"];
         put?: never;
         /** Create infra billing history */
-        post: operations["InfraBillingController_createInfraBillingHistoryRecord"];
+        post: operations["InfraBillingController_createInfraBillingRecord"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2113,7 +2151,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Delete infra billing history */
-        delete: operations["InfraBillingController_deleteInfraBillingHistoryRecordByUuid"];
+        delete: operations["InfraBillingController_deleteInfraBillingRecord"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2149,7 +2187,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Delete infra billing node */
-        delete: operations["InfraBillingController_deleteInfraBillingNodeByUuid"];
+        delete: operations["InfraBillingController_deleteInfraBillingNode"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2162,7 +2200,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all subscription request history */
+        /**
+         * Get all subscription request history
+         * @description Please note that the filters here are primarily intended for use by the frontend and rely on expensive operators such as LIKE under the hood. Misusing these filters may negatively impact the performance of your database.
+         */
         get: operations["UserSubscriptionRequestHistoryController_getSubscriptionRequestHistory"];
         put?: never;
         post?: never;
@@ -2342,6 +2383,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/system/stats/digest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Stats Digest
+         * @description Aggregated statistics for a datetime range [start, end): created and expired users, total traffic, traffic spent by users created within the range and new HWID devices. Per-user traffic history is stored with daily granularity (UTC), so the "traffic by new users" metric snaps to whole days at the range edges.
+         */
+        get: operations["SystemController_getStatsDigest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/stats/http": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get HTTP Stats */
+        get: operations["SystemController_getHttpStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/subscription-settings": {
         parameters: {
             query?: never;
@@ -2360,7 +2438,7 @@ export interface paths {
         patch: operations["SubscriptionSettingsController_updateSettings"];
         trace?: never;
     };
-    "/api/ip-control/fetch-ips/{uuid}": {
+    "/api/connections/by-user/{userId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2369,23 +2447,23 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Request IP List for User */
-        post: operations["IpControlController_fetchUserIps"];
+        /** Request Connections for User */
+        post: operations["ConnectionsController_connectionsByUser"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/ip-control/fetch-ips/result/{jobId}": {
+    "/api/connections/by-user/{jobId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get IP List Result by Job ID */
-        get: operations["IpControlController_getFetchIpsResult"];
+        /** Get Connections for User by Job ID */
+        get: operations["ConnectionsController_connectionsByUserResult"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2394,7 +2472,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/ip-control/drop-connections": {
+    "/api/connections/drop": {
         parameters: {
             query?: never;
             header?: never;
@@ -2404,14 +2482,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Drop Connections for Users or IPs */
-        post: operations["IpControlController_dropConnections"];
+        post: operations["ConnectionsController_dropConnections"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/ip-control/fetch-users-ips/{nodeUuid}": {
+    "/api/connections/by-node/{nodeUuid}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2420,23 +2498,23 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Request Users IPs List for Node */
-        post: operations["IpControlController_fetchUsersIps"];
+        /** Request Connections for Node */
+        post: operations["ConnectionsController_connectionsByNode"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/ip-control/fetch-users-ips/result/{jobId}": {
+    "/api/connections/by-node/{jobId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Users IPs List Result by Job ID */
-        get: operations["IpControlController_getFetchUsersIpsResult"];
+        /** Get Connections for Node by Job ID */
+        get: operations["ConnectionsController_connectionsByNodeResult"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2445,7 +2523,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/metadata/user/{uuid}": {
+    "/api/metadata/user/{userId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2503,6 +2581,7 @@ export interface components {
                         enabled: boolean;
                         clientId: string | null;
                         clientSecret: string | null;
+                        frontendDomain: string | null;
                         plainDomain: string | null;
                         allowedEmails: string[];
                     };
@@ -2581,7 +2660,7 @@ export interface components {
                 } | null;
             };
         };
-        UpdateRemnawaveSettingsRequestDto: {
+        UpdateRemnawaveSettingsBodyDto: {
             passkeySettings?: {
                 enabled: boolean;
                 rpId: string | null;
@@ -2598,6 +2677,7 @@ export interface components {
                     enabled: boolean;
                     clientId: string | null;
                     clientSecret: string | null;
+                    frontendDomain: string | null;
                     plainDomain: string | null;
                     allowedEmails: string[];
                 };
@@ -2693,6 +2773,7 @@ export interface components {
                         enabled: boolean;
                         clientId: string | null;
                         clientSecret: string | null;
+                        frontendDomain: string | null;
                         plainDomain: string | null;
                         allowedEmails: string[];
                     };
@@ -2774,7 +2855,7 @@ export interface components {
         GetPasskeyRegistrationOptionsResponseDto: {
             response: unknown;
         };
-        VerifyPasskeyRegistrationRequestDto: {
+        VerifyPasskeyRegistrationBodyDto: {
             response: unknown;
         };
         VerifyPasskeyRegistrationResponseDto: {
@@ -2782,7 +2863,7 @@ export interface components {
                 verified: boolean;
             };
         };
-        GetAllPasskeysResponseDto: {
+        GetPasskeysResponseDto: {
             response: {
                 passkeys: {
                     id: string;
@@ -2800,28 +2881,10 @@ export interface components {
                 }[];
             };
         };
-        DeletePasskeyRequestDto: {
+        DeletePasskeyBodyDto: {
             id: string;
         };
-        DeletePasskeyResponseDto: {
-            response: {
-                passkeys: {
-                    id: string;
-                    name: string;
-                    /**
-                     * Format: date-time
-                     * @description Created date. Format: 2025-01-17T15:38:45.065Z
-                     */
-                    createdAt: string;
-                    /**
-                     * Format: date-time
-                     * @description Last used date. Format: 2025-01-17T15:38:45.065Z
-                     */
-                    lastUsedAt: string;
-                }[];
-            };
-        };
-        UpdatePasskeyRequestDto: {
+        UpdatePasskeyBodyDto: {
             id: string;
             name: string;
         };
@@ -2843,8 +2906,10 @@ export interface components {
                 }[];
             };
         };
-        LoginRequestDto: {
+        LoginBodyDto: {
+            /** @description Username of the user */
             username: string;
+            /** @description Password of the user */
             password: string;
         };
         LoginResponseDto: {
@@ -2852,7 +2917,8 @@ export interface components {
                 accessToken: string;
             };
         };
-        RegisterRequestDto: {
+        RegisterBodyDto: {
+            /** @description Username of the user */
             username: string;
             password: string;
         };
@@ -2884,7 +2950,7 @@ export interface components {
                 };
             };
         };
-        OAuth2AuthorizeRequestDto: {
+        OAuth2AuthorizeBodyDto: {
             /** @enum {string} */
             provider: "telegram" | "github" | "pocketid" | "yandex" | "keycloak" | "generic";
         };
@@ -2894,7 +2960,7 @@ export interface components {
                 authorizationUrl: string | null;
             };
         };
-        OAuth2CallbackRequestDto: {
+        OAuth2CallbackBodyDto: {
             /** @enum {string} */
             provider: "telegram" | "github" | "pocketid" | "yandex" | "keycloak" | "generic";
             code: string;
@@ -2908,7 +2974,7 @@ export interface components {
         GetPasskeyAuthenticationOptionsResponseDto: {
             response: unknown;
         };
-        VerifyPasskeyAuthenticationRequestDto: {
+        VerifyPasskeyAuthenticationBodyDto: {
             response: unknown;
         };
         VerifyPasskeyAuthenticationResponseDto: {
@@ -2916,7 +2982,7 @@ export interface components {
                 accessToken: string;
             };
         };
-        GetSubscriptionPageConfigsResponseDto: {
+        GetSubpageConfigsResponseDto: {
             response: {
                 total: number;
                 configs: {
@@ -2928,7 +2994,7 @@ export interface components {
                 }[];
             };
         };
-        GetSubscriptionPageConfigResponseDto: {
+        GetSubpageConfigResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -2937,13 +3003,13 @@ export interface components {
                 config: unknown;
             };
         };
-        UpdateSubscriptionPageConfigRequestDto: {
+        UpdateSubpageConfigBodyDto: {
             /** Format: uuid */
             uuid: string;
             name?: string;
             config?: unknown;
         };
-        UpdateSubscriptionPageConfigResponseDto: {
+        UpdateSubpageConfigResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -2952,15 +3018,10 @@ export interface components {
                 config: unknown;
             };
         };
-        DeleteSubscriptionPageConfigResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        CreateSubscriptionPageConfigRequestDto: {
+        CreateSubpageConfigBodyDto: {
             name: string;
         };
-        CreateSubscriptionPageConfigResponseDto: {
+        CreateSubpageConfigResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -2969,14 +3030,14 @@ export interface components {
                 config: unknown;
             };
         };
-        ReorderSubscriptionPageConfigsRequestDto: {
+        ReorderSubpageConfigsBodyDto: {
             items: {
                 viewPosition: number;
                 /** Format: uuid */
                 uuid: string;
             }[];
         };
-        ReorderSubscriptionPageConfigsResponseDto: {
+        ReorderSubpageConfigsResponseDto: {
             response: {
                 total: number;
                 configs: {
@@ -2988,11 +3049,11 @@ export interface components {
                 }[];
             };
         };
-        CloneSubscriptionPageConfigRequestDto: {
+        CloneSubpageConfigBodyDto: {
             /** Format: uuid */
             cloneFromUuid: string;
         };
-        CloneSubscriptionPageConfigResponseDto: {
+        CloneSubpageConfigResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -3001,7 +3062,7 @@ export interface components {
                 config: unknown;
             };
         };
-        CreateUserRequestDto: {
+        CreateUserBodyDto: {
             /** @description Unique username for the user. Required. Must be 3-36 characters long and contain only letters, numbers, underscores and dashes. */
             username: string;
             /**
@@ -3061,32 +3122,20 @@ export interface components {
             activeInternalSquads?: string[];
             /**
              * Format: uuid
-             * @description Optional. Pass UUID to create user with specific UUID, otherwise it will be generated automatically.
-             */
-            uuid?: string;
-            /**
-             * Format: uuid
              * @description Optional. External squad UUID.
              */
             externalSquadUuid?: string | null;
         };
-        CreateUserResponseDto: {
+        UserResponseDto: {
             response: {
-                /** Format: uuid */
-                uuid: string;
                 id: number;
                 shortUuid: string;
                 username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
+                /** @enum {string} */
                 status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
                 trafficLimitBytes: number;
                 /**
                  * @description Available reset periods
-                 * @default NO_RESET
                  * @enum {string}
                  */
                 trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -3104,7 +3153,6 @@ export interface components {
                 /** Format: uuid */
                 vlessUuid: string;
                 ssPassword: string;
-                /** @default 0 */
                 lastTriggeredThreshold: number;
                 /** Format: date-time */
                 subRevokedAt: string | null;
@@ -3132,24 +3180,20 @@ export interface components {
                 };
             };
         };
-        UpdateUserRequestDto: {
+        UpdateUserBodyDto: {
             /** @description Username of the user */
             username?: string;
-            /**
-             * Format: uuid
-             * @description UUID of the user. UUID has higher priority than username, so if both are provided, username will be ignored.
-             */
-            uuid?: string;
+            /** @description ID of the user */
+            id?: number;
             /** @enum {string} */
             status?: "ACTIVE" | "DISABLED";
             /** @description Traffic limit in bytes. 0 - unlimited */
             trafficLimitBytes?: number;
             /**
-             * @description Available reset periods
-             * @default NO_RESET
+             * @description Traffic limit reset strategy
              * @enum {string}
              */
-            trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
+            trafficLimitStrategy?: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
             /**
              * Format: date-time
              * @description Expiration date: 2025-01-17T15:38:45.065Z
@@ -3168,91 +3212,17 @@ export interface components {
              */
             externalSquadUuid?: string | null;
         };
-        UpdateUserResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
-        };
-        DeleteUserResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        GetAllUsersResponseDto: {
+        GetUsersResponseDto: {
             response: {
                 users: {
-                    /** Format: uuid */
-                    uuid: string;
                     id: number;
                     shortUuid: string;
                     username: string;
-                    /**
-                     * @default ACTIVE
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                    /** @default 0 */
                     trafficLimitBytes: number;
                     /**
                      * @description Available reset periods
-                     * @default NO_RESET
                      * @enum {string}
                      */
                     trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -3270,7 +3240,6 @@ export interface components {
                     /** Format: uuid */
                     vlessUuid: string;
                     ssPassword: string;
-                    /** @default 0 */
                     lastTriggeredThreshold: number;
                     /** Format: date-time */
                     subRevokedAt: string | null;
@@ -3303,21 +3272,14 @@ export interface components {
         GetUsersStreamResponseDto: {
             response: {
                 users: {
-                    /** Format: uuid */
-                    uuid: string;
                     id: number;
                     shortUuid: string;
                     username: string;
-                    /**
-                     * @default ACTIVE
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                    /** @default 0 */
                     trafficLimitBytes: number;
                     /**
                      * @description Available reset periods
-                     * @default NO_RESET
                      * @enum {string}
                      */
                     trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -3335,7 +3297,6 @@ export interface components {
                     /** Format: uuid */
                     vlessUuid: string;
                     ssPassword: string;
-                    /** @default 0 */
                     lastTriggeredThreshold: number;
                     /** Format: date-time */
                     subRevokedAt: string | null;
@@ -3368,15 +3329,14 @@ export interface components {
                 hasMore: boolean;
             };
         };
-        GetAllTagsResponseDto: {
+        GetUsersTagsResponseDto: {
             response: {
                 tags: string[];
             };
         };
         GetUserAccessibleNodesResponseDto: {
             response: {
-                /** Format: uuid */
-                userUuid: string;
+                userId: number;
                 activeNodes: {
                     /** Format: uuid */
                     uuid: string;
@@ -3400,444 +3360,10 @@ export interface components {
                     userId: number;
                     /** Format: date-time */
                     requestAt: string;
-                    requestIp: string | null;
-                    userAgent: string | null;
+                    requestIp?: string | null;
+                    userAgent?: string | null;
                 }[];
             };
-        };
-        GetUserByShortUuidResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
-        };
-        GetUserByUuidResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
-        };
-        GetUserByUsernameResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
-        };
-        GetUserByIdResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
-        };
-        GetUserByTelegramIdResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            }[];
-        };
-        GetUserByEmailResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            }[];
-        };
-        GetUserByTagResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            }[];
         };
         RevokeUserSubscriptionBodyDto: {
             /**
@@ -3848,318 +3374,44 @@ export interface components {
             /** @description Optional. If not provided, a new short UUID will be generated by Remnawave. Please note that it is strongly recommended to allow Remnawave to generate the short UUID. */
             shortUuid?: string;
         };
-        RevokeUserSubscriptionResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
+        ExtendUserBodyDto: {
+            /** @description The number of days to extend the expiration date. */
+            days: number;
         };
-        DisableUserResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
-        };
-        EnableUserResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
-        };
-        ResetUserTrafficResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                id: number;
-                shortUuid: string;
-                username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
-                trafficLimitBytes: number;
-                /**
-                 * @description Available reset periods
-                 * @default NO_RESET
-                 * @enum {string}
-                 */
-                trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /** Format: date-time */
-                expireAt: string;
-                telegramId: number | null;
-                /** Format: email */
-                email: string | null;
-                description: string | null;
-                tag: string | null;
-                hwidDeviceLimit: number | null;
-                /** Format: uuid */
-                externalSquadUuid: string | null;
-                trojanPassword: string;
-                /** Format: uuid */
-                vlessUuid: string;
-                ssPassword: string;
-                /** @default 0 */
-                lastTriggeredThreshold: number;
-                /** Format: date-time */
-                subRevokedAt: string | null;
-                /** Format: date-time */
-                lastTrafficResetAt: string | null;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                subscriptionUrl: string;
-                activeInternalSquads: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                }[];
-                userTraffic: {
-                    usedTrafficBytes: number;
-                    lifetimeUsedTrafficBytes: number;
-                    /** Format: date-time */
-                    onlineAt: string | null;
-                    /** Format: date-time */
-                    firstConnectedAt: string | null;
-                    /** Format: uuid */
-                    lastConnectedNodeUuid: string | null;
-                };
-            };
-        };
-        ResolveUserRequestBodyDto: {
-            /** Format: uuid */
-            uuid?: string;
+        ResolveUserBodyDto: {
             id?: number;
             shortUuid?: string;
             username?: string;
         };
         ResolveUserResponseDto: {
             response: {
-                /** Format: uuid */
-                uuid: string;
-                username: string;
                 id: number;
+                username: string;
                 shortUuid: string;
             };
         };
-        BulkDeleteUsersByStatusRequestDto: {
-            /**
-             * @default ACTIVE
-             * @enum {string}
-             */
+        BulkDeleteUsersByStatusBodyDto: {
+            /** @enum {string} */
             status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
         };
-        BulkDeleteUsersByStatusResponseDto: {
-            response: {
-                affectedRows: number;
-            };
+        BulkDeleteUsersBodyDto: {
+            userIds: number[];
         };
-        BulkDeleteUsersRequestDto: {
-            uuids: string[];
+        BulkRevokeUsersSubscriptionBodyDto: {
+            userIds: number[];
         };
-        BulkDeleteUsersResponseDto: {
-            response: {
-                affectedRows: number;
-            };
+        BulkResetTrafficUsersBodyDto: {
+            userIds: number[];
         };
-        BulkRevokeUsersSubscriptionRequestDto: {
-            uuids: string[];
-        };
-        BulkRevokeUsersSubscriptionResponseDto: {
-            response: {
-                affectedRows: number;
-            };
-        };
-        BulkResetTrafficUsersRequestDto: {
-            uuids: string[];
-        };
-        BulkResetTrafficUsersResponseDto: {
-            response: {
-                affectedRows: number;
-            };
-        };
-        BulkUpdateUsersRequestDto: {
-            uuids: string[];
+        BulkUpdateUsersBodyDto: {
+            userIds: number[];
             fields: {
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
-                status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
+                /** @enum {string} */
+                status?: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
                 /** @description Traffic limit in bytes. 0 - unlimited */
                 trafficLimitBytes?: number;
                 /**
-                 * @description Traffic limit reset strategy
+                 * @description Available reset periods
                  * @enum {string}
                  */
                 trafficLimitStrategy?: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -4181,39 +3433,21 @@ export interface components {
                 externalSquadUuid?: string | null;
             };
         };
-        BulkUpdateUsersResponseDto: {
-            response: {
-                affectedRows: number;
-            };
-        };
-        BulkUpdateUsersSquadsRequestDto: {
-            uuids: string[];
+        BulkUpdateUsersSquadsBodyDto: {
+            userIds: number[];
             activeInternalSquads: string[];
         };
-        BulkUpdateUsersSquadsResponseDto: {
-            response: {
-                affectedRows: number;
-            };
-        };
-        BulkExtendExpirationDateRequestDto: {
-            uuids: string[];
+        BulkExtendExpirationDateBodyDto: {
+            userIds: number[];
             extendDays: number;
         };
-        BulkExtendExpirationDateResponseDto: {
-            response: {
-                affectedRows: number;
-            };
-        };
-        BulkAllUpdateUsersRequestDto: {
-            /**
-             * @default ACTIVE
-             * @enum {string}
-             */
-            status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
+        BulkAllUpdateUsersBodyDto: {
+            /** @enum {string} */
+            status?: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
             /** @description Traffic limit in bytes. 0 - unlimited */
             trafficLimitBytes?: number;
             /**
-             * @description Traffic limit reset strategy
+             * @description Available reset periods
              * @enum {string}
              */
             trafficLimitStrategy?: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -4229,23 +3463,8 @@ export interface components {
             tag?: string | null;
             hwidDeviceLimit?: number | null;
         };
-        BulkAllUpdateUsersResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        BulkAllResetTrafficUsersResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        BulkAllExtendExpirationDateRequestDto: {
+        BulkAllExtendExpirationDateBodyDto: {
             extendDays: number;
-        };
-        BulkAllExtendExpirationDateResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
         };
         GetSubscriptionInfoResponseDto: {
             response: {
@@ -4275,7 +3494,7 @@ export interface components {
                 subscriptionUrl: string;
             };
         };
-        GetAllSubscriptionsResponseDto: {
+        GetSubscriptionsResponseDto: {
             response: {
                 subscriptions: {
                     isFound: boolean;
@@ -4362,7 +3581,7 @@ export interface components {
                 subscriptionUrl: string;
             };
         };
-        GetSubscriptionByUuidResponseDto: {
+        GetSubscriptionByIdResponseDto: {
             response: {
                 isFound: boolean;
                 user: {
@@ -4393,21 +3612,14 @@ export interface components {
         GetRawSubscriptionByShortUuidResponseDto: {
             response: {
                 user: {
-                    /** Format: uuid */
-                    uuid: string;
                     id: number;
                     shortUuid: string;
                     username: string;
-                    /**
-                     * @default ACTIVE
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                    /** @default 0 */
                     trafficLimitBytes: number;
                     /**
                      * @description Available reset periods
-                     * @default NO_RESET
                      * @enum {string}
                      */
                     trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -4425,7 +3637,6 @@ export interface components {
                     /** Format: uuid */
                     vlessUuid: string;
                     ssPassword: string;
-                    /** @default 0 */
                     lastTriggeredThreshold: number;
                     /** Format: date-time */
                     subRevokedAt: string | null;
@@ -4558,6 +3769,7 @@ export interface components {
                         serverName: string | null;
                         echConfigList: string | null;
                         echForceQuery: string | null;
+                        echSockopt: unknown;
                     } | {
                         fingerprint: string;
                         publicKey: string;
@@ -4599,7 +3811,7 @@ export interface components {
                 }[];
             };
         };
-        GetSubpageConfigByShortUuidRequestBodyDto: {
+        GetSubpageConfigByShortUuidBodyDto: {
             requestHeaders: {
                 [key: string]: string;
             };
@@ -4611,7 +3823,7 @@ export interface components {
                 webpageAllowed: boolean;
             };
         };
-        GetConnectionKeysByUuidResponseDto: {
+        GetConnectionKeysByUserIdResponseDto: {
             response: {
                 enabledKeys: string[];
                 hiddenKeys: string[];
@@ -4645,11 +3857,13 @@ export interface components {
                 encodedTemplateYaml: string | null;
             };
         };
-        UpdateTemplateRequestDto: {
+        UpdateTemplateBodyDto: {
             /** Format: uuid */
             uuid: string;
             name?: string;
-            templateJson?: Record<string, never>;
+            templateJson?: {
+                [key: string]: unknown;
+            };
             encodedTemplateYaml?: string;
         };
         UpdateTemplateResponseDto: {
@@ -4664,12 +3878,7 @@ export interface components {
                 encodedTemplateYaml: string | null;
             };
         };
-        DeleteSubscriptionTemplateResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        CreateSubscriptionTemplateRequestDto: {
+        CreateSubscriptionTemplateBodyDto: {
             name: string;
             /** @enum {string} */
             templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
@@ -4686,7 +3895,7 @@ export interface components {
                 encodedTemplateYaml: string | null;
             };
         };
-        ReorderSubscriptionTemplatesRequestDto: {
+        ReorderSubscriptionTemplatesBodyDto: {
             items: {
                 viewPosition: number;
                 /** Format: uuid */
@@ -4708,10 +3917,13 @@ export interface components {
                 }[];
             };
         };
-        CreateApiTokenRequestDto: {
+        CreateApiTokenBodyDto: {
+            /** @description Name of the API token */
             name: string;
+            /** @description Expiration days of the API token */
             expiresInDays: number;
             /**
+             * @description Scopes of the API token
              * @default [
              *       "*"
              *     ]
@@ -4733,9 +3945,6 @@ export interface components {
                 token: string;
             };
         };
-        DeleteApiTokenResponseDto: {
-            response: boolean;
-        };
         GetApiTokenScopesResponseDto: {
             response: {
                 wildcard: string;
@@ -4753,7 +3962,7 @@ export interface components {
                 }[];
             };
         };
-        FindAllApiTokensResponseDto: {
+        GetApiTokensResponseDto: {
             response: {
                 tokens: {
                     /** Format: uuid */
@@ -4767,11 +3976,6 @@ export interface components {
                     /** Format: date-time */
                     updatedAt: string;
                 }[];
-                docs: {
-                    enabled: boolean;
-                    scalarPath: string | null;
-                    swaggerPath: string | null;
-                };
             };
         };
         GetConfigProfilesResponseDto: {
@@ -4906,14 +4110,11 @@ export interface components {
                 updatedAt: string;
             };
         };
-        DeleteConfigProfileResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        CreateConfigProfileRequestDto: {
+        CreateConfigProfileBodyDto: {
             name: string;
-            config: Record<string, never>;
+            config: {
+                [key: string]: unknown;
+            };
         };
         CreateConfigProfileResponseDto: {
             response: {
@@ -4946,11 +4147,13 @@ export interface components {
                 updatedAt: string;
             };
         };
-        UpdateConfigProfileRequestDto: {
+        UpdateConfigProfileBodyDto: {
             /** Format: uuid */
             uuid: string;
             name?: string;
-            config?: Record<string, never>;
+            config?: {
+                [key: string]: unknown;
+            };
         };
         UpdateConfigProfileResponseDto: {
             response: {
@@ -4983,7 +4186,7 @@ export interface components {
                 updatedAt: string;
             };
         };
-        ReorderConfigProfilesRequestDto: {
+        ReorderConfigProfilesBodyDto: {
             items: {
                 viewPosition: number;
                 /** Format: uuid */
@@ -5033,21 +4236,14 @@ export interface components {
                 }[];
             };
         };
-        DeleteSnippetRequestDto: {
+        DeleteSnippetBodyDto: {
             name: string;
         };
-        DeleteSnippetResponseDto: {
-            response: {
-                total: number;
-                snippets: {
-                    name: string;
-                    snippet: unknown;
-                }[];
-            };
-        };
-        CreateSnippetRequestDto: {
+        CreateSnippetBodyDto: {
             name: string;
-            snippet: Record<string, never>[];
+            snippet: {
+                [key: string]: unknown;
+            }[];
         };
         CreateSnippetResponseDto: {
             response: {
@@ -5058,9 +4254,11 @@ export interface components {
                 }[];
             };
         };
-        UpdateSnippetRequestDto: {
+        UpdateSnippetBodyDto: {
             name: string;
-            snippet: Record<string, never>[];
+            snippet: {
+                [key: string]: unknown;
+            }[];
         };
         UpdateSnippetResponseDto: {
             response: {
@@ -5102,7 +4300,7 @@ export interface components {
                 }[];
             };
         };
-        GetInternalSquadByUuidResponseDto: {
+        GetInternalSquadResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -5130,7 +4328,7 @@ export interface components {
                 updatedAt: string;
             };
         };
-        CreateInternalSquadRequestDto: {
+        CreateInternalSquadBodyDto: {
             name: string;
             inbounds: string[];
         };
@@ -5178,7 +4376,22 @@ export interface components {
                 }[];
             };
         };
-        UpdateInternalSquadRequestDto: {
+        GetInternalSquadUsageResponseDto: {
+            response: {
+                /** Format: uuid */
+                squadUuid: string;
+                users: {
+                    id: number;
+                    /** @description Total used bytes over the period (raw bytes) */
+                    totalBytes: number;
+                }[];
+                /** @description Cursor to fetch the next page, or null if there are no more results */
+                nextCursor: string | null;
+                /** @description Whether there are more results to fetch */
+                hasMore: boolean;
+            };
+        };
+        UpdateInternalSquadBodyDto: {
             /** Format: uuid */
             uuid: string;
             name?: string;
@@ -5212,22 +4425,7 @@ export interface components {
                 updatedAt: string;
             };
         };
-        DeleteInternalSquadResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        AddUsersToInternalSquadResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        RemoveUsersFromInternalSquadResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        ReorderInternalSquadsRequestDto: {
+        ReorderInternalSquadsBodyDto: {
             items: {
                 viewPosition: number;
                 /** Format: uuid */
@@ -5265,6 +4463,26 @@ export interface components {
                 }[];
             };
         };
+        AddManyUsersToInternalSquadBodyDto: {
+            userIds: number[];
+        };
+        DeleteManyUsersFromInternalSquadBodyDto: {
+            userIds: number[];
+        };
+        GetInternalSquadUserUsageResponseDto: {
+            response: {
+                days: {
+                    /** @description Day (YYYY-MM-DD) */
+                    date: string;
+                    nodes: {
+                        /** Format: uuid */
+                        uuid: string;
+                        /** @description Used bytes on this node that day (raw bytes) */
+                        totalBytes: number;
+                    }[];
+                }[];
+            };
+        };
         GetExternalSquadsResponseDto: {
             response: {
                 total: number;
@@ -5283,23 +4501,18 @@ export interface components {
                         templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                     }[];
                     subscriptionSettings: {
-                        profileTitle?: string;
-                        supportLink?: string;
-                        profileUpdateInterval?: number;
-                        isProfileWebpageUrlEnabled?: boolean;
                         serveJsonAtBaseSubscription?: boolean;
                         isShowCustomRemarks?: boolean;
-                        happAnnounce?: string | null;
-                        happRouting?: string | null;
                         randomizeHosts?: boolean;
                     } | null;
                     hostOverrides: {
                         serverDescription?: string | null;
                         vlessRouteId?: number | null;
                     } | null;
-                    responseHeaders: {
+                    responseHeadersAdd: {
                         [key: string]: string;
-                    } | null;
+                    };
+                    responseHeadersRemove: string[];
                     hwidSettings: {
                         enabled: boolean;
                         fallbackDeviceLimit: number;
@@ -5338,23 +4551,18 @@ export interface components {
                     templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                 }[];
                 subscriptionSettings: {
-                    profileTitle?: string;
-                    supportLink?: string;
-                    profileUpdateInterval?: number;
-                    isProfileWebpageUrlEnabled?: boolean;
                     serveJsonAtBaseSubscription?: boolean;
                     isShowCustomRemarks?: boolean;
-                    happAnnounce?: string | null;
-                    happRouting?: string | null;
                     randomizeHosts?: boolean;
                 } | null;
                 hostOverrides: {
                     serverDescription?: string | null;
                     vlessRouteId?: number | null;
                 } | null;
-                responseHeaders: {
+                responseHeadersAdd: {
                     [key: string]: string;
-                } | null;
+                };
+                responseHeadersRemove: string[];
                 hwidSettings: {
                     enabled: boolean;
                     fallbackDeviceLimit: number;
@@ -5376,7 +4584,7 @@ export interface components {
                 updatedAt: string;
             };
         };
-        CreateExternalSquadRequestDto: {
+        CreateExternalSquadBodyDto: {
             name: string;
         };
         CreateExternalSquadResponseDto: {
@@ -5395,23 +4603,18 @@ export interface components {
                     templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                 }[];
                 subscriptionSettings: {
-                    profileTitle?: string;
-                    supportLink?: string;
-                    profileUpdateInterval?: number;
-                    isProfileWebpageUrlEnabled?: boolean;
                     serveJsonAtBaseSubscription?: boolean;
                     isShowCustomRemarks?: boolean;
-                    happAnnounce?: string | null;
-                    happRouting?: string | null;
                     randomizeHosts?: boolean;
                 } | null;
                 hostOverrides: {
                     serverDescription?: string | null;
                     vlessRouteId?: number | null;
                 } | null;
-                responseHeaders: {
+                responseHeadersAdd: {
                     [key: string]: string;
-                } | null;
+                };
+                responseHeadersRemove: string[];
                 hwidSettings: {
                     enabled: boolean;
                     fallbackDeviceLimit: number;
@@ -5433,34 +4636,38 @@ export interface components {
                 updatedAt: string;
             };
         };
-        UpdateExternalSquadRequestDto: {
-            /** Format: uuid */
+        UpdateExternalSquadBodyDto: {
+            /**
+             * Format: uuid
+             * @description UUID of the external squad
+             */
             uuid: string;
             name?: string;
             templates?: {
-                /** Format: uuid */
+                /**
+                 * Format: uuid
+                 * @description UUID of the subscription template
+                 */
                 templateUuid: string;
-                /** @enum {string} */
+                /**
+                 * @description Type of the subscription template
+                 * @enum {string}
+                 */
                 templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
             }[];
             subscriptionSettings?: {
-                profileTitle?: string;
-                supportLink?: string;
-                profileUpdateInterval?: number;
-                isProfileWebpageUrlEnabled?: boolean;
                 serveJsonAtBaseSubscription?: boolean;
                 isShowCustomRemarks?: boolean;
-                happAnnounce?: string | null;
-                happRouting?: string | null;
                 randomizeHosts?: boolean;
             };
             hostOverrides?: {
                 serverDescription?: string | null;
                 vlessRouteId?: number | null;
             };
-            responseHeaders?: {
+            responseHeadersAdd?: {
                 [key: string]: string;
-            } | null;
+            };
+            responseHeadersRemove?: string[];
             hwidSettings?: {
                 enabled: boolean;
                 fallbackDeviceLimit: number;
@@ -5493,23 +4700,18 @@ export interface components {
                     templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                 }[];
                 subscriptionSettings: {
-                    profileTitle?: string;
-                    supportLink?: string;
-                    profileUpdateInterval?: number;
-                    isProfileWebpageUrlEnabled?: boolean;
                     serveJsonAtBaseSubscription?: boolean;
                     isShowCustomRemarks?: boolean;
-                    happAnnounce?: string | null;
-                    happRouting?: string | null;
                     randomizeHosts?: boolean;
                 } | null;
                 hostOverrides: {
                     serverDescription?: string | null;
                     vlessRouteId?: number | null;
                 } | null;
-                responseHeaders: {
+                responseHeadersAdd: {
                     [key: string]: string;
-                } | null;
+                };
+                responseHeadersRemove: string[];
                 hwidSettings: {
                     enabled: boolean;
                     fallbackDeviceLimit: number;
@@ -5531,22 +4733,7 @@ export interface components {
                 updatedAt: string;
             };
         };
-        DeleteExternalSquadResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        AddUsersToExternalSquadResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        RemoveUsersFromExternalSquadResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        ReorderExternalSquadsRequestDto: {
+        ReorderExternalSquadsBodyDto: {
             items: {
                 viewPosition: number;
                 /** Format: uuid */
@@ -5571,23 +4758,18 @@ export interface components {
                         templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                     }[];
                     subscriptionSettings: {
-                        profileTitle?: string;
-                        supportLink?: string;
-                        profileUpdateInterval?: number;
-                        isProfileWebpageUrlEnabled?: boolean;
                         serveJsonAtBaseSubscription?: boolean;
                         isShowCustomRemarks?: boolean;
-                        happAnnounce?: string | null;
-                        happRouting?: string | null;
                         randomizeHosts?: boolean;
                     } | null;
                     hostOverrides: {
                         serverDescription?: string | null;
                         vlessRouteId?: number | null;
                     } | null;
-                    responseHeaders: {
+                    responseHeadersAdd: {
                         [key: string]: string;
-                    } | null;
+                    };
+                    responseHeadersRemove: string[];
                     hwidSettings: {
                         enabled: boolean;
                         fallbackDeviceLimit: number;
@@ -5610,17 +4792,17 @@ export interface components {
                 }[];
             };
         };
-        GetPubKeyResponseDto: {
+        GetNodeSecretKeyResponseDto: {
             response: {
-                pubKey: string;
+                secretKey: string;
             };
         };
-        GetAllNodesTagsResponseDto: {
+        GetNodesTagsResponseDto: {
             response: {
                 tags: string[];
             };
         };
-        CreateNodeRequestDto: {
+        CreateNodeBodyDto: {
             name: string;
             address: string;
             port?: number;
@@ -5646,7 +4828,7 @@ export interface components {
             activePluginUuid?: string | null;
             note?: string;
         };
-        CreateNodeResponseDto: {
+        NodeResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -5741,7 +4923,7 @@ export interface components {
                 note: string | null;
             };
         };
-        GetAllNodesResponseDto: {
+        GetNodesResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -5836,297 +5018,7 @@ export interface components {
                 note: string | null;
             }[];
         };
-        GetOneNodeResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                name: string;
-                address: string;
-                port: number | null;
-                proxyUrl: string | null;
-                isConnected: boolean;
-                isDisabled: boolean;
-                isConnecting: boolean;
-                /** Format: date-time */
-                lastStatusChange: string | null;
-                lastStatusMessage: string | null;
-                isTrafficTrackingActive: boolean;
-                trafficResetDay: number | null;
-                trafficLimitBytes: number | null;
-                trafficUsedBytes: number | null;
-                notifyPercent: number | null;
-                viewPosition: number;
-                countryCode: string;
-                consumptionMultiplier: number;
-                nodeConsumptionMultiplier: number;
-                tags: string[];
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                configProfile: {
-                    /** Format: uuid */
-                    activeConfigProfileUuid: string | null;
-                    activeInbounds: {
-                        /** Format: uuid */
-                        uuid: string;
-                        /** Format: uuid */
-                        profileUuid: string;
-                        tag: string;
-                        type: string;
-                        network: string | null;
-                        security: string | null;
-                        port: number | null;
-                        rawInbound: unknown;
-                    }[];
-                };
-                /** Format: uuid */
-                providerUuid: string | null;
-                provider: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                    faviconLink: string | null;
-                    loginUrl: string | null;
-                    /** Format: date-time */
-                    createdAt: string;
-                    /** Format: date-time */
-                    updatedAt: string;
-                } | null;
-                /** Format: uuid */
-                activePluginUuid: string | null;
-                system: {
-                    info: {
-                        arch: string;
-                        cpus: number;
-                        cpuModel: string;
-                        memoryTotal: number;
-                        hostname: string;
-                        platform: string;
-                        release: string;
-                        type: string;
-                        version: string;
-                        networkInterfaces: string[];
-                    };
-                    stats: {
-                        memoryFree: number;
-                        memoryUsed: number;
-                        uptime: number;
-                        loadAvg: number[];
-                        interface: {
-                            interface: string;
-                            rxBytesPerSec: number;
-                            txBytesPerSec: number;
-                            rxTotal: number;
-                            txTotal: number;
-                        } | null;
-                    };
-                } | null;
-                versions: {
-                    xray: string;
-                    node: string;
-                } | null;
-                xrayUptime: number;
-                usersOnline: number;
-                note: string | null;
-            };
-        };
-        EnableNodeResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                name: string;
-                address: string;
-                port: number | null;
-                proxyUrl: string | null;
-                isConnected: boolean;
-                isDisabled: boolean;
-                isConnecting: boolean;
-                /** Format: date-time */
-                lastStatusChange: string | null;
-                lastStatusMessage: string | null;
-                isTrafficTrackingActive: boolean;
-                trafficResetDay: number | null;
-                trafficLimitBytes: number | null;
-                trafficUsedBytes: number | null;
-                notifyPercent: number | null;
-                viewPosition: number;
-                countryCode: string;
-                consumptionMultiplier: number;
-                nodeConsumptionMultiplier: number;
-                tags: string[];
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                configProfile: {
-                    /** Format: uuid */
-                    activeConfigProfileUuid: string | null;
-                    activeInbounds: {
-                        /** Format: uuid */
-                        uuid: string;
-                        /** Format: uuid */
-                        profileUuid: string;
-                        tag: string;
-                        type: string;
-                        network: string | null;
-                        security: string | null;
-                        port: number | null;
-                        rawInbound: unknown;
-                    }[];
-                };
-                /** Format: uuid */
-                providerUuid: string | null;
-                provider: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                    faviconLink: string | null;
-                    loginUrl: string | null;
-                    /** Format: date-time */
-                    createdAt: string;
-                    /** Format: date-time */
-                    updatedAt: string;
-                } | null;
-                /** Format: uuid */
-                activePluginUuid: string | null;
-                system: {
-                    info: {
-                        arch: string;
-                        cpus: number;
-                        cpuModel: string;
-                        memoryTotal: number;
-                        hostname: string;
-                        platform: string;
-                        release: string;
-                        type: string;
-                        version: string;
-                        networkInterfaces: string[];
-                    };
-                    stats: {
-                        memoryFree: number;
-                        memoryUsed: number;
-                        uptime: number;
-                        loadAvg: number[];
-                        interface: {
-                            interface: string;
-                            rxBytesPerSec: number;
-                            txBytesPerSec: number;
-                            rxTotal: number;
-                            txTotal: number;
-                        } | null;
-                    };
-                } | null;
-                versions: {
-                    xray: string;
-                    node: string;
-                } | null;
-                xrayUptime: number;
-                usersOnline: number;
-                note: string | null;
-            };
-        };
-        DisableNodeResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                name: string;
-                address: string;
-                port: number | null;
-                proxyUrl: string | null;
-                isConnected: boolean;
-                isDisabled: boolean;
-                isConnecting: boolean;
-                /** Format: date-time */
-                lastStatusChange: string | null;
-                lastStatusMessage: string | null;
-                isTrafficTrackingActive: boolean;
-                trafficResetDay: number | null;
-                trafficLimitBytes: number | null;
-                trafficUsedBytes: number | null;
-                notifyPercent: number | null;
-                viewPosition: number;
-                countryCode: string;
-                consumptionMultiplier: number;
-                nodeConsumptionMultiplier: number;
-                tags: string[];
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                configProfile: {
-                    /** Format: uuid */
-                    activeConfigProfileUuid: string | null;
-                    activeInbounds: {
-                        /** Format: uuid */
-                        uuid: string;
-                        /** Format: uuid */
-                        profileUuid: string;
-                        tag: string;
-                        type: string;
-                        network: string | null;
-                        security: string | null;
-                        port: number | null;
-                        rawInbound: unknown;
-                    }[];
-                };
-                /** Format: uuid */
-                providerUuid: string | null;
-                provider: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                    faviconLink: string | null;
-                    loginUrl: string | null;
-                    /** Format: date-time */
-                    createdAt: string;
-                    /** Format: date-time */
-                    updatedAt: string;
-                } | null;
-                /** Format: uuid */
-                activePluginUuid: string | null;
-                system: {
-                    info: {
-                        arch: string;
-                        cpus: number;
-                        cpuModel: string;
-                        memoryTotal: number;
-                        hostname: string;
-                        platform: string;
-                        release: string;
-                        type: string;
-                        version: string;
-                        networkInterfaces: string[];
-                    };
-                    stats: {
-                        memoryFree: number;
-                        memoryUsed: number;
-                        uptime: number;
-                        loadAvg: number[];
-                        interface: {
-                            interface: string;
-                            rxBytesPerSec: number;
-                            txBytesPerSec: number;
-                            rxTotal: number;
-                            txTotal: number;
-                        } | null;
-                    };
-                } | null;
-                versions: {
-                    xray: string;
-                    node: string;
-                } | null;
-                xrayUptime: number;
-                usersOnline: number;
-                note: string | null;
-            };
-        };
-        DeleteNodeResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        UpdateNodeRequestDto: {
+        UpdateNodeBodyDto: {
             /** Format: uuid */
             uuid: string;
             name?: string;
@@ -6152,130 +5044,20 @@ export interface components {
             activePluginUuid?: string | null;
             note?: string | null;
         };
-        UpdateNodeResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                name: string;
-                address: string;
-                port: number | null;
-                proxyUrl: string | null;
-                isConnected: boolean;
-                isDisabled: boolean;
-                isConnecting: boolean;
-                /** Format: date-time */
-                lastStatusChange: string | null;
-                lastStatusMessage: string | null;
-                isTrafficTrackingActive: boolean;
-                trafficResetDay: number | null;
-                trafficLimitBytes: number | null;
-                trafficUsedBytes: number | null;
-                notifyPercent: number | null;
-                viewPosition: number;
-                countryCode: string;
-                consumptionMultiplier: number;
-                nodeConsumptionMultiplier: number;
-                tags: string[];
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-                configProfile: {
-                    /** Format: uuid */
-                    activeConfigProfileUuid: string | null;
-                    activeInbounds: {
-                        /** Format: uuid */
-                        uuid: string;
-                        /** Format: uuid */
-                        profileUuid: string;
-                        tag: string;
-                        type: string;
-                        network: string | null;
-                        security: string | null;
-                        port: number | null;
-                        rawInbound: unknown;
-                    }[];
-                };
-                /** Format: uuid */
-                providerUuid: string | null;
-                provider: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                    faviconLink: string | null;
-                    loginUrl: string | null;
-                    /** Format: date-time */
-                    createdAt: string;
-                    /** Format: date-time */
-                    updatedAt: string;
-                } | null;
-                /** Format: uuid */
-                activePluginUuid: string | null;
-                system: {
-                    info: {
-                        arch: string;
-                        cpus: number;
-                        cpuModel: string;
-                        memoryTotal: number;
-                        hostname: string;
-                        platform: string;
-                        release: string;
-                        type: string;
-                        version: string;
-                        networkInterfaces: string[];
-                    };
-                    stats: {
-                        memoryFree: number;
-                        memoryUsed: number;
-                        uptime: number;
-                        loadAvg: number[];
-                        interface: {
-                            interface: string;
-                            rxBytesPerSec: number;
-                            txBytesPerSec: number;
-                            rxTotal: number;
-                            txTotal: number;
-                        } | null;
-                    };
-                } | null;
-                versions: {
-                    xray: string;
-                    node: string;
-                } | null;
-                xrayUptime: number;
-                usersOnline: number;
-                note: string | null;
-            };
-        };
-        RestartNodeRequestBodyDto: {
+        RestartNodeBodyDto: {
             forceRestart: boolean;
         };
-        RestartNodeResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        ResetNodeTrafficResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        RestartAllNodesRequestBodyDto: {
+        RestartAllNodesBodyDto: {
             forceRestart: boolean;
         };
-        RestartAllNodesResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        ReorderNodeRequestDto: {
+        ReorderNodesBodyDto: {
             nodes: {
                 viewPosition: number;
                 /** Format: uuid */
                 uuid: string;
             }[];
         };
-        ReorderNodeResponseDto: {
+        ReorderNodesResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -6370,7 +5152,7 @@ export interface components {
                 note: string | null;
             }[];
         };
-        ProfileModificationRequestDto: {
+        ProfileModificationBodyDto: {
             uuids: string[];
             configProfile: {
                 /** Format: uuid */
@@ -6378,22 +5160,12 @@ export interface components {
                 activeInbounds: string[];
             };
         };
-        ProfileModificationResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        BulkNodesActionsRequestDto: {
+        BulkNodesActionsBodyDto: {
             uuids: string[];
             /** @enum {string} */
             action: "ENABLE" | "DISABLE" | "RESTART" | "RESET_TRAFFIC";
         };
-        BulkNodesActionsResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        BulkNodesUpdateRequestDto: {
+        BulkNodesUpdateBodyDto: {
             uuids: string[];
             fields: {
                 countryCode?: string;
@@ -6407,11 +5179,6 @@ export interface components {
                 note?: string | null;
             };
         };
-        BulkNodesUpdateResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
         GetTorrentBlockerReportsResponseDto: {
             response: {
                 records: {
@@ -6419,8 +5186,6 @@ export interface components {
                     userId: number;
                     nodeId: number;
                     user: {
-                        /** Format: uuid */
-                        uuid: string;
                         username: string;
                     };
                     node: {
@@ -6471,8 +5236,7 @@ export interface components {
                     reportsLast24Hours: number;
                 };
                 topUsers: {
-                    /** Format: uuid */
-                    uuid: string;
+                    userId: number;
                     color: string;
                     username: string;
                     total: number;
@@ -6485,56 +5249,6 @@ export interface components {
                     name: string;
                     total: number;
                 }[];
-            };
-        };
-        TruncateTorrentBlockerReportsResponseDto: {
-            response: {
-                records: {
-                    id: number;
-                    userId: number;
-                    nodeId: number;
-                    user: {
-                        /** Format: uuid */
-                        uuid: string;
-                        username: string;
-                    };
-                    node: {
-                        /** Format: uuid */
-                        uuid: string;
-                        name: string;
-                        countryCode: string;
-                    };
-                    report: {
-                        actionReport: {
-                            blocked: boolean;
-                            ip: string;
-                            blockDuration: number;
-                            /** Format: date-time */
-                            willUnblockAt: string;
-                            userId: string;
-                            /** Format: date-time */
-                            processedAt: string;
-                        };
-                        xrayReport: {
-                            email: string | null;
-                            level: number | null;
-                            protocol: string | null;
-                            network: string;
-                            source: string | null;
-                            destination: string;
-                            routeTarget: string | null;
-                            originalTarget: string | null;
-                            inboundTag: string | null;
-                            inboundName: string | null;
-                            inboundLocal: string | null;
-                            outboundTag: string | null;
-                            ts: number;
-                        };
-                    };
-                    /** Format: date-time */
-                    createdAt: string;
-                }[];
-                total: number;
             };
         };
         GetNodePluginsResponseDto: {
@@ -6558,7 +5272,7 @@ export interface components {
                 pluginConfig: unknown;
             };
         };
-        UpdateNodePluginRequestDto: {
+        UpdateNodePluginBodyDto: {
             /** Format: uuid */
             uuid: string;
             name?: string;
@@ -6573,12 +5287,7 @@ export interface components {
                 pluginConfig: unknown;
             };
         };
-        DeleteNodePluginResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        CreateNodePluginRequestDto: {
+        CreateNodePluginBodyDto: {
             name: string;
         };
         CreateNodePluginResponseDto: {
@@ -6590,7 +5299,7 @@ export interface components {
                 pluginConfig: unknown;
             };
         };
-        ReorderNodePluginsRequestDto: {
+        ReorderNodePluginsBodyDto: {
             items: {
                 viewPosition: number;
                 /** Format: uuid */
@@ -6609,7 +5318,7 @@ export interface components {
                 }[];
             };
         };
-        CloneNodePluginRequestDto: {
+        CloneNodePluginBodyDto: {
             /** Format: uuid */
             cloneFromUuid: string;
         };
@@ -6622,7 +5331,7 @@ export interface components {
                 pluginConfig: unknown;
             };
         };
-        PluginExecutorRequestDto: {
+        PluginExecutorBodyDto: {
             command: {
                 /** @enum {string} */
                 command: "blockIps";
@@ -6633,7 +5342,7 @@ export interface components {
             } | {
                 /** @enum {string} */
                 command: "unblockIps";
-                ips: string[];
+                ips: (string)[];
             } | {
                 /** @enum {string} */
                 command: "recreateTables";
@@ -6647,17 +5356,12 @@ export interface components {
                 nodeUuids: string[];
             };
         };
-        PluginExecutorResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        GetAllHostTagsResponseDto: {
+        GetHostsTagsResponseDto: {
             response: {
                 tags: string[];
             };
         };
-        CreateHostRequestDto: {
+        CreateHostBodyDto: {
             inbound: {
                 /** Format: uuid */
                 configProfileUuid: string;
@@ -6709,7 +5413,7 @@ export interface components {
             /** @description Optional. Subscription types from which the host will be excluded from. */
             excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
         };
-        CreateHostResponseDto: {
+        HostResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -6762,7 +5466,7 @@ export interface components {
                 excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             };
         };
-        UpdateHostRequestDto: {
+        UpdateHostBodyDto: {
             /** Format: uuid */
             uuid: string;
             inbound?: {
@@ -6808,60 +5512,7 @@ export interface components {
             /** @description Optional. Subscription types from which the host will be excluded from. */
             excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
         };
-        UpdateHostResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                viewPosition: number;
-                remark: string;
-                address: string;
-                port: number;
-                path: string | null;
-                sni: string | null;
-                host: string | null;
-                /** @enum {string|null} */
-                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
-                fingerprint: string | null;
-                isDisabled: boolean;
-                /**
-                 * @default DEFAULT
-                 * @enum {string}
-                 */
-                securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xhttpExtraParams: unknown;
-                muxParams: unknown;
-                sockoptParams: unknown;
-                finalMask: unknown;
-                inbound: {
-                    /** Format: uuid */
-                    configProfileUuid: string | null;
-                    /** Format: uuid */
-                    configProfileInboundUuid: string | null;
-                };
-                serverDescription: string | null;
-                /** @default [] */
-                tags: string[];
-                /** @default false */
-                isHidden: boolean;
-                /** @default false */
-                overrideSniFromAddress: boolean;
-                /** @default false */
-                keepSniBlank: boolean;
-                vlessRouteId: number | null;
-                pinnedPeerCertSha256: string | null;
-                verifyPeerCertByName: string | null;
-                shuffleHost: boolean;
-                mihomoX25519: boolean;
-                /** @enum {string|null} */
-                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
-                nodes: string[];
-                /** Format: uuid */
-                xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
-            };
-        };
-        GetAllHostsResponseDto: {
+        GetHostsResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -6914,245 +5565,28 @@ export interface components {
                 excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             }[];
         };
-        GetOneHostResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                viewPosition: number;
-                remark: string;
-                address: string;
-                port: number;
-                path: string | null;
-                sni: string | null;
-                host: string | null;
-                /** @enum {string|null} */
-                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
-                fingerprint: string | null;
-                isDisabled: boolean;
-                /**
-                 * @default DEFAULT
-                 * @enum {string}
-                 */
-                securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xhttpExtraParams: unknown;
-                muxParams: unknown;
-                sockoptParams: unknown;
-                finalMask: unknown;
-                inbound: {
-                    /** Format: uuid */
-                    configProfileUuid: string | null;
-                    /** Format: uuid */
-                    configProfileInboundUuid: string | null;
-                };
-                serverDescription: string | null;
-                /** @default [] */
-                tags: string[];
-                /** @default false */
-                isHidden: boolean;
-                /** @default false */
-                overrideSniFromAddress: boolean;
-                /** @default false */
-                keepSniBlank: boolean;
-                vlessRouteId: number | null;
-                pinnedPeerCertSha256: string | null;
-                verifyPeerCertByName: string | null;
-                shuffleHost: boolean;
-                mihomoX25519: boolean;
-                /** @enum {string|null} */
-                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
-                nodes: string[];
-                /** Format: uuid */
-                xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
-            };
-        };
-        ReorderHostRequestDto: {
+        ReorderHostsBodyDto: {
             hosts: {
                 viewPosition: number;
                 /** Format: uuid */
                 uuid: string;
             }[];
         };
-        ReorderHostResponseDto: {
+        ReorderHostsResponseDto: {
             response: {
                 isUpdated: boolean;
             };
         };
-        DeleteHostResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        BulkDeleteHostsRequestDto: {
+        BulkDeleteHostsBodyDto: {
             uuids: string[];
         };
-        BulkDeleteHostsResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                viewPosition: number;
-                remark: string;
-                address: string;
-                port: number;
-                path: string | null;
-                sni: string | null;
-                host: string | null;
-                /** @enum {string|null} */
-                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
-                fingerprint: string | null;
-                isDisabled: boolean;
-                /**
-                 * @default DEFAULT
-                 * @enum {string}
-                 */
-                securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xhttpExtraParams: unknown;
-                muxParams: unknown;
-                sockoptParams: unknown;
-                finalMask: unknown;
-                inbound: {
-                    /** Format: uuid */
-                    configProfileUuid: string | null;
-                    /** Format: uuid */
-                    configProfileInboundUuid: string | null;
-                };
-                serverDescription: string | null;
-                /** @default [] */
-                tags: string[];
-                /** @default false */
-                isHidden: boolean;
-                /** @default false */
-                overrideSniFromAddress: boolean;
-                /** @default false */
-                keepSniBlank: boolean;
-                vlessRouteId: number | null;
-                pinnedPeerCertSha256: string | null;
-                verifyPeerCertByName: string | null;
-                shuffleHost: boolean;
-                mihomoX25519: boolean;
-                /** @enum {string|null} */
-                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
-                nodes: string[];
-                /** Format: uuid */
-                xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
-            }[];
-        };
-        BulkDisableHostsRequestDto: {
+        BulkDisableHostsBodyDto: {
             uuids: string[];
         };
-        BulkDisableHostsResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                viewPosition: number;
-                remark: string;
-                address: string;
-                port: number;
-                path: string | null;
-                sni: string | null;
-                host: string | null;
-                /** @enum {string|null} */
-                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
-                fingerprint: string | null;
-                isDisabled: boolean;
-                /**
-                 * @default DEFAULT
-                 * @enum {string}
-                 */
-                securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xhttpExtraParams: unknown;
-                muxParams: unknown;
-                sockoptParams: unknown;
-                finalMask: unknown;
-                inbound: {
-                    /** Format: uuid */
-                    configProfileUuid: string | null;
-                    /** Format: uuid */
-                    configProfileInboundUuid: string | null;
-                };
-                serverDescription: string | null;
-                /** @default [] */
-                tags: string[];
-                /** @default false */
-                isHidden: boolean;
-                /** @default false */
-                overrideSniFromAddress: boolean;
-                /** @default false */
-                keepSniBlank: boolean;
-                vlessRouteId: number | null;
-                pinnedPeerCertSha256: string | null;
-                verifyPeerCertByName: string | null;
-                shuffleHost: boolean;
-                mihomoX25519: boolean;
-                /** @enum {string|null} */
-                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
-                nodes: string[];
-                /** Format: uuid */
-                xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
-            }[];
-        };
-        BulkEnableHostsRequestDto: {
+        BulkEnableHostsBodyDto: {
             uuids: string[];
         };
-        BulkEnableHostsResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                viewPosition: number;
-                remark: string;
-                address: string;
-                port: number;
-                path: string | null;
-                sni: string | null;
-                host: string | null;
-                /** @enum {string|null} */
-                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
-                fingerprint: string | null;
-                isDisabled: boolean;
-                /**
-                 * @default DEFAULT
-                 * @enum {string}
-                 */
-                securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xhttpExtraParams: unknown;
-                muxParams: unknown;
-                sockoptParams: unknown;
-                finalMask: unknown;
-                inbound: {
-                    /** Format: uuid */
-                    configProfileUuid: string | null;
-                    /** Format: uuid */
-                    configProfileInboundUuid: string | null;
-                };
-                serverDescription: string | null;
-                /** @default [] */
-                tags: string[];
-                /** @default false */
-                isHidden: boolean;
-                /** @default false */
-                overrideSniFromAddress: boolean;
-                /** @default false */
-                keepSniBlank: boolean;
-                vlessRouteId: number | null;
-                pinnedPeerCertSha256: string | null;
-                verifyPeerCertByName: string | null;
-                shuffleHost: boolean;
-                mihomoX25519: boolean;
-                /** @enum {string|null} */
-                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
-                nodes: string[];
-                /** Format: uuid */
-                xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
-            }[];
-        };
-        UpdateManyHostsRequestDto: {
+        UpdateManyHostsBodyDto: {
             inbound?: {
                 /** Format: uuid */
                 configProfileUuid: string;
@@ -7197,69 +5631,22 @@ export interface components {
             excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
             uuids: string[];
         };
-        UpdateManyHostsResponseDto: {
-            response: {
-                /** Format: uuid */
-                uuid: string;
-                viewPosition: number;
-                remark: string;
-                address: string;
-                port: number;
-                path: string | null;
-                sni: string | null;
-                host: string | null;
-                /** @enum {string|null} */
-                alpn: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
-                fingerprint: string | null;
-                isDisabled: boolean;
-                /**
-                 * @default DEFAULT
-                 * @enum {string}
-                 */
-                securityLayer: "DEFAULT" | "TLS" | "NONE";
-                xhttpExtraParams: unknown;
-                muxParams: unknown;
-                sockoptParams: unknown;
-                finalMask: unknown;
-                inbound: {
-                    /** Format: uuid */
-                    configProfileUuid: string | null;
-                    /** Format: uuid */
-                    configProfileInboundUuid: string | null;
-                };
-                serverDescription: string | null;
-                /** @default [] */
-                tags: string[];
-                /** @default false */
-                isHidden: boolean;
-                /** @default false */
-                overrideSniFromAddress: boolean;
-                /** @default false */
-                keepSniBlank: boolean;
-                vlessRouteId: number | null;
-                pinnedPeerCertSha256: string | null;
-                verifyPeerCertByName: string | null;
-                shuffleHost: boolean;
-                mihomoX25519: boolean;
-                /** @enum {string|null} */
-                mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
-                nodes: string[];
-                /** Format: uuid */
-                xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
-                excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
-            }[];
+        GetNodeUsageBodyDto: {
+            /** @description Node UUIDs to include */
+            nodesUuids: string[];
         };
-        GetLegacyStatsNodesUsersUsageResponseDto: {
+        GetNodeUsageResponseDto: {
             response: {
-                /** Format: uuid */
-                userUuid: string;
-                username: string;
-                /** Format: uuid */
-                nodeUuid: string;
-                total: number;
-                date: string;
-            }[];
+                nodes: {
+                    /** Format: uuid */
+                    uuid: string;
+                    users: {
+                        id: number;
+                        /** @description Total used bytes over the period (raw bytes) */
+                        totalBytes: number;
+                    }[];
+                }[];
+            };
         };
         GetStatsNodeUsersUsageResponseDto: {
             response: {
@@ -7272,7 +5659,7 @@ export interface components {
                 }[];
             };
         };
-        GetStatsNodesUsersUsageRequestDto: {
+        GetStatsNodesUsersUsageBodyDto: {
             nodesUuids: string[];
         };
         GetStatsNodesUsersUsageResponseDto: {
@@ -7285,18 +5672,6 @@ export interface components {
                     total: number;
                 }[];
             };
-        };
-        GetLegacyStatsUserUsageResponseDto: {
-            response: {
-                /** Format: uuid */
-                userUuid: string;
-                /** Format: uuid */
-                nodeUuid: string;
-                nodeName: string;
-                countryCode: string;
-                total: number;
-                date: string;
-            }[];
         };
         GetStatsUserUsageResponseDto: {
             response: {
@@ -7321,7 +5696,7 @@ export interface components {
                 }[];
             };
         };
-        GetAllHwidDevicesResponseDto: {
+        GetHwidDevicesQueryResponseDto: {
             response: {
                 devices: {
                     hwid: string;
@@ -7339,10 +5714,9 @@ export interface components {
                 total: number;
             };
         };
-        CreateUserHwidDeviceRequestDto: {
+        CreateUserHwidDeviceBodyDto: {
             hwid: string;
-            /** Format: uuid */
-            userUuid: string;
+            userId: number;
             platform?: string;
             osVersion?: string;
             deviceModel?: string;
@@ -7367,9 +5741,8 @@ export interface components {
                 }[];
             };
         };
-        DeleteUserHwidDeviceRequestDto: {
-            /** Format: uuid */
-            userUuid: string;
+        DeleteUserHwidDeviceBodyDto: {
+            userId: number;
             hwid: string;
         };
         DeleteUserHwidDeviceResponseDto: {
@@ -7390,9 +5763,8 @@ export interface components {
                 }[];
             };
         };
-        DeleteAllUserHwidDevicesRequestDto: {
-            /** Format: uuid */
-            userUuid: string;
+        DeleteAllUserHwidDevicesBodyDto: {
+            userId: number;
         };
         DeleteAllUserHwidDevicesResponseDto: {
             response: {
@@ -7432,8 +5804,6 @@ export interface components {
         GetTopUsersByHwidDevicesResponseDto: {
             response: {
                 users: {
-                    /** Format: uuid */
-                    userUuid: string;
                     id: number;
                     username: string;
                     devicesCount: number;
@@ -7510,7 +5880,7 @@ export interface components {
                 }[];
             };
         };
-        GetInfraProviderByUuidResponseDto: {
+        GetInfraProviderResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
@@ -7535,12 +5905,7 @@ export interface components {
                 }[];
             };
         };
-        DeleteInfraProviderByUuidResponseDto: {
-            response: {
-                isDeleted: boolean;
-            };
-        };
-        CreateInfraProviderRequestDto: {
+        CreateInfraProviderBodyDto: {
             name: string;
             /** Format: uri */
             faviconLink?: string;
@@ -7572,7 +5937,7 @@ export interface components {
                 }[];
             };
         };
-        UpdateInfraProviderRequestDto: {
+        UpdateInfraProviderBodyDto: {
             /** Format: uuid */
             uuid: string;
             name?: string;
@@ -7606,7 +5971,7 @@ export interface components {
                 }[];
             };
         };
-        CreateInfraBillingHistoryRecordRequestDto: {
+        CreateInfraBillingRecordBodyDto: {
             /** Format: uuid */
             providerUuid: string;
             amount: number;
@@ -7616,7 +5981,7 @@ export interface components {
              */
             billedAt: string;
         };
-        CreateInfraBillingHistoryRecordResponseDto: {
+        CreateInfraBillingRecordResponseDto: {
             response: {
                 records: {
                     /** Format: uuid */
@@ -7636,27 +6001,7 @@ export interface components {
                 total: number;
             };
         };
-        GetInfraBillingHistoryRecordsResponseDto: {
-            response: {
-                records: {
-                    /** Format: uuid */
-                    uuid: string;
-                    /** Format: uuid */
-                    providerUuid: string;
-                    amount: number;
-                    /** Format: date-time */
-                    billedAt: string;
-                    provider: {
-                        /** Format: uuid */
-                        uuid: string;
-                        name: string;
-                        faviconLink: string | null;
-                    };
-                }[];
-                total: number;
-            };
-        };
-        DeleteInfraBillingHistoryRecordByUuidResponseDto: {
+        GetInfraBillingRecordsResponseDto: {
             response: {
                 records: {
                     /** Format: uuid */
@@ -7721,7 +6066,7 @@ export interface components {
                 };
             };
         };
-        UpdateInfraBillingNodeRequestDto: {
+        UpdateInfraBillingNodeBodyDto: {
             uuids: string[];
             /** Format: date-time */
             nextBillingAt: string;
@@ -7771,7 +6116,7 @@ export interface components {
                 };
             };
         };
-        CreateInfraBillingNodeRequestDto: {
+        CreateInfraBillingNodeBodyDto: {
             /** Format: uuid */
             providerUuid: string;
             /** Format: uuid */
@@ -7784,51 +6129,6 @@ export interface components {
             nextBillingAt: string;
         };
         CreateInfraBillingNodeResponseDto: {
-            response: {
-                totalBillingNodes: number;
-                billingNodes: {
-                    /** Format: uuid */
-                    uuid: string;
-                    /** Format: uuid */
-                    nodeUuid: string | null;
-                    name: string | null;
-                    /** Format: uuid */
-                    providerUuid: string;
-                    provider: {
-                        /** Format: uuid */
-                        uuid: string;
-                        name: string;
-                        loginUrl: string | null;
-                        faviconLink: string | null;
-                    };
-                    node: {
-                        /** Format: uuid */
-                        uuid: string;
-                        name: string;
-                        countryCode: string;
-                    } | null;
-                    /** Format: date-time */
-                    nextBillingAt: string;
-                    /** Format: date-time */
-                    createdAt: string;
-                    /** Format: date-time */
-                    updatedAt: string;
-                }[];
-                availableBillingNodes: {
-                    /** Format: uuid */
-                    uuid: string;
-                    name: string;
-                    countryCode: string;
-                }[];
-                totalAvailableBillingNodes: number;
-                stats: {
-                    upcomingNodesCount: number;
-                    currentMonthPayments: number;
-                    totalSpent: number;
-                };
-            };
-        };
-        DeleteInfraBillingNodeByUuidResponseDto: {
             response: {
                 totalBillingNodes: number;
                 billingNodes: {
@@ -8035,78 +6335,75 @@ export interface components {
                 }[];
             };
         };
-        DebugSrrMatcherRequestDto: {
+        DebugSrrMatcherBodyDto: {
             responseRules: {
                 /**
-                 * @description {"title":"Response Rules Config Version","markdownDescription":"Version of the **response rules** config. Currently supported version is **1**."}
+                 * Response Rules Config Version
                  * @enum {string}
                  */
                 version: "1";
-                /** @description {"markdownDescription":"Settings for the **response rules** config. Optional."} */
+                /** Response Rule Settings */
                 settings?: {
-                    /** @description {"markdownDescription":"Usually, a user's subscription may also be available via additional paths such as **\/json**, **\/stash**, or **\/mihomo**. If this flag is set to **true**, access via these additional paths will be disabled."} */
+                    /** Disable Subscription Access by Path */
                     disableSubscriptionAccessByPath?: boolean;
                 };
-                /** @description {"title":"Response Rules","markdownDescription":"Array of **response rules**. Rules are evaluated in order and the first rule that matches is applied. If no rule matches, request will be blocked by default.\n\n**Example:**\n```json\n[\n  {\n    \"name\": \"Blank rule\",\n    \"description\": \"Blank rule\",\n    \"operator\": \"AND\",\n    \"enabled\": true,\n    \"conditions\": [],\n    \"responseType\": \"BLOCK\",\n    \"responseModifications\": {\n      \"headers\": []\n    }\n  }\n]\n```","defaultSnippets":[]} */
+                /** Response Rules */
                 rules: {
-                    /** @description {"markdownDescription":"Name of the response rule."} */
+                    /** Name */
                     name: string;
-                    /** @description {"markdownDescription":"Description of the response rule. Optional."} */
+                    /** Description */
                     description?: string;
-                    /** @description {"markdownDescription":"Control whether the response rule is enabled or disabled. \n\n - `true` the rule will be applied. \n\n - `false` the rule will be always ignored."} */
+                    /** Enabled */
                     enabled: boolean;
-                    /**
-                     * @description {"markdownDescription":"Operator to use for combining conditions in the rule."}
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     operator: "AND" | "OR";
-                    /** @description {"markdownDescription":"Array of conditions to check against the request headers. Conditions are applied with **operator**. If conditions are empty, the rule will be matched."} */
+                    /** Conditions */
                     conditions: {
-                        /** @description {"markdownDescription":"**Name** of the HTTP header to check. Must comply with RFC 7230."} */
+                        /** Header Name */
                         headerName: string;
-                        /**
-                         * @description {"errorMessage":"Invalid operator. Please select a valid operator.","markdownDescription":"Operator to use for comparing the `headerName` with `value`.","markdownEnumDescriptions":["Performs an exact, comparison between the header value and specified string. `string === value`","Ensures the header value does not exactly match the specified string. `string !== value`","Checks if the header value contains the specified string as a substring. `string.includes()`","Verifies the header value does not contain the specified string as a substring. `!string.includes()`","Validates that the header value begins with the specified string. `string.startsWith()`","Validates that the header value does not begin with the specified string. `!string.startsWith()`","Confirms the header value ends with the specified string. `string.endsWith()`","Confirms the header value does not end with the specified string. `!string.endsWith()`","Evaluates if the header value matches the specified regular expression pattern. `regex.test()`","Evaluates if the header value does not match the specified regular expression pattern. `!regex.test()`"]}
-                         * @enum {string}
-                         */
+                        /** @enum {string} */
                         operator: "EQUALS" | "NOT_EQUALS" | "CONTAINS" | "NOT_CONTAINS" | "STARTS_WITH" | "NOT_STARTS_WITH" | "ENDS_WITH" | "NOT_ENDS_WITH" | "REGEX" | "NOT_REGEX";
-                        /** @description {"markdownDescription":"**Value** to check against the **headerName**."} */
                         value: string;
-                        /** @description {"markdownDescription":"Whether the value is **case sensitive**. \n\n - `true`: the value will be compared as is. \n\n - `false`: the value will be lowercased **before** comparison."} */
                         caseSensitive: boolean;
                     }[];
-                    /**
-                     * @description {"errorMessage":"Invalid response type. Please select a valid response type.","markdownDescription":"Type of the response. Determines the type of **response** to be returned when the rule is matched.","markdownEnumDescriptions":["Return **subscription** in XRAY-JSON format. (Using `Xray Json` template)","Return **subscription** in BASE64 encoded string. Compatible with most client application with Xray core.","Return **subscription** in Mihomo format. (Using `Mihomo` template)","Return **subscription** in Stash format. (Using `Stash` template)","Return **subscription** in Clash format. (Using `Clash` template) Useful for client application that use Legacy Clash core.","Return **subscription** in Singbox format. (Using `Singbox` template) Format which is used by Singbox client application.","Return **subscription** as browser format. The same as on `/info` route.","**Drop** request and return `403` status code.","**Drop** request and return `404` status code.","**Drop** request and return `451` status code.","**Drop** the socket connection."]}
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     responseType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX" | "BROWSER" | "BLOCK" | "STATUS_CODE_404" | "STATUS_CODE_451" | "SOCKET_DROP";
-                    /** @description {"examples":[{"headers":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Response modifications to be applied when the rule is matched. Optional."} */
+                    /**
+                     * Response Modifications
+                     * @example {
+                     *       "headers": [
+                     *         {
+                     *           "key": "X-Custom-Header",
+                     *           "value": "CustomValue"
+                     *         }
+                     *       ]
+                     *     }
+                     */
                     responseModifications?: {
-                        /** @description {"defaultSnippets":[{"label":"Examples: Add custom header","markdownDescription":"Add a custom header to the response","body":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Array of headers to be added when the rule is matched."} */
                         headers?: {
-                            /** @description {"markdownDescription":"Key of the response header. Must comply with RFC 7230."} */
+                            /** Header Key */
                             key: string;
-                            /** @description {"markdownDescription":"Value of the response header. "} */
+                            /** Header Value */
                             value: string;
                         }[];
-                        /** @description {"markdownDescription":"By default, headers are added when forming the response. In some cases, headers set in SRR may be overridden by headers from other parts of the system. If you set this flag to **true**, headers from SRR will be added at the very end, just before the response is sent. In this case, SRR headers may override headers from other sections."} */
+                        /** Apply Headers to End */
                         applyHeadersToEnd?: boolean;
-                        /** @description {"markdownDescription":"Override the subscription template with the given name. If not provided, the default subscription template will be used. If the template name is not found, the default subscription template for this type will be used. **This modification have higher priority than settings from External Squads.**"} */
+                        /** Subscription Template */
                         subscriptionTemplate?: string;
-                        /** @description {"markdownDescription":"Each Host may have its own Xray Json Template. If you set this flag to **true**, the Xray Json Template defined by the SRR will be used. **The Host's Xray Json Template will be ignored.**"} */
+                        /** Ignore Host Xray Json Template */
                         ignoreHostXrayJsonTemplate?: boolean;
-                        /** @description {"markdownDescription":"If you set this flag to **true**, the **Serve JSON at Base Subscription** setting will be ignored (set to **false**)."} */
+                        /** Ignore Serve Json at Base Subscription */
                         ignoreServeJsonAtBaseSubscription?: boolean;
-                        /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                         additionalExtendedClientsRegex?: string[];
-                        /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                        /** Disable HWID Check */
                         disableHwidCheck?: boolean;
-                        /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                        /** Encryption */
                         encryption?: {
                             /** @enum {string} */
                             method: "age1" | "age1pq1";
                             key: string;
                         };
-                        /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                        /** Exclude Hosts by Tags */
                         excludeHostsByTags?: string[];
                     };
                 }[];
@@ -8117,66 +6414,63 @@ export interface components {
                 matched: boolean;
                 /** @enum {string} */
                 responseType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX" | "BROWSER" | "BLOCK" | "STATUS_CODE_404" | "STATUS_CODE_451" | "SOCKET_DROP";
-                /** @description {"defaultSnippets":[{"label":"Examples: Blank rule","markdownDescription":"Simple blank rule with no conditions or modifications.\n```json\n{\n  \"name\": \"Blank rule\",\n  \"description\": \"Blank rule\",\n  \"operator\": \"AND\",\n  \"enabled\": true,\n  \"conditions\": [],\n  \"responseType\": \"BLOCK\",\n  \"responseModifications\": {\n    \"headers\": []\n  }\n}\n```","body":{"name":"Blank rule","description":"Blank rule","operator":"AND","enabled":true,"conditions":[],"responseType":"BLOCK","responseModifications":{"headers":[]}}},{"label":"Examples: Block Legacy Clients","markdownDescription":"Block requests from legacy clients\n```json\n{\n  \"name\": \"Block Legacy Clients\",\n  \"description\": \"Block requests from legacy clients\",\n  \"enabled\": true,\n  \"operator\": \"OR\",\n  \"conditions\": [\n    {\n      \"headerName\": \"user-agent\",\n      \"operator\": \"CONTAINS\",\n      \"value\": \"Hiddify\",\n      \"caseSensitive\": true\n    },\n    {\n      \"headerName\": \"user-agent\",\n      \"operator\": \"CONTAINS\",\n      \"value\": \"FoxRay\",\n      \"caseSensitive\": true\n    }\n  ],\n  \"responseType\": \"BLOCK\"\n}\n```","body":{"name":"Block Legacy Clients","description":"Block requests from legacy clients","enabled":true,"operator":"OR","conditions":[{"headerName":"user-agent","operator":"CONTAINS","value":"Hiddify","caseSensitive":true},{"headerName":"user-agent","operator":"CONTAINS","value":"FoxRay","caseSensitive":true}],"responseType":"BLOCK"}}],"title":"Response Rule","markdownDescription":"Response rule configuration.\n\n**Fields:**\n- **name**: Name of the response rule.\n- **description**: Description of the response rule. Optional.\n- **enabled**: Control whether the response rule is enabled or disabled. \n\n - `true` the rule will be applied. \n\n - `false` the rule will be always ignored.\n- **operator**: Operator to use for combining conditions in the rule.\n- **conditions**: Array of conditions to check against the request headers. Conditions are applied with **operator**. If conditions are empty, the rule will be matched.\n- **responseType**: Type of the response. Determines the type of **response** to be returned when the rule is matched.\n- **responseModifications**: Response modifications to be applied when the rule is matched. Optional.\n\n**Example:**\n```json\n{\n  \"name\": \"Block Legacy Clients\",\n  \"description\": \"Block requests from legacy clients\",\n  \"enabled\": true,\n  \"operator\": \"OR\",\n  \"conditions\": [\n    {\n      \"headerName\": \"user-agent\",\n      \"operator\": \"CONTAINS\",\n      \"value\": \"Hiddify\",\n      \"caseSensitive\": true\n    },\n    {\n      \"headerName\": \"user-agent\",\n      \"operator\": \"CONTAINS\",\n      \"value\": \"FoxRay\",\n      \"caseSensitive\": true\n    }\n  ],\n  \"responseType\": \"BLOCK\"\n}\n```"} */
+                /** Response Rule */
                 matchedRule: {
-                    /** @description {"markdownDescription":"Name of the response rule."} */
+                    /** Name */
                     name: string;
-                    /** @description {"markdownDescription":"Description of the response rule. Optional."} */
+                    /** Description */
                     description?: string;
-                    /** @description {"markdownDescription":"Control whether the response rule is enabled or disabled. \n\n - `true` the rule will be applied. \n\n - `false` the rule will be always ignored."} */
+                    /** Enabled */
                     enabled: boolean;
-                    /**
-                     * @description {"markdownDescription":"Operator to use for combining conditions in the rule."}
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     operator: "AND" | "OR";
-                    /** @description {"markdownDescription":"Array of conditions to check against the request headers. Conditions are applied with **operator**. If conditions are empty, the rule will be matched."} */
+                    /** Conditions */
                     conditions: {
-                        /** @description {"markdownDescription":"**Name** of the HTTP header to check. Must comply with RFC 7230."} */
+                        /** Header Name */
                         headerName: string;
-                        /**
-                         * @description {"errorMessage":"Invalid operator. Please select a valid operator.","markdownDescription":"Operator to use for comparing the `headerName` with `value`.","markdownEnumDescriptions":["Performs an exact, comparison between the header value and specified string. `string === value`","Ensures the header value does not exactly match the specified string. `string !== value`","Checks if the header value contains the specified string as a substring. `string.includes()`","Verifies the header value does not contain the specified string as a substring. `!string.includes()`","Validates that the header value begins with the specified string. `string.startsWith()`","Validates that the header value does not begin with the specified string. `!string.startsWith()`","Confirms the header value ends with the specified string. `string.endsWith()`","Confirms the header value does not end with the specified string. `!string.endsWith()`","Evaluates if the header value matches the specified regular expression pattern. `regex.test()`","Evaluates if the header value does not match the specified regular expression pattern. `!regex.test()`"]}
-                         * @enum {string}
-                         */
+                        /** @enum {string} */
                         operator: "EQUALS" | "NOT_EQUALS" | "CONTAINS" | "NOT_CONTAINS" | "STARTS_WITH" | "NOT_STARTS_WITH" | "ENDS_WITH" | "NOT_ENDS_WITH" | "REGEX" | "NOT_REGEX";
-                        /** @description {"markdownDescription":"**Value** to check against the **headerName**."} */
                         value: string;
-                        /** @description {"markdownDescription":"Whether the value is **case sensitive**. \n\n - `true`: the value will be compared as is. \n\n - `false`: the value will be lowercased **before** comparison."} */
                         caseSensitive: boolean;
                     }[];
-                    /**
-                     * @description {"errorMessage":"Invalid response type. Please select a valid response type.","markdownDescription":"Type of the response. Determines the type of **response** to be returned when the rule is matched.","markdownEnumDescriptions":["Return **subscription** in XRAY-JSON format. (Using `Xray Json` template)","Return **subscription** in BASE64 encoded string. Compatible with most client application with Xray core.","Return **subscription** in Mihomo format. (Using `Mihomo` template)","Return **subscription** in Stash format. (Using `Stash` template)","Return **subscription** in Clash format. (Using `Clash` template) Useful for client application that use Legacy Clash core.","Return **subscription** in Singbox format. (Using `Singbox` template) Format which is used by Singbox client application.","Return **subscription** as browser format. The same as on `/info` route.","**Drop** request and return `403` status code.","**Drop** request and return `404` status code.","**Drop** request and return `451` status code.","**Drop** the socket connection."]}
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     responseType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX" | "BROWSER" | "BLOCK" | "STATUS_CODE_404" | "STATUS_CODE_451" | "SOCKET_DROP";
-                    /** @description {"examples":[{"headers":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Response modifications to be applied when the rule is matched. Optional."} */
+                    /**
+                     * Response Modifications
+                     * @example {
+                     *       "headers": [
+                     *         {
+                     *           "key": "X-Custom-Header",
+                     *           "value": "CustomValue"
+                     *         }
+                     *       ]
+                     *     }
+                     */
                     responseModifications?: {
-                        /** @description {"defaultSnippets":[{"label":"Examples: Add custom header","markdownDescription":"Add a custom header to the response","body":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Array of headers to be added when the rule is matched."} */
                         headers?: {
-                            /** @description {"markdownDescription":"Key of the response header. Must comply with RFC 7230."} */
+                            /** Header Key */
                             key: string;
-                            /** @description {"markdownDescription":"Value of the response header. "} */
+                            /** Header Value */
                             value: string;
                         }[];
-                        /** @description {"markdownDescription":"By default, headers are added when forming the response. In some cases, headers set in SRR may be overridden by headers from other parts of the system. If you set this flag to **true**, headers from SRR will be added at the very end, just before the response is sent. In this case, SRR headers may override headers from other sections."} */
+                        /** Apply Headers to End */
                         applyHeadersToEnd?: boolean;
-                        /** @description {"markdownDescription":"Override the subscription template with the given name. If not provided, the default subscription template will be used. If the template name is not found, the default subscription template for this type will be used. **This modification have higher priority than settings from External Squads.**"} */
+                        /** Subscription Template */
                         subscriptionTemplate?: string;
-                        /** @description {"markdownDescription":"Each Host may have its own Xray Json Template. If you set this flag to **true**, the Xray Json Template defined by the SRR will be used. **The Host's Xray Json Template will be ignored.**"} */
+                        /** Ignore Host Xray Json Template */
                         ignoreHostXrayJsonTemplate?: boolean;
-                        /** @description {"markdownDescription":"If you set this flag to **true**, the **Serve JSON at Base Subscription** setting will be ignored (set to **false**)."} */
+                        /** Ignore Serve Json at Base Subscription */
                         ignoreServeJsonAtBaseSubscription?: boolean;
-                        /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                         additionalExtendedClientsRegex?: string[];
-                        /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                        /** Disable HWID Check */
                         disableHwidCheck?: boolean;
-                        /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                        /** Encryption */
                         encryption?: {
                             /** @enum {string} */
                             method: "age1" | "age1pq1";
                             key: string;
                         };
-                        /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                        /** Exclude Hosts by Tags */
                         excludeHostsByTags?: string[];
                     };
                 } | null;
@@ -8207,14 +6501,35 @@ export interface components {
                 initDate: string;
             };
         };
+        GetStatsDigestResponseDto: {
+            response: {
+                users: {
+                    createdCount: number;
+                    expiredCount: number;
+                };
+                traffic: {
+                    totalBytes: string;
+                    byUsersCreatedInRangeBytes: string;
+                };
+                hwidDevices: {
+                    createdCount: number;
+                };
+            };
+        };
+        GetHttpStatsResponseDto: {
+            response: {
+                routes: {
+                    method: string;
+                    route: string;
+                    count: number;
+                }[];
+                total: number;
+            };
+        };
         GetSubscriptionSettingsResponseDto: {
             response: {
                 /** Format: uuid */
                 uuid: string;
-                profileTitle: string;
-                supportLink: string;
-                profileUpdateInterval: number;
-                isProfileWebpageUrlEnabled: boolean;
                 serveJsonAtBaseSubscription: boolean;
                 isShowCustomRemarks: boolean;
                 customRemarks: {
@@ -8225,83 +6540,78 @@ export interface components {
                     HWIDMaxDevicesExceeded: string[];
                     HWIDNotSupported: string[];
                 };
-                happAnnounce: string | null;
-                happRouting: string | null;
                 customResponseHeaders: {
                     [key: string]: string;
                 } | null;
                 randomizeHosts: boolean;
                 responseRules: {
                     /**
-                     * @description {"title":"Response Rules Config Version","markdownDescription":"Version of the **response rules** config. Currently supported version is **1**."}
+                     * Response Rules Config Version
                      * @enum {string}
                      */
                     version: "1";
-                    /** @description {"markdownDescription":"Settings for the **response rules** config. Optional."} */
+                    /** Response Rule Settings */
                     settings?: {
-                        /** @description {"markdownDescription":"Usually, a user's subscription may also be available via additional paths such as **\/json**, **\/stash**, or **\/mihomo**. If this flag is set to **true**, access via these additional paths will be disabled."} */
+                        /** Disable Subscription Access by Path */
                         disableSubscriptionAccessByPath?: boolean;
                     };
-                    /** @description {"title":"Response Rules","markdownDescription":"Array of **response rules**. Rules are evaluated in order and the first rule that matches is applied. If no rule matches, request will be blocked by default.\n\n**Example:**\n```json\n[\n  {\n    \"name\": \"Blank rule\",\n    \"description\": \"Blank rule\",\n    \"operator\": \"AND\",\n    \"enabled\": true,\n    \"conditions\": [],\n    \"responseType\": \"BLOCK\",\n    \"responseModifications\": {\n      \"headers\": []\n    }\n  }\n]\n```","defaultSnippets":[]} */
+                    /** Response Rules */
                     rules: {
-                        /** @description {"markdownDescription":"Name of the response rule."} */
+                        /** Name */
                         name: string;
-                        /** @description {"markdownDescription":"Description of the response rule. Optional."} */
+                        /** Description */
                         description?: string;
-                        /** @description {"markdownDescription":"Control whether the response rule is enabled or disabled. \n\n - `true` the rule will be applied. \n\n - `false` the rule will be always ignored."} */
+                        /** Enabled */
                         enabled: boolean;
-                        /**
-                         * @description {"markdownDescription":"Operator to use for combining conditions in the rule."}
-                         * @enum {string}
-                         */
+                        /** @enum {string} */
                         operator: "AND" | "OR";
-                        /** @description {"markdownDescription":"Array of conditions to check against the request headers. Conditions are applied with **operator**. If conditions are empty, the rule will be matched."} */
+                        /** Conditions */
                         conditions: {
-                            /** @description {"markdownDescription":"**Name** of the HTTP header to check. Must comply with RFC 7230."} */
+                            /** Header Name */
                             headerName: string;
-                            /**
-                             * @description {"errorMessage":"Invalid operator. Please select a valid operator.","markdownDescription":"Operator to use for comparing the `headerName` with `value`.","markdownEnumDescriptions":["Performs an exact, comparison between the header value and specified string. `string === value`","Ensures the header value does not exactly match the specified string. `string !== value`","Checks if the header value contains the specified string as a substring. `string.includes()`","Verifies the header value does not contain the specified string as a substring. `!string.includes()`","Validates that the header value begins with the specified string. `string.startsWith()`","Validates that the header value does not begin with the specified string. `!string.startsWith()`","Confirms the header value ends with the specified string. `string.endsWith()`","Confirms the header value does not end with the specified string. `!string.endsWith()`","Evaluates if the header value matches the specified regular expression pattern. `regex.test()`","Evaluates if the header value does not match the specified regular expression pattern. `!regex.test()`"]}
-                             * @enum {string}
-                             */
+                            /** @enum {string} */
                             operator: "EQUALS" | "NOT_EQUALS" | "CONTAINS" | "NOT_CONTAINS" | "STARTS_WITH" | "NOT_STARTS_WITH" | "ENDS_WITH" | "NOT_ENDS_WITH" | "REGEX" | "NOT_REGEX";
-                            /** @description {"markdownDescription":"**Value** to check against the **headerName**."} */
                             value: string;
-                            /** @description {"markdownDescription":"Whether the value is **case sensitive**. \n\n - `true`: the value will be compared as is. \n\n - `false`: the value will be lowercased **before** comparison."} */
                             caseSensitive: boolean;
                         }[];
-                        /**
-                         * @description {"errorMessage":"Invalid response type. Please select a valid response type.","markdownDescription":"Type of the response. Determines the type of **response** to be returned when the rule is matched.","markdownEnumDescriptions":["Return **subscription** in XRAY-JSON format. (Using `Xray Json` template)","Return **subscription** in BASE64 encoded string. Compatible with most client application with Xray core.","Return **subscription** in Mihomo format. (Using `Mihomo` template)","Return **subscription** in Stash format. (Using `Stash` template)","Return **subscription** in Clash format. (Using `Clash` template) Useful for client application that use Legacy Clash core.","Return **subscription** in Singbox format. (Using `Singbox` template) Format which is used by Singbox client application.","Return **subscription** as browser format. The same as on `/info` route.","**Drop** request and return `403` status code.","**Drop** request and return `404` status code.","**Drop** request and return `451` status code.","**Drop** the socket connection."]}
-                         * @enum {string}
-                         */
+                        /** @enum {string} */
                         responseType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX" | "BROWSER" | "BLOCK" | "STATUS_CODE_404" | "STATUS_CODE_451" | "SOCKET_DROP";
-                        /** @description {"examples":[{"headers":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Response modifications to be applied when the rule is matched. Optional."} */
+                        /**
+                         * Response Modifications
+                         * @example {
+                         *       "headers": [
+                         *         {
+                         *           "key": "X-Custom-Header",
+                         *           "value": "CustomValue"
+                         *         }
+                         *       ]
+                         *     }
+                         */
                         responseModifications?: {
-                            /** @description {"defaultSnippets":[{"label":"Examples: Add custom header","markdownDescription":"Add a custom header to the response","body":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Array of headers to be added when the rule is matched."} */
                             headers?: {
-                                /** @description {"markdownDescription":"Key of the response header. Must comply with RFC 7230."} */
+                                /** Header Key */
                                 key: string;
-                                /** @description {"markdownDescription":"Value of the response header. "} */
+                                /** Header Value */
                                 value: string;
                             }[];
-                            /** @description {"markdownDescription":"By default, headers are added when forming the response. In some cases, headers set in SRR may be overridden by headers from other parts of the system. If you set this flag to **true**, headers from SRR will be added at the very end, just before the response is sent. In this case, SRR headers may override headers from other sections."} */
+                            /** Apply Headers to End */
                             applyHeadersToEnd?: boolean;
-                            /** @description {"markdownDescription":"Override the subscription template with the given name. If not provided, the default subscription template will be used. If the template name is not found, the default subscription template for this type will be used. **This modification have higher priority than settings from External Squads.**"} */
+                            /** Subscription Template */
                             subscriptionTemplate?: string;
-                            /** @description {"markdownDescription":"Each Host may have its own Xray Json Template. If you set this flag to **true**, the Xray Json Template defined by the SRR will be used. **The Host's Xray Json Template will be ignored.**"} */
+                            /** Ignore Host Xray Json Template */
                             ignoreHostXrayJsonTemplate?: boolean;
-                            /** @description {"markdownDescription":"If you set this flag to **true**, the **Serve JSON at Base Subscription** setting will be ignored (set to **false**)."} */
+                            /** Ignore Serve Json at Base Subscription */
                             ignoreServeJsonAtBaseSubscription?: boolean;
-                            /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                             additionalExtendedClientsRegex?: string[];
-                            /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                            /** Disable HWID Check */
                             disableHwidCheck?: boolean;
-                            /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                            /** Encryption */
                             encryption?: {
                                 /** @enum {string} */
                                 method: "age1" | "age1pq1";
                                 key: string;
                             };
-                            /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                            /** Exclude Hosts by Tags */
                             excludeHostsByTags?: string[];
                         };
                     }[];
@@ -8317,16 +6627,10 @@ export interface components {
                 updatedAt: string;
             };
         };
-        UpdateSubscriptionSettingsRequestDto: {
+        UpdateSubscriptionSettingsBodyDto: {
             /** Format: uuid */
             uuid: string;
-            profileTitle?: string;
-            supportLink?: string;
-            profileUpdateInterval?: number;
-            isProfileWebpageUrlEnabled?: boolean;
             serveJsonAtBaseSubscription?: boolean;
-            happAnnounce?: string | null;
-            happRouting?: string | null;
             isShowCustomRemarks?: boolean;
             customRemarks?: {
                 expiredUsers: string[];
@@ -8342,75 +6646,72 @@ export interface components {
             randomizeHosts?: boolean;
             responseRules?: {
                 /**
-                 * @description {"title":"Response Rules Config Version","markdownDescription":"Version of the **response rules** config. Currently supported version is **1**."}
+                 * Response Rules Config Version
                  * @enum {string}
                  */
                 version: "1";
-                /** @description {"markdownDescription":"Settings for the **response rules** config. Optional."} */
+                /** Response Rule Settings */
                 settings?: {
-                    /** @description {"markdownDescription":"Usually, a user's subscription may also be available via additional paths such as **\/json**, **\/stash**, or **\/mihomo**. If this flag is set to **true**, access via these additional paths will be disabled."} */
+                    /** Disable Subscription Access by Path */
                     disableSubscriptionAccessByPath?: boolean;
                 };
-                /** @description {"title":"Response Rules","markdownDescription":"Array of **response rules**. Rules are evaluated in order and the first rule that matches is applied. If no rule matches, request will be blocked by default.\n\n**Example:**\n```json\n[\n  {\n    \"name\": \"Blank rule\",\n    \"description\": \"Blank rule\",\n    \"operator\": \"AND\",\n    \"enabled\": true,\n    \"conditions\": [],\n    \"responseType\": \"BLOCK\",\n    \"responseModifications\": {\n      \"headers\": []\n    }\n  }\n]\n```","defaultSnippets":[]} */
+                /** Response Rules */
                 rules: {
-                    /** @description {"markdownDescription":"Name of the response rule."} */
+                    /** Name */
                     name: string;
-                    /** @description {"markdownDescription":"Description of the response rule. Optional."} */
+                    /** Description */
                     description?: string;
-                    /** @description {"markdownDescription":"Control whether the response rule is enabled or disabled. \n\n - `true` the rule will be applied. \n\n - `false` the rule will be always ignored."} */
+                    /** Enabled */
                     enabled: boolean;
-                    /**
-                     * @description {"markdownDescription":"Operator to use for combining conditions in the rule."}
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     operator: "AND" | "OR";
-                    /** @description {"markdownDescription":"Array of conditions to check against the request headers. Conditions are applied with **operator**. If conditions are empty, the rule will be matched."} */
+                    /** Conditions */
                     conditions: {
-                        /** @description {"markdownDescription":"**Name** of the HTTP header to check. Must comply with RFC 7230."} */
+                        /** Header Name */
                         headerName: string;
-                        /**
-                         * @description {"errorMessage":"Invalid operator. Please select a valid operator.","markdownDescription":"Operator to use for comparing the `headerName` with `value`.","markdownEnumDescriptions":["Performs an exact, comparison between the header value and specified string. `string === value`","Ensures the header value does not exactly match the specified string. `string !== value`","Checks if the header value contains the specified string as a substring. `string.includes()`","Verifies the header value does not contain the specified string as a substring. `!string.includes()`","Validates that the header value begins with the specified string. `string.startsWith()`","Validates that the header value does not begin with the specified string. `!string.startsWith()`","Confirms the header value ends with the specified string. `string.endsWith()`","Confirms the header value does not end with the specified string. `!string.endsWith()`","Evaluates if the header value matches the specified regular expression pattern. `regex.test()`","Evaluates if the header value does not match the specified regular expression pattern. `!regex.test()`"]}
-                         * @enum {string}
-                         */
+                        /** @enum {string} */
                         operator: "EQUALS" | "NOT_EQUALS" | "CONTAINS" | "NOT_CONTAINS" | "STARTS_WITH" | "NOT_STARTS_WITH" | "ENDS_WITH" | "NOT_ENDS_WITH" | "REGEX" | "NOT_REGEX";
-                        /** @description {"markdownDescription":"**Value** to check against the **headerName**."} */
                         value: string;
-                        /** @description {"markdownDescription":"Whether the value is **case sensitive**. \n\n - `true`: the value will be compared as is. \n\n - `false`: the value will be lowercased **before** comparison."} */
                         caseSensitive: boolean;
                     }[];
-                    /**
-                     * @description {"errorMessage":"Invalid response type. Please select a valid response type.","markdownDescription":"Type of the response. Determines the type of **response** to be returned when the rule is matched.","markdownEnumDescriptions":["Return **subscription** in XRAY-JSON format. (Using `Xray Json` template)","Return **subscription** in BASE64 encoded string. Compatible with most client application with Xray core.","Return **subscription** in Mihomo format. (Using `Mihomo` template)","Return **subscription** in Stash format. (Using `Stash` template)","Return **subscription** in Clash format. (Using `Clash` template) Useful for client application that use Legacy Clash core.","Return **subscription** in Singbox format. (Using `Singbox` template) Format which is used by Singbox client application.","Return **subscription** as browser format. The same as on `/info` route.","**Drop** request and return `403` status code.","**Drop** request and return `404` status code.","**Drop** request and return `451` status code.","**Drop** the socket connection."]}
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     responseType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX" | "BROWSER" | "BLOCK" | "STATUS_CODE_404" | "STATUS_CODE_451" | "SOCKET_DROP";
-                    /** @description {"examples":[{"headers":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Response modifications to be applied when the rule is matched. Optional."} */
+                    /**
+                     * Response Modifications
+                     * @example {
+                     *       "headers": [
+                     *         {
+                     *           "key": "X-Custom-Header",
+                     *           "value": "CustomValue"
+                     *         }
+                     *       ]
+                     *     }
+                     */
                     responseModifications?: {
-                        /** @description {"defaultSnippets":[{"label":"Examples: Add custom header","markdownDescription":"Add a custom header to the response","body":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Array of headers to be added when the rule is matched."} */
                         headers?: {
-                            /** @description {"markdownDescription":"Key of the response header. Must comply with RFC 7230."} */
+                            /** Header Key */
                             key: string;
-                            /** @description {"markdownDescription":"Value of the response header. "} */
+                            /** Header Value */
                             value: string;
                         }[];
-                        /** @description {"markdownDescription":"By default, headers are added when forming the response. In some cases, headers set in SRR may be overridden by headers from other parts of the system. If you set this flag to **true**, headers from SRR will be added at the very end, just before the response is sent. In this case, SRR headers may override headers from other sections."} */
+                        /** Apply Headers to End */
                         applyHeadersToEnd?: boolean;
-                        /** @description {"markdownDescription":"Override the subscription template with the given name. If not provided, the default subscription template will be used. If the template name is not found, the default subscription template for this type will be used. **This modification have higher priority than settings from External Squads.**"} */
+                        /** Subscription Template */
                         subscriptionTemplate?: string;
-                        /** @description {"markdownDescription":"Each Host may have its own Xray Json Template. If you set this flag to **true**, the Xray Json Template defined by the SRR will be used. **The Host's Xray Json Template will be ignored.**"} */
+                        /** Ignore Host Xray Json Template */
                         ignoreHostXrayJsonTemplate?: boolean;
-                        /** @description {"markdownDescription":"If you set this flag to **true**, the **Serve JSON at Base Subscription** setting will be ignored (set to **false**)."} */
+                        /** Ignore Serve Json at Base Subscription */
                         ignoreServeJsonAtBaseSubscription?: boolean;
-                        /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                         additionalExtendedClientsRegex?: string[];
-                        /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                        /** Disable HWID Check */
                         disableHwidCheck?: boolean;
-                        /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                        /** Encryption */
                         encryption?: {
                             /** @enum {string} */
                             method: "age1" | "age1pq1";
                             key: string;
                         };
-                        /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                        /** Exclude Hosts by Tags */
                         excludeHostsByTags?: string[];
                     };
                 }[];
@@ -8425,10 +6726,6 @@ export interface components {
             response: {
                 /** Format: uuid */
                 uuid: string;
-                profileTitle: string;
-                supportLink: string;
-                profileUpdateInterval: number;
-                isProfileWebpageUrlEnabled: boolean;
                 serveJsonAtBaseSubscription: boolean;
                 isShowCustomRemarks: boolean;
                 customRemarks: {
@@ -8439,83 +6736,78 @@ export interface components {
                     HWIDMaxDevicesExceeded: string[];
                     HWIDNotSupported: string[];
                 };
-                happAnnounce: string | null;
-                happRouting: string | null;
                 customResponseHeaders: {
                     [key: string]: string;
                 } | null;
                 randomizeHosts: boolean;
                 responseRules: {
                     /**
-                     * @description {"title":"Response Rules Config Version","markdownDescription":"Version of the **response rules** config. Currently supported version is **1**."}
+                     * Response Rules Config Version
                      * @enum {string}
                      */
                     version: "1";
-                    /** @description {"markdownDescription":"Settings for the **response rules** config. Optional."} */
+                    /** Response Rule Settings */
                     settings?: {
-                        /** @description {"markdownDescription":"Usually, a user's subscription may also be available via additional paths such as **\/json**, **\/stash**, or **\/mihomo**. If this flag is set to **true**, access via these additional paths will be disabled."} */
+                        /** Disable Subscription Access by Path */
                         disableSubscriptionAccessByPath?: boolean;
                     };
-                    /** @description {"title":"Response Rules","markdownDescription":"Array of **response rules**. Rules are evaluated in order and the first rule that matches is applied. If no rule matches, request will be blocked by default.\n\n**Example:**\n```json\n[\n  {\n    \"name\": \"Blank rule\",\n    \"description\": \"Blank rule\",\n    \"operator\": \"AND\",\n    \"enabled\": true,\n    \"conditions\": [],\n    \"responseType\": \"BLOCK\",\n    \"responseModifications\": {\n      \"headers\": []\n    }\n  }\n]\n```","defaultSnippets":[]} */
+                    /** Response Rules */
                     rules: {
-                        /** @description {"markdownDescription":"Name of the response rule."} */
+                        /** Name */
                         name: string;
-                        /** @description {"markdownDescription":"Description of the response rule. Optional."} */
+                        /** Description */
                         description?: string;
-                        /** @description {"markdownDescription":"Control whether the response rule is enabled or disabled. \n\n - `true` the rule will be applied. \n\n - `false` the rule will be always ignored."} */
+                        /** Enabled */
                         enabled: boolean;
-                        /**
-                         * @description {"markdownDescription":"Operator to use for combining conditions in the rule."}
-                         * @enum {string}
-                         */
+                        /** @enum {string} */
                         operator: "AND" | "OR";
-                        /** @description {"markdownDescription":"Array of conditions to check against the request headers. Conditions are applied with **operator**. If conditions are empty, the rule will be matched."} */
+                        /** Conditions */
                         conditions: {
-                            /** @description {"markdownDescription":"**Name** of the HTTP header to check. Must comply with RFC 7230."} */
+                            /** Header Name */
                             headerName: string;
-                            /**
-                             * @description {"errorMessage":"Invalid operator. Please select a valid operator.","markdownDescription":"Operator to use for comparing the `headerName` with `value`.","markdownEnumDescriptions":["Performs an exact, comparison between the header value and specified string. `string === value`","Ensures the header value does not exactly match the specified string. `string !== value`","Checks if the header value contains the specified string as a substring. `string.includes()`","Verifies the header value does not contain the specified string as a substring. `!string.includes()`","Validates that the header value begins with the specified string. `string.startsWith()`","Validates that the header value does not begin with the specified string. `!string.startsWith()`","Confirms the header value ends with the specified string. `string.endsWith()`","Confirms the header value does not end with the specified string. `!string.endsWith()`","Evaluates if the header value matches the specified regular expression pattern. `regex.test()`","Evaluates if the header value does not match the specified regular expression pattern. `!regex.test()`"]}
-                             * @enum {string}
-                             */
+                            /** @enum {string} */
                             operator: "EQUALS" | "NOT_EQUALS" | "CONTAINS" | "NOT_CONTAINS" | "STARTS_WITH" | "NOT_STARTS_WITH" | "ENDS_WITH" | "NOT_ENDS_WITH" | "REGEX" | "NOT_REGEX";
-                            /** @description {"markdownDescription":"**Value** to check against the **headerName**."} */
                             value: string;
-                            /** @description {"markdownDescription":"Whether the value is **case sensitive**. \n\n - `true`: the value will be compared as is. \n\n - `false`: the value will be lowercased **before** comparison."} */
                             caseSensitive: boolean;
                         }[];
-                        /**
-                         * @description {"errorMessage":"Invalid response type. Please select a valid response type.","markdownDescription":"Type of the response. Determines the type of **response** to be returned when the rule is matched.","markdownEnumDescriptions":["Return **subscription** in XRAY-JSON format. (Using `Xray Json` template)","Return **subscription** in BASE64 encoded string. Compatible with most client application with Xray core.","Return **subscription** in Mihomo format. (Using `Mihomo` template)","Return **subscription** in Stash format. (Using `Stash` template)","Return **subscription** in Clash format. (Using `Clash` template) Useful for client application that use Legacy Clash core.","Return **subscription** in Singbox format. (Using `Singbox` template) Format which is used by Singbox client application.","Return **subscription** as browser format. The same as on `/info` route.","**Drop** request and return `403` status code.","**Drop** request and return `404` status code.","**Drop** request and return `451` status code.","**Drop** the socket connection."]}
-                         * @enum {string}
-                         */
+                        /** @enum {string} */
                         responseType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX" | "BROWSER" | "BLOCK" | "STATUS_CODE_404" | "STATUS_CODE_451" | "SOCKET_DROP";
-                        /** @description {"examples":[{"headers":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Response modifications to be applied when the rule is matched. Optional."} */
+                        /**
+                         * Response Modifications
+                         * @example {
+                         *       "headers": [
+                         *         {
+                         *           "key": "X-Custom-Header",
+                         *           "value": "CustomValue"
+                         *         }
+                         *       ]
+                         *     }
+                         */
                         responseModifications?: {
-                            /** @description {"defaultSnippets":[{"label":"Examples: Add custom header","markdownDescription":"Add a custom header to the response","body":[{"key":"X-Custom-Header","value":"CustomValue"}]}],"markdownDescription":"Array of headers to be added when the rule is matched."} */
                             headers?: {
-                                /** @description {"markdownDescription":"Key of the response header. Must comply with RFC 7230."} */
+                                /** Header Key */
                                 key: string;
-                                /** @description {"markdownDescription":"Value of the response header. "} */
+                                /** Header Value */
                                 value: string;
                             }[];
-                            /** @description {"markdownDescription":"By default, headers are added when forming the response. In some cases, headers set in SRR may be overridden by headers from other parts of the system. If you set this flag to **true**, headers from SRR will be added at the very end, just before the response is sent. In this case, SRR headers may override headers from other sections."} */
+                            /** Apply Headers to End */
                             applyHeadersToEnd?: boolean;
-                            /** @description {"markdownDescription":"Override the subscription template with the given name. If not provided, the default subscription template will be used. If the template name is not found, the default subscription template for this type will be used. **This modification have higher priority than settings from External Squads.**"} */
+                            /** Subscription Template */
                             subscriptionTemplate?: string;
-                            /** @description {"markdownDescription":"Each Host may have its own Xray Json Template. If you set this flag to **true**, the Xray Json Template defined by the SRR will be used. **The Host's Xray Json Template will be ignored.**"} */
+                            /** Ignore Host Xray Json Template */
                             ignoreHostXrayJsonTemplate?: boolean;
-                            /** @description {"markdownDescription":"If you set this flag to **true**, the **Serve JSON at Base Subscription** setting will be ignored (set to **false**)."} */
+                            /** Ignore Serve Json at Base Subscription */
                             ignoreServeJsonAtBaseSubscription?: boolean;
-                            /** @description {"markdownDescription":"Additional regex patterns to match extended clients. Matched clients will receive `serverDescription` in the subscription response.\n\n**Default Mihomo extended clients:**\n- `^FlClash ?X/`\n- `^Flowvy/`\n- `^prizrak-box/`\n- `^koala-clash/`\n\n**Default Xray extended clients:**\n- `^Happ/`\n- `^INCY/`\n\n**Example:** `[\"^MyClient/\", \"^CustomApp\\\\/v2\"]`"} */
                             additionalExtendedClientsRegex?: string[];
-                            /** @description {"markdownDescription":"If you set this flag to **true**, the HWID check will be disabled. **This modification have higher priority than settings from Subscription Settings.**"} */
+                            /** Disable HWID Check */
                             disableHwidCheck?: boolean;
-                            /** @description {"markdownDescription":"Encrypt response body with given parameters. Generate keypairs with Rescue CLI: `docker exec -it remnawave cli`, select \"Generate keypairs\"."} */
+                            /** Encryption */
                             encryption?: {
                                 /** @enum {string} */
                                 method: "age1" | "age1pq1";
                                 key: string;
                             };
-                            /** @description {"markdownDescription":"Excludes hosts from the subscription output if at least one tag in the host matches the given tags."} */
+                            /** Exclude Hosts by Tags */
                             excludeHostsByTags?: string[];
                         };
                     }[];
@@ -8531,12 +6823,12 @@ export interface components {
                 updatedAt: string;
             };
         };
-        FetchIpsResponseDto: {
+        ConnectionsByUserResponseDto: {
             response: {
                 jobId: string;
             };
         };
-        FetchIpsResultResponseDto: {
+        ConnectionsByUserResultResponseDto: {
             response: {
                 isCompleted: boolean;
                 isFailed: boolean;
@@ -8547,9 +6839,7 @@ export interface components {
                 };
                 result: {
                     success: boolean;
-                    /** Format: uuid */
-                    userUuid: string;
-                    userId: string;
+                    userId: number;
                     nodes: {
                         /** Format: uuid */
                         nodeUuid: string;
@@ -8564,15 +6854,15 @@ export interface components {
                 } | null;
             };
         };
-        DropConnectionsRequestDto: {
+        DropConnectionsBodyDto: {
             dropBy: {
                 /** @enum {string} */
-                by: "userUuids";
-                userUuids: string[];
+                by: "userIds";
+                userIds: number[];
             } | {
                 /** @enum {string} */
                 by: "ipAddresses";
-                ipAddresses: string[];
+                ipAddresses: (string)[];
             };
             targetNodes: {
                 /** @enum {string} */
@@ -8583,17 +6873,12 @@ export interface components {
                 nodeUuids: string[];
             };
         };
-        DropConnectionsResponseDto: {
-            response: {
-                eventSent: boolean;
-            };
-        };
-        FetchUsersIpsResponseDto: {
+        ConnectionsByNodeResponseDto: {
             response: {
                 jobId: string;
             };
         };
-        FetchUsersIpsResultResponseDto: {
+        ConnectionsByNodeResultResponseDto: {
             response: {
                 isCompleted: boolean;
                 isFailed: boolean;
@@ -8602,7 +6887,7 @@ export interface components {
                     /** Format: uuid */
                     nodeUuid: string;
                     users: {
-                        userId: string;
+                        userId: number;
                         ips: {
                             ip: string;
                             /** Format: date-time */
@@ -8614,28 +6899,40 @@ export interface components {
         };
         GetUserMetadataResponseDto: {
             response: {
-                metadata: Record<string, never>;
+                metadata: {
+                    [key: string]: unknown;
+                };
             };
         };
-        UpsertUserMetadataRequestBodyDto: {
-            metadata: Record<string, never>;
+        UpsertUserMetadataBodyDto: {
+            metadata: {
+                [key: string]: unknown;
+            };
         };
         UpsertUserMetadataResponseDto: {
             response: {
-                metadata: Record<string, never>;
+                metadata: {
+                    [key: string]: unknown;
+                };
             };
         };
         GetNodeMetadataResponseDto: {
             response: {
-                metadata: Record<string, never>;
+                metadata: {
+                    [key: string]: unknown;
+                };
             };
         };
-        UpsertNodeMetadataRequestBodyDto: {
-            metadata: Record<string, never>;
+        UpsertNodeMetadataBodyDto: {
+            metadata: {
+                [key: string]: unknown;
+            };
         };
         UpsertNodeMetadataResponseDto: {
             response: {
-                metadata: Record<string, never>;
+                metadata: {
+                    [key: string]: unknown;
+                };
             };
         };
         RemnawaveWebhookUserEventsDto: {
@@ -8646,21 +6943,14 @@ export interface components {
             /** Format: date-time */
             timestamp: string;
             data: {
-                /** Format: uuid */
-                uuid: string;
                 id: number;
                 shortUuid: string;
                 username: string;
-                /**
-                 * @default ACTIVE
-                 * @enum {string}
-                 */
+                /** @enum {string} */
                 status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                /** @default 0 */
                 trafficLimitBytes: number;
                 /**
                  * @description Available reset periods
-                 * @default NO_RESET
                  * @enum {string}
                  */
                 trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -8678,7 +6968,6 @@ export interface components {
                 /** Format: uuid */
                 vlessUuid: string;
                 ssPassword: string;
-                /** @default 0 */
                 lastTriggeredThreshold: number;
                 /** Format: date-time */
                 subRevokedAt: string | null;
@@ -8719,21 +7008,14 @@ export interface components {
             timestamp: string;
             data: {
                 user: {
-                    /** Format: uuid */
-                    uuid: string;
                     id: number;
                     shortUuid: string;
                     username: string;
-                    /**
-                     * @default ACTIVE
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                    /** @default 0 */
                     trafficLimitBytes: number;
                     /**
                      * @description Available reset periods
-                     * @default NO_RESET
                      * @enum {string}
                      */
                     trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -8751,7 +7033,6 @@ export interface components {
                     /** Format: uuid */
                     vlessUuid: string;
                     ssPassword: string;
-                    /** @default 0 */
                     lastTriggeredThreshold: number;
                     /** Format: date-time */
                     subRevokedAt: string | null;
@@ -9054,21 +7335,14 @@ export interface components {
                     note: string | null;
                 };
                 user: {
-                    /** Format: uuid */
-                    uuid: string;
                     id: number;
                     shortUuid: string;
                     username: string;
-                    /**
-                     * @default ACTIVE
-                     * @enum {string}
-                     */
+                    /** @enum {string} */
                     status: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
-                    /** @default 0 */
                     trafficLimitBytes: number;
                     /**
                      * @description Available reset periods
-                     * @default NO_RESET
                      * @enum {string}
                      */
                     trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
@@ -9086,7 +7360,6 @@ export interface components {
                     /** Format: uuid */
                     vlessUuid: string;
                     ssPassword: string;
-                    /** @default 0 */
                     lastTriggeredThreshold: number;
                     /** Format: date-time */
                     subRevokedAt: string | null;
@@ -9142,6 +7415,358 @@ export interface components {
                 };
             };
         };
+        RemnawaveInternalServerErrorDto: {
+            /** @description Time when the error occurred, in ISO 8601 format. */
+            timestamp: string;
+            /** @description Path of the request that caused the error. */
+            path: string;
+            /**
+             * @description Human-readable error message.
+             * @enum {string}
+             */
+            message: "Server error" | "Login error" | "Create API token error" | "Delete API token error" | "Find all API tokens error" | "Get public key error" | "Enable node error" | "Error updating configuration" | "Error retrieving configuration" | "Delete many inbounds error" | "Create many inbounds error" | "Find all inbounds error" | "Failed to create user" | "User creation successful, but inbound creation failed. User not created." | "User creation successful, but failed to get created user with inbounds." | "Get all users error" | "Get user by error" | "Revoke user subscription error" | "Disable user error" | "Enable user error" | "Create node error" | "Restart node error" | "Get config with users error" | "Delete user error" | "Update node error" | "Update user error" | "Increment used traffic error" | "Get all nodes error" | "Get one node error" | "Delete node error" | "Create host error" | "Delete host error" | "Get user stats error" | "Update user with inbounds error" | "Get all hosts error" | "Reorder hosts error" | "Update host error" | "Create config error" | "Get nodes usage by range error" | "Reset user traffic error" | "Reorder nodes error" | "Get all inbounds error" | "Bulk delete users by status error" | "Update inbound error" | "Update exceeded traffic users error" | "Create admin error" | "Get auth status error" | "Disable node error" | "Get one host error" | "Get subscription settings error" | "Update subscription settings error" | "Add inbound to users error" | "Remove inbound from users error" | "Add inbound to nodes error" | "Remove inbound from nodes error" | "Delete hosts error" | "Bulk enable hosts error" | "Bulk disable hosts error" | "Bulk delete users by UUID error" | "Bulk revoke users subscription error" | "Bulk reset user traffic error" | "Bulk update users error" | "Bulk add inbounds to users error" | "Bulk update all users error" | "Keypair creation error" | "Get user usage by range error" | "Keypair not found. Restart app." | "Activate all inbounds error" | "Create hwid user device error" | "Check hwid exists error" | "Get user hwid devices error" | "Delete hwid user device error" | "Upsert hwid user device error" | "Get all tags error" | "Getting all subscriptions error" | "Trigger threshold notification error" | "Bulk delete by status error" | "Clean old usage records error" | "Vacuum table error" | "Get config profiles error" | "Get config profile by UUID error" | "Create config profile error" | "Get inbounds by profile UUID error" | "Get internal squads error" | "Get internal squad by UUID error" | "Create internal squad error" | "Update internal squad error" | "Delete internal squad error" | "Create user with internal squad error" | "Get user accessible nodes error" | "Get infra providers error" | "Get infra provider by UUID error" | "Delete infra provider by UUID error" | "Create infra provider error" | "Update infra provider error" | "Create infra billing history record error" | "Get infra billing history records error" | "Delete infra billing history record by UUID error" | "Get billing nodes error" | "Update infra billing node error" | "Create infra billing node error" | "Delete infra billing node by UUID error" | "Get billing nodes for notifications error" | "Add users to internal squad error" | "Internal squad bulk actions error" | "Remove users from internal squad error" | "Delete config profile by UUID error" | "Update config profile error" | "OAuth2 authorize error" | "Sync active profile error" | "Get all host tags error" | "Get internal squad accessible nodes error" | "Delete hwid user devices error" | "Create user subscription request history error" | "Get user subscription request history error" | "Get all hwid devices error" | "Get hwid devices stats error" | "Get user subscription request history stats error" | "Get snippets error" | "Delete snippet by name error" | "Update snippet error" | "Get all subscription templates error" | "Get subscription template by UUID error" | "Update subscription template error" | "Delete subscription template error" | "Create subscription template error" | "Get external squads error" | "Create external squad error" | "Update external squad error" | "Delete external squad error" | "Add users to external squad error" | "Remove users from external squad error" | "Get external squad by UUID error" | "Get Remnawave settings error" | "Update Remnawave settings error" | "Generate passkey registration options error" | "Verify passkey registration error" | "Get active passkeys error" | "Delete passkey error" | "Get computed config profile by UUID error" | "Reset node traffic error" | "Update passkey error" | "Generic reorder error" | "Bulk extend expiration date error" | "Get subscription page config by UUID error" | "Get all subscription page configs error" | "Update subscription page config error" | "Delete subscription page config error" | "Create subscription page config error" | "Job creation failed" | "Get all node plugins error" | "Get node plugin by UUID error" | "Update node plugin error" | "Create node plugin error" | "Get torrent blocker reports error" | "Update hosts error" | "Get internal squad usage error" | "Add many users to internal squad error" | "Remove many users from internal squad error" | "Get stats digest error";
+            /**
+             * @description Error code. Possible values:
+             *
+             *     - `A001` — Server error
+             *     - `A002` — Login error
+             *     - `A005` — Create API token error
+             *     - `A006` — Delete API token error
+             *     - `A008` — Find all API tokens error
+             *     - `A009` — Get public key error
+             *     - `A010` — Enable node error
+             *     - `A013` — Error updating configuration
+             *     - `A014` — Error retrieving configuration
+             *     - `A015` — Delete many inbounds error
+             *     - `A016` — Create many inbounds error
+             *     - `A017` — Find all inbounds error
+             *     - `A018` — Failed to create user
+             *     - `A022` — User creation successful, but inbound creation failed. User not created.
+             *     - `A023` — User creation successful, but failed to get created user with inbounds.
+             *     - `A024` — Get all users error
+             *     - `A026` — Get user by error
+             *     - `A027` — Revoke user subscription error
+             *     - `A028` — Disable user error
+             *     - `A031` — Enable user error
+             *     - `A032` — Create node error
+             *     - `A035` — Restart node error
+             *     - `A036` — Get config with users error
+             *     - `A037` — Delete user error
+             *     - `A038` — Update node error
+             *     - `A039` — Update user error
+             *     - `A040` — Increment used traffic error
+             *     - `A041` — Get all nodes error
+             *     - `A042` — Get one node error
+             *     - `A043` — Delete node error
+             *     - `A044` — Create host error
+             *     - `A047` — Delete host error
+             *     - `A048` — Get user stats error
+             *     - `A049` — Update user with inbounds error
+             *     - `A050` — Get all hosts error
+             *     - `A051` — Reorder hosts error
+             *     - `A052` — Update host error
+             *     - `A053` — Create config error
+             *     - `A055` — Get nodes usage by range error
+             *     - `A056` — Reset user traffic error
+             *     - `A057` — Reorder nodes error
+             *     - `A058` — Get all inbounds error
+             *     - `A059` — Bulk delete users by status error
+             *     - `A060` — Update inbound error
+             *     - `A064` — Update exceeded traffic users error
+             *     - `A066` — Create admin error
+             *     - `A067` — Get auth status error
+             *     - `A069` — Disable node error
+             *     - `A070` — Get one host error
+             *     - `A072` — Get subscription settings error
+             *     - `A073` — Update subscription settings error
+             *     - `A074` — Add inbound to users error
+             *     - `A075` — Remove inbound from users error
+             *     - `A077` — Add inbound to nodes error
+             *     - `A078` — Remove inbound from nodes error
+             *     - `A079` — Delete hosts error
+             *     - `A080` — Bulk enable hosts error
+             *     - `A081` — Bulk disable hosts error
+             *     - `A084` — Bulk delete users by UUID error
+             *     - `A085` — Bulk revoke users subscription error
+             *     - `A086` — Bulk reset user traffic error
+             *     - `A087` — Bulk update users error
+             *     - `A088` — Bulk add inbounds to users error
+             *     - `A089` — Bulk update all users error
+             *     - `A090` — Keypair creation error
+             *     - `A091` — Get user usage by range error
+             *     - `A092` — Keypair not found. Restart app.
+             *     - `A093` — Activate all inbounds error
+             *     - `A096` — Create hwid user device error
+             *     - `A097` — Check hwid exists error
+             *     - `A100` — Get user hwid devices error
+             *     - `A101` — Delete hwid user device error
+             *     - `A102` — Upsert hwid user device error
+             *     - `A103` — Get all tags error
+             *     - `A104` — Getting all subscriptions error
+             *     - `A105` — Trigger threshold notification error
+             *     - `A106` — Bulk delete by status error
+             *     - `A107` — Clean old usage records error
+             *     - `A108` — Vacuum table error
+             *     - `A109` — Get config profiles error
+             *     - `A110` — Get config profile by UUID error
+             *     - `A112` — Create config profile error
+             *     - `A115` — Get inbounds by profile UUID error
+             *     - `A116` — Get internal squads error
+             *     - `A117` — Get internal squad by UUID error
+             *     - `A119` — Create internal squad error
+             *     - `A121` — Update internal squad error
+             *     - `A122` — Delete internal squad error
+             *     - `A123` — Create user with internal squad error
+             *     - `A125` — Get user accessible nodes error
+             *     - `A126` — Get infra providers error
+             *     - `A127` — Get infra provider by UUID error
+             *     - `A129` — Delete infra provider by UUID error
+             *     - `A130` — Create infra provider error
+             *     - `A131` — Update infra provider error
+             *     - `A132` — Create infra billing history record error
+             *     - `A133` — Get infra billing history records error
+             *     - `A134` — Delete infra billing history record by UUID error
+             *     - `A135` — Get billing nodes error
+             *     - `A136` — Update infra billing node error
+             *     - `A137` — Create infra billing node error
+             *     - `A138` — Delete infra billing node by UUID error
+             *     - `A139` — Get billing nodes for notifications error
+             *     - `A140` — Add users to internal squad error
+             *     - `A141` — Internal squad bulk actions error
+             *     - `A142` — Remove users from internal squad error
+             *     - `A143` — Delete config profile by UUID error
+             *     - `A146` — Update config profile error
+             *     - `A148` — OAuth2 authorize error
+             *     - `A150` — Sync active profile error
+             *     - `A151` — Get all host tags error
+             *     - `A154` — Get internal squad accessible nodes error
+             *     - `A155` — Delete hwid user devices error
+             *     - `A156` — Create user subscription request history error
+             *     - `A157` — Get user subscription request history error
+             *     - `A158` — Get all hwid devices error
+             *     - `A159` — Get hwid devices stats error
+             *     - `A160` — Get user subscription request history stats error
+             *     - `A161` — Get snippets error
+             *     - `A163` — Delete snippet by name error
+             *     - `A165` — Update snippet error
+             *     - `A168` — Get all subscription templates error
+             *     - `A169` — Get subscription template by UUID error
+             *     - `A171` — Update subscription template error
+             *     - `A177` — Delete subscription template error
+             *     - `A179` — Create subscription template error
+             *     - `A181` — Get external squads error
+             *     - `A183` — Create external squad error
+             *     - `A184` — Update external squad error
+             *     - `A185` — Delete external squad error
+             *     - `A186` — Add users to external squad error
+             *     - `A187` — Remove users from external squad error
+             *     - `A188` — Get external squad by UUID error
+             *     - `A192` — Get Remnawave settings error
+             *     - `A193` — Update Remnawave settings error
+             *     - `A196` — Generate passkey registration options error
+             *     - `A197` — Verify passkey registration error
+             *     - `A198` — Get active passkeys error
+             *     - `A199` — Delete passkey error
+             *     - `A200` — Get computed config profile by UUID error
+             *     - `A201` — Reset node traffic error
+             *     - `A202` — Update passkey error
+             *     - `A203` — Generic reorder error
+             *     - `A205` — Bulk extend expiration date error
+             *     - `A207` — Get subscription page config by UUID error
+             *     - `A208` — Get all subscription page configs error
+             *     - `A211` — Update subscription page config error
+             *     - `A213` — Delete subscription page config error
+             *     - `A214` — Create subscription page config error
+             *     - `A217` — Job creation failed
+             *     - `A219` — Get all node plugins error
+             *     - `A221` — Get node plugin by UUID error
+             *     - `A224` — Update node plugin error
+             *     - `A225` — Create node plugin error
+             *     - `A227` — Get torrent blocker reports error
+             *     - `A228` — Update hosts error
+             *     - `A232` — Get internal squad usage error
+             *     - `A233` — Add many users to internal squad error
+             *     - `A234` — Remove many users from internal squad error
+             *     - `A236` — Get stats digest error
+             * @enum {string}
+             */
+            errorCode: "A001" | "A002" | "A005" | "A006" | "A008" | "A009" | "A010" | "A013" | "A014" | "A015" | "A016" | "A017" | "A018" | "A022" | "A023" | "A024" | "A026" | "A027" | "A028" | "A031" | "A032" | "A035" | "A036" | "A037" | "A038" | "A039" | "A040" | "A041" | "A042" | "A043" | "A044" | "A047" | "A048" | "A049" | "A050" | "A051" | "A052" | "A053" | "A055" | "A056" | "A057" | "A058" | "A059" | "A060" | "A064" | "A066" | "A067" | "A069" | "A070" | "A072" | "A073" | "A074" | "A075" | "A077" | "A078" | "A079" | "A080" | "A081" | "A084" | "A085" | "A086" | "A087" | "A088" | "A089" | "A090" | "A091" | "A092" | "A093" | "A096" | "A097" | "A100" | "A101" | "A102" | "A103" | "A104" | "A105" | "A106" | "A107" | "A108" | "A109" | "A110" | "A112" | "A115" | "A116" | "A117" | "A119" | "A121" | "A122" | "A123" | "A125" | "A126" | "A127" | "A129" | "A130" | "A131" | "A132" | "A133" | "A134" | "A135" | "A136" | "A137" | "A138" | "A139" | "A140" | "A141" | "A142" | "A143" | "A146" | "A148" | "A150" | "A151" | "A154" | "A155" | "A156" | "A157" | "A158" | "A159" | "A160" | "A161" | "A163" | "A165" | "A168" | "A169" | "A171" | "A177" | "A179" | "A181" | "A183" | "A184" | "A185" | "A186" | "A187" | "A188" | "A192" | "A193" | "A196" | "A197" | "A198" | "A199" | "A200" | "A201" | "A202" | "A203" | "A205" | "A207" | "A208" | "A211" | "A213" | "A214" | "A217" | "A219" | "A221" | "A224" | "A225" | "A227" | "A228" | "A232" | "A233" | "A234" | "A236";
+        };
+        RemnawaveValidationErrorDto: {
+            /** @description Human-readable error message. */
+            message: string;
+            /** @description HTTP status code. */
+            statusCode: number;
+            /** @description List of validation issues. */
+            errors: {
+                /** @description Validation type, e.g. `uuid`. */
+                validation: string;
+                /** @description Zod issue code, e.g. `invalid_string`. */
+                code: string;
+                /** @description Human-readable issue message. */
+                message: string;
+                /** @description Path to the field that failed validation. */
+                path: string[];
+            }[];
+        };
+        RemnawaveBadRequestErrorDto: {
+            /** @description Time when the error occurred, in ISO 8601 format. */
+            timestamp: string;
+            /** @description Path of the request that caused the error. */
+            path: string;
+            /**
+             * @description Human-readable error message.
+             * @enum {string}
+             */
+            message: "User username already exists" | "User short UUID already exists" | "User subscription UUID already exists" | "User already disabled" | "User already enabled" | "Node name already exists" | "Node address already exists" | "Host remark already exists" | "LIMITED and EXPIRED statuses are not allowed to be set manually." | "User hwid device already exists" | "User hwid device limit reached" | "This name is reserved by Remnawave. Please use a different name." | "Node is disabled" | "Name or config is required" | "Name or inbounds is required" | "Snippet name already exists" | "Snippet cannot be empty" | "Snippet cannot contain empty objects" | "This name is reserved. Please use a different name." | "Template JSON is not allowed for YAML template" | "Template YAML is not allowed for JSON template" | "Template JSON and YAML cannot be updated simultaneously" | "Template name already exists for this type" | "Reserved template cannot be deleted" | "Template type not allowed" | "External squad name already exists" | "Name or templates are required" | "Passkeys not configured" | "Passkeys not enabled. Please enable it first." | "Reserved config name" | "Config name already exists" | "Reserved subpage config cannot be deleted" | "Invalid subscription page config" | "Invalid Remnawave injector" | "Invalid node plugin config" | "Node plugin name already exists" | "One or more provided API token scopes are invalid" | "Either nodeUuid or name must be provided" | "Start date must be before or equal to end date";
+            /**
+             * @description Error code. Possible values:
+             *
+             *     - `A019` — User username already exists
+             *     - `A020` — User short UUID already exists
+             *     - `A021` — User subscription UUID already exists
+             *     - `A029` — User already disabled
+             *     - `A030` — User already enabled
+             *     - `A033` — Node name already exists
+             *     - `A034` — Node address already exists
+             *     - `A045` — Host remark already exists
+             *     - `A089` — LIMITED and EXPIRED statuses are not allowed to be set manually.
+             *     - `A098` — User hwid device already exists
+             *     - `A099` — User hwid device limit reached
+             *     - `A144` — This name is reserved by Remnawave. Please use a different name.
+             *     - `A145` — This name is reserved by Remnawave. Please use a different name.
+             *     - `A149` — Node is disabled
+             *     - `A152` — Name or config is required
+             *     - `A153` — Name or inbounds is required
+             *     - `A164` — Snippet name already exists
+             *     - `A166` — Snippet cannot be empty
+             *     - `A167` — Snippet cannot contain empty objects
+             *     - `A172` — This name is reserved. Please use a different name.
+             *     - `A173` — Template JSON is not allowed for YAML template
+             *     - `A174` — Template YAML is not allowed for JSON template
+             *     - `A175` — Template JSON and YAML cannot be updated simultaneously
+             *     - `A176` — Template name already exists for this type
+             *     - `A178` — Reserved template cannot be deleted
+             *     - `A180` — Template type not allowed
+             *     - `A189` — External squad name already exists
+             *     - `A190` — Name or templates are required
+             *     - `A194` — Passkeys not configured
+             *     - `A195` — Passkeys not enabled. Please enable it first.
+             *     - `A209` — Reserved config name
+             *     - `A210` — Config name already exists
+             *     - `A212` — Reserved subpage config cannot be deleted
+             *     - `A215` — Invalid subscription page config
+             *     - `A216` — Invalid Remnawave injector
+             *     - `A222` — Invalid node plugin config
+             *     - `A223` — Node plugin name already exists
+             *     - `A229` — One or more provided API token scopes are invalid
+             *     - `A230` — Either nodeUuid or name must be provided
+             *     - `A235` — Start date must be before or equal to end date
+             * @enum {string}
+             */
+            errorCode: "A019" | "A020" | "A021" | "A029" | "A030" | "A033" | "A034" | "A045" | "A089" | "A098" | "A099" | "A144" | "A145" | "A149" | "A152" | "A153" | "A164" | "A166" | "A167" | "A172" | "A173" | "A174" | "A175" | "A176" | "A178" | "A180" | "A189" | "A190" | "A194" | "A195" | "A209" | "A210" | "A212" | "A215" | "A216" | "A222" | "A223" | "A229" | "A230" | "A235";
+        };
+        RemnawaveNotFoundErrorDto: {
+            /** @description Time when the error occurred, in ISO 8601 format. */
+            timestamp: string;
+            /** @description Path of the request that caused the error. */
+            path: string;
+            /**
+             * @description Human-readable error message.
+             * @enum {string}
+             */
+            message: "Requested token not found" | "Node not found" | "Configuration not found" | "User not found" | "Host not found" | "Users not found" | "User with specified params not found" | "Admin not found" | "Subscription settings not found" | "Inbound not found" | "Config profile not found" | "Internal squad not found" | "Config profile inbound not found in specified profile" | "Infra provider not found" | "OAuth2 provider not found" | "Snippet not found" | "Subscription template not found" | "External squad not found" | "Passkey not found" | "HWID device not found" | "Subscription page config not found" | "Job result fetch failed or job not found" | "Connected nodes not found" | "Node plugin not found" | "Metadata not found";
+            /**
+             * @description Error code. Possible values:
+             *
+             *     - `A007` — Requested token not found
+             *     - `A011` — Node not found
+             *     - `A012` — Configuration not found
+             *     - `A025` — User not found
+             *     - `A046` — Host not found
+             *     - `A062` — Users not found
+             *     - `A063` — User with specified params not found
+             *     - `A065` — Admin not found
+             *     - `A071` — Subscription settings not found
+             *     - `A076` — Inbound not found
+             *     - `A111` — Config profile not found
+             *     - `A118` — Internal squad not found
+             *     - `A124` — Config profile inbound not found in specified profile
+             *     - `A128` — Infra provider not found
+             *     - `A147` — OAuth2 provider not found
+             *     - `A162` — Snippet not found
+             *     - `A170` — Subscription template not found
+             *     - `A182` — External squad not found
+             *     - `A191` — Passkey not found
+             *     - `A204` — HWID device not found
+             *     - `A206` — Subscription page config not found
+             *     - `A218` — Job result fetch failed or job not found
+             *     - `A219` — Connected nodes not found
+             *     - `A220` — Node plugin not found
+             *     - `A226` — Metadata not found
+             * @enum {string}
+             */
+            errorCode: "A007" | "A011" | "A012" | "A025" | "A046" | "A062" | "A063" | "A065" | "A071" | "A076" | "A111" | "A118" | "A124" | "A128" | "A147" | "A162" | "A170" | "A182" | "A191" | "A204" | "A206" | "A218" | "A219" | "A220" | "A226";
+        };
+        /** @description A single message of the "ioraw:export:user_usage" Redis Stream (EXPORT_TO_STREAM_ENABLED). */
+        RemnawaveUserUsageStreamMessageDto: {
+            /**
+             * @description Message schema version.
+             * @enum {string}
+             */
+            v: "1";
+            /** @description Node ID the batch belongs to (bigint as string). */
+            nodeId: string;
+            /**
+             * Format: date-time
+             * @description Time the batch was exported (ISO 8601, UTC).
+             */
+            ts: string;
+            /** @description User traffic deltas: "userId:totalBytes" pairs separated by ";". */
+            records: string;
+        };
+        /** @description A single message of the "ioraw:export:subscription_requests" Redis Stream (EXPORT_TO_STREAM_ENABLED). */
+        RemnawaveSubscriptionRequestStreamMessageDto: {
+            /**
+             * @description Message schema version.
+             * @enum {string}
+             */
+            v: "1";
+            /** @description ID of the user who requested the subscription (bigint as string). */
+            userId: string;
+            /**
+             * Format: date-time
+             * @description Time of the subscription request (ISO 8601, UTC).
+             */
+            requestAt: string;
+            /** @description Client IP address, omitted if unknown. */
+            requestIp?: string;
+            /** @description Client User-Agent, omitted if unknown. */
+            userAgent?: string;
+        };
+        /** @description A single message of the "ioraw:export:node_connections" Redis Stream (EXPORT_TO_STREAM_ENABLED). Snapshot of connections on one node; retention is time-based. */
+        RemnawaveNodeConnectionsStreamMessageDto: {
+            /**
+             * @description Message schema version.
+             * @enum {string}
+             */
+            v: "1";
+            /** @description Node ID the snapshot belongs to (bigint as string). */
+            nodeId: string;
+            /**
+             * Format: date-time
+             * @description Time the snapshot was exported (ISO 8601, UTC).
+             */
+            ts: string;
+            /**
+             * @description JSON-encoded array of users connected to the node with their IPs.
+             *     Example:
+             *     ```json
+             *     [{ "userId": "42", "ips": [{ "ip": "1.2.3.4", "lastSeen": "2026-07-16T11:59:30.000Z" }] }]
+             *     ```
+             */
+            users: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -9160,7 +7785,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Remnawave settings retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -9169,57 +7794,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetRemnawaveSettingsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9233,11 +7832,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateRemnawaveSettingsRequestDto"];
+                "application/json": components["schemas"]["UpdateRemnawaveSettingsBodyDto"];
             };
         };
         responses: {
-            /** @description Subscription settings updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -9246,57 +7845,31 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateRemnawaveSettingsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9310,66 +7883,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Get passkey registration options */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["GetPasskeyRegistrationOptionsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9383,70 +7930,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["VerifyPasskeyRegistrationRequestDto"];
+                "application/json": components["schemas"]["VerifyPasskeyRegistrationBodyDto"];
             };
         };
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Verify passkey registration result */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["VerifyPasskeyRegistrationResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9460,66 +7981,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Validation error */
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetPasskeysResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Get all passkeys */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetAllPasskeysResponseDto"];
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9533,70 +8028,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeletePasskeyRequestDto"];
+                "application/json": components["schemas"]["DeletePasskeyBodyDto"];
             };
         };
         responses: {
-            /** @description Validation error */
+            /** @description Operation successful, no content returned */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Delete passkey result */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeletePasskeyResponseDto"];
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9610,70 +8077,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdatePasskeyRequestDto"];
+                "application/json": components["schemas"]["UpdatePasskeyBodyDto"];
             };
         };
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Update passkey */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["UpdatePasskeyResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9687,86 +8128,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LoginRequestDto"];
+                "application/json": components["schemas"]["LoginBodyDto"];
             };
         };
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Unauthorized - Invalid credentials */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 401 */
-                        statusCode?: number;
-                        /** @example Invalid credentials */
-                        message?: string;
-                        /** @example Unauthorized */
-                        error?: string;
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Access token for further requests */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["LoginResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9780,86 +8179,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["RegisterRequestDto"];
+                "application/json": components["schemas"]["RegisterBodyDto"];
             };
         };
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Forbidden - Registration is not allowed */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example 403 */
-                        statusCode?: number;
-                        /** @example Registration is not allowed */
-                        message?: string;
-                        /** @example Forbidden */
-                        error?: string;
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Access token for further requests */
-            default: {
+            /** @description Resource created successfully */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["RegisterResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9873,66 +8230,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Status of the system */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["GetStatusResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -9946,70 +8277,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["OAuth2AuthorizeRequestDto"];
+                "application/json": components["schemas"]["OAuth2AuthorizeBodyDto"];
             };
         };
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description OAuth2 authorization URL */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["OAuth2AuthorizeResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10023,70 +8328,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["OAuth2CallbackRequestDto"];
+                "application/json": components["schemas"]["OAuth2CallbackBodyDto"];
             };
         };
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Access token for further requests */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["OAuth2CallbackResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10100,66 +8379,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description Passkey authentication options */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["GetPasskeyAuthenticationOptionsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10173,70 +8426,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["VerifyPasskeyAuthenticationRequestDto"];
+                "application/json": components["schemas"]["VerifyPasskeyAuthenticationBodyDto"];
             };
         };
         responses: {
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-            /** @description JWT access token after successful passkey authentication */
-            default: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["VerifyPasskeyAuthenticationResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10250,66 +8477,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription page configs retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetSubscriptionPageConfigsResponseDto"];
+                    "application/json": components["schemas"]["GetSubpageConfigsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10323,70 +8524,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateSubscriptionPageConfigRequestDto"];
+                "application/json": components["schemas"]["CreateSubpageConfigBodyDto"];
             };
         };
         responses: {
-            /** @description Subscription page config created successfully */
-            200: {
+            /** @description Resource created successfully */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateSubscriptionPageConfigResponseDto"];
+                    "application/json": components["schemas"]["CreateSubpageConfigResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10400,70 +8575,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateSubscriptionPageConfigRequestDto"];
+                "application/json": components["schemas"]["UpdateSubpageConfigBodyDto"];
             };
         };
         responses: {
-            /** @description Subscription page config updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpdateSubscriptionPageConfigResponseDto"];
+                    "application/json": components["schemas"]["UpdateSubpageConfigResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10473,73 +8622,46 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Subscription page config UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription page config retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetSubscriptionPageConfigResponseDto"];
+                    "application/json": components["schemas"]["GetSubpageConfigResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10549,73 +8671,44 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Subscription page config UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription page config deleted successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["DeleteSubscriptionPageConfigResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10629,70 +8722,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReorderSubscriptionPageConfigsRequestDto"];
+                "application/json": components["schemas"]["ReorderSubpageConfigsBodyDto"];
             };
         };
         responses: {
-            /** @description Subscription page configs reordered successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ReorderSubscriptionPageConfigsResponseDto"];
+                    "application/json": components["schemas"]["ReorderSubpageConfigsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10706,81 +8773,67 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CloneSubscriptionPageConfigRequestDto"];
+                "application/json": components["schemas"]["CloneSubpageConfigBodyDto"];
             };
         };
         responses: {
-            /** @description Subscription page config cloned successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CloneSubscriptionPageConfigResponseDto"];
+                    "application/json": components["schemas"]["CloneSubpageConfigResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    UsersController_getAllUsers: {
+    UsersController_getUsers: {
         parameters: {
             query?: {
-                /** @description Page size for pagination */
-                size?: number;
-                /** @description Offset for pagination */
+                /** @description Start index (offset) of the results to return, default is 0 */
                 start?: number;
+                /** @description Number of results to return, no more than 1000 */
+                size?: number;
+                filters?: {
+                    id: string;
+                    value: unknown;
+                }[];
+                filterModes?: {
+                    [key: string]: string;
+                };
+                globalFilterMode?: string;
+                sorting?: {
+                    id: string;
+                    desc: boolean;
+                }[];
             };
             header?: never;
             path?: never;
@@ -10788,66 +8841,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Users fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetAllUsersResponseDto"];
+                    "application/json": components["schemas"]["GetUsersResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10861,70 +8888,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateUserRequestDto"];
+                "application/json": components["schemas"]["CreateUserBodyDto"];
             };
         };
         responses: {
-            /** @description User created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateUserResponseDto"];
+                    "application/json": components["schemas"]["UserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -10938,719 +8939,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateUserRequestDto"];
+                "application/json": components["schemas"]["UpdateUserBodyDto"];
             };
         };
         responses: {
-            /** @description User updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpdateUserResponseDto"];
+                    "application/json": components["schemas"]["UserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_getUserByUuid: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description UUID of the user */
-                uuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetUserByUuidResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_deleteUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description UUID of the user */
-                uuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeleteUserResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description User not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_getUsersStream: {
-        parameters: {
-            query?: {
-                /** @description Page size, no more than 1000 (default 250) */
-                size?: number;
-                /** @description Cursor from the previous response (nextCursor). Omit on the first request */
-                cursor?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Users fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetUsersStreamResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_getAllTags: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tags fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetAllTagsResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_getUserAccessibleNodes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description UUID of the user */
-                uuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User accessible nodes fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetUserAccessibleNodesResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description User not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_getUserSubscriptionRequestHistory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description UUID of the user */
-                uuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User subscription request history fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetUserSubscriptionRequestHistoryResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description User not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_getUserByShortUuid: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Short UUID of the user */
-                shortUuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetUserByShortUuidResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description User not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_getUserByUsername: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Username of the user */
-                username: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetUserByUsernameResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description User not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -11660,308 +8986,400 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description ID of the user */
-                id: string;
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description User fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetUserByIdResponseDto"];
+                    "application/json": components["schemas"]["UserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    UsersController_deleteUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    UsersController_getUserByTelegramId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Telegram ID of the user */
-                telegramId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Users fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetUserByTelegramIdResponseDto"];
-                };
-            };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    UsersController_getUsersByEmail: {
+    UsersController_getUsersStream: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Email of the user */
-                email: string;
+            query?: {
+                /** @description Cursor for pagination — pass the nextCursor from the previous response. Omit on the first request. */
+                cursor?: number;
+                /** @description Number of results to return, no more than 1000 */
+                size?: number;
+                /** @description Status to filter users by */
+                status?: "ACTIVE" | "DISABLED" | "LIMITED" | "EXPIRED";
+                /** @description Traffic limit strategy to filter users by */
+                trafficLimitStrategy?: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
+                /** @description Telegram ID to filter users by */
+                telegramId?: string;
+                /** @description Email to filter users by */
+                email?: string;
+                /** @description Tag to filter users by */
+                tag?: string;
+                /** @description External squad UUID to filter users by */
+                externalSquadUuid?: string;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Users fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetUserByEmailResponseDto"];
+                    "application/json": components["schemas"]["GetUsersStreamResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    UsersController_getUsersByTag: {
+    UsersController_getUsersTags: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                /** @description Tag of the user */
-                tag: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Users fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetUserByTagResponseDto"];
+                    "application/json": components["schemas"]["GetUsersTagsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    UsersController_getUserAccessibleNodes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetUserAccessibleNodesResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    UsersController_getUserSubscriptionRequestHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetUserSubscriptionRequestHistoryResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    UsersController_getUserByShortUuid: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                shortUuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    UsersController_getUserByUsername: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                username: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -11971,8 +9389,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                userId: number;
             };
             cookie?: never;
         };
@@ -11982,73 +9399,40 @@ export interface operations {
             };
         };
         responses: {
-            /** @description User subscription revoked successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RevokeUserSubscriptionResponseDto"];
+                    "application/json": components["schemas"]["UserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12058,80 +9442,46 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description User disabled successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DisableUserResponseDto"];
+                    "application/json": components["schemas"]["UserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12141,80 +9491,46 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description User enabled successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EnableUserResponseDto"];
+                    "application/json": components["schemas"]["UserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12224,80 +9540,99 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description User traffic reset successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResetUserTrafficResponseDto"];
+                    "application/json": components["schemas"]["UserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    UsersController_extendUserExpirationDate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExtendUserBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12311,11 +9646,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ResolveUserRequestBodyDto"];
+                "application/json": components["schemas"]["ResolveUserBodyDto"];
             };
         };
         responses: {
-            /** @description User resolved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -12324,64 +9659,31 @@ export interface operations {
                     "application/json": components["schemas"]["ResolveUserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12395,70 +9697,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkDeleteUsersByStatusRequestDto"];
+                "application/json": components["schemas"]["BulkDeleteUsersByStatusBodyDto"];
             };
         };
         responses: {
-            /** @description Users deleted successfully */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkDeleteUsersByStatusResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12472,70 +9746,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkDeleteUsersRequestDto"];
+                "application/json": components["schemas"]["BulkDeleteUsersBodyDto"];
             };
         };
         responses: {
-            /** @description Users deleted successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkDeleteUsersResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12549,70 +9795,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkRevokeUsersSubscriptionRequestDto"];
+                "application/json": components["schemas"]["BulkRevokeUsersSubscriptionBodyDto"];
             };
         };
         responses: {
-            /** @description Users subscription revoked successfully */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkRevokeUsersSubscriptionResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12626,70 +9844,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkResetTrafficUsersRequestDto"];
+                "application/json": components["schemas"]["BulkResetTrafficUsersBodyDto"];
             };
         };
         responses: {
-            /** @description Users traffic reset successfully */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkResetTrafficUsersResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12703,70 +9893,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkUpdateUsersRequestDto"];
+                "application/json": components["schemas"]["BulkUpdateUsersBodyDto"];
             };
         };
         responses: {
-            /** @description Users updated successfully */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkUpdateUsersResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12780,70 +9942,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkUpdateUsersSquadsRequestDto"];
+                "application/json": components["schemas"]["BulkUpdateUsersSquadsBodyDto"];
             };
         };
         responses: {
-            /** @description Internal squads updated successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkUpdateUsersSquadsResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12857,70 +9991,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkExtendExpirationDateRequestDto"];
+                "application/json": components["schemas"]["BulkExtendExpirationDateBodyDto"];
             };
         };
         responses: {
-            /** @description Users expiration date extended successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkExtendExpirationDateResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -12934,70 +10040,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkAllUpdateUsersRequestDto"];
+                "application/json": components["schemas"]["BulkAllUpdateUsersBodyDto"];
             };
         };
         responses: {
-            /** @description All users updated successfully */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkAllUpdateUsersResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13011,66 +10089,38 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description All users traffic reset successfully */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkAllResetTrafficUsersResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13084,70 +10134,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkAllExtendExpirationDateRequestDto"];
+                "application/json": components["schemas"]["BulkAllExtendExpirationDateBodyDto"];
             };
         };
         responses: {
-            /** @description All users expiration date extended successfully */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkAllExtendExpirationDateResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13157,14 +10179,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Short UUID of the user */
                 shortUuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription info fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13173,57 +10194,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetSubscriptionInfoResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13233,7 +10228,6 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Short UUID of the user */
                 shortUuid: string;
             };
             cookie?: never;
@@ -13245,6 +10239,33 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
             };
         };
     };
@@ -13253,10 +10274,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Client type */
-                clientType: "stash" | "singbox" | "mihomo" | "json" | "v2ray-json" | "clash";
-                /** @description Short UUID of the user */
                 shortUuid: string;
+                clientType: "stash" | "singbox" | "mihomo" | "json" | "v2ray-json" | "clash";
             };
             cookie?: never;
         };
@@ -13268,15 +10287,42 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
         };
     };
     SubscriptionsController_getAllSubscriptions: {
         parameters: {
             query?: {
-                /** @description Number of subscriptions to return, no more than 500 */
-                size?: number;
                 /** @description Start index (offset) of the users to return, default is 0 */
                 start?: number;
+                /** @description Number of subscriptions to return, no more than 500 */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -13284,66 +10330,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Users fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetAllSubscriptionsResponseDto"];
+                    "application/json": components["schemas"]["GetSubscriptionsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13353,14 +10373,14 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Username of the user */
+                /** @description Username */
                 username: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13369,72 +10389,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetSubscriptionByUsernameResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** Format: date-time */
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13444,14 +10423,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Short uuid of the user */
                 shortUuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13460,72 +10438,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetSubscriptionByShortUuidProtectedResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** Format: date-time */
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13535,88 +10472,47 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Uuid of the user */
-                uuid: string;
+                /** @description User ID */
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetSubscriptionByUuidResponseDto"];
+                    "application/json": components["schemas"]["GetSubscriptionByIdResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** Format: date-time */
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13624,19 +10520,17 @@ export interface operations {
     SubscriptionsController_getRawSubscriptionByShortUuid: {
         parameters: {
             query?: {
-                /** @description Include disabled hosts in the subscription. Default is false. */
-                withDisabledHosts?: boolean;
+                withDisabledHosts?: string;
             };
             header?: never;
             path: {
-                /** @description Short UUID of the user */
                 shortUuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Raw subscription fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13645,57 +10539,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetRawSubscriptionByShortUuidResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13705,18 +10573,17 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Short UUID of the user */
                 shortUuid: string;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["GetSubpageConfigByShortUuidRequestBodyDto"];
+                "application/json": components["schemas"]["GetSubpageConfigByShortUuidBodyDto"];
             };
         };
         responses: {
-            /** @description Subpage config fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13725,133 +10592,81 @@ export interface operations {
                     "application/json": components["schemas"]["GetSubpageConfigByShortUuidResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    SubscriptionsController_getConnectionKeysByUuid: {
+    SubscriptionsController_getConnectionKeysByUserId: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                /** @description User ID */
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Connection keys fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetConnectionKeysByUuidResponseDto"];
+                    "application/json": components["schemas"]["GetConnectionKeysByUserIdResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13865,7 +10680,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Templates retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13874,57 +10689,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetTemplatesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -13938,12 +10727,12 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateSubscriptionTemplateRequestDto"];
+                "application/json": components["schemas"]["CreateSubscriptionTemplateBodyDto"];
             };
         };
         responses: {
-            /** @description Template created successfully */
-            200: {
+            /** @description Resource created successfully */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -13951,57 +10740,31 @@ export interface operations {
                     "application/json": components["schemas"]["CreateSubscriptionTemplateResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14015,11 +10778,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateTemplateRequestDto"];
+                "application/json": components["schemas"]["UpdateTemplateBodyDto"];
             };
         };
         responses: {
-            /** @description Template updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -14028,57 +10791,31 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateTemplateResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14088,14 +10825,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Template UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Template retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -14104,57 +10840,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetTemplateResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14164,73 +10874,44 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Template UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Template deleted successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["DeleteSubscriptionTemplateResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14244,11 +10925,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReorderSubscriptionTemplatesRequestDto"];
+                "application/json": components["schemas"]["ReorderSubscriptionTemplatesBodyDto"];
             };
         };
         responses: {
-            /** @description Subscription templates reordered successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -14257,62 +10938,36 @@ export interface operations {
                     "application/json": components["schemas"]["ReorderSubscriptionTemplatesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    ApiTokensController_findAll: {
+    ApiTokensController_getApiTokens: {
         parameters: {
             query?: never;
             header?: never;
@@ -14321,71 +10976,45 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Tokens fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FindAllApiTokensResponseDto"];
+                    "application/json": components["schemas"]["GetApiTokensResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    ApiTokensController_create: {
+    ApiTokensController_createApiToken: {
         parameters: {
             query?: never;
             header?: never;
@@ -14394,11 +11023,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateApiTokenRequestDto"];
+                "application/json": components["schemas"]["CreateApiTokenBodyDto"];
             };
         };
         responses: {
-            /** @description Token created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -14407,62 +11036,36 @@ export interface operations {
                     "application/json": components["schemas"]["CreateApiTokenResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    ApiTokensController_delete: {
+    ApiTokensController_deleteApiToken: {
         parameters: {
             query?: never;
             header?: never;
@@ -14474,66 +11077,38 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Token deleted successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["DeleteApiTokenResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14547,7 +11122,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Available API token scopes fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -14556,57 +11131,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetApiTokenScopesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14620,7 +11169,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Config profiles retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -14629,57 +11178,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetConfigProfilesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14693,11 +11216,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateConfigProfileRequestDto"];
+                "application/json": components["schemas"]["CreateConfigProfileBodyDto"];
             };
         };
         responses: {
-            /** @description Config profile created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -14706,43 +11229,22 @@ export interface operations {
                     "application/json": components["schemas"]["CreateConfigProfileResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
             /** @description Config profile name already exists or inbound tags are not unique. Inbound tags must be unique in global scope. */
@@ -14752,18 +11254,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14777,11 +11274,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateConfigProfileRequestDto"];
+                "application/json": components["schemas"]["UpdateConfigProfileBodyDto"];
             };
         };
         responses: {
-            /** @description Config profile updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -14790,51 +11287,23 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateConfigProfileResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Config profile not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
             /** @description Config profile name already exists or inbound tags are not unique. Inbound tags must be unique in global scope. */
             409: {
@@ -14843,18 +11312,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14868,7 +11332,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Inbounds retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -14877,57 +11341,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetAllInboundsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -14937,13 +11375,14 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description UUID of the config profile */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Inbounds retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -14952,64 +11391,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetInboundsByProfileUuidResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Config profile not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15025,7 +11431,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Config profile retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -15034,64 +11440,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetConfigProfileByUuidResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Config profile not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15101,79 +11474,45 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description UUID of the config profile */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Config profile deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeleteConfigProfileResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Config profile not found */
-            404: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15189,7 +11528,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Computed config profile retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -15198,64 +11537,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetComputedConfigProfileByUuidResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Config profile not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15269,11 +11575,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReorderConfigProfilesRequestDto"];
+                "application/json": components["schemas"]["ReorderConfigProfilesBodyDto"];
             };
         };
         responses: {
-            /** @description Config profiles reordered successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -15282,57 +11588,31 @@ export interface operations {
                     "application/json": components["schemas"]["ReorderConfigProfilesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15346,7 +11626,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Snippets retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -15355,57 +11635,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetSnippetsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15419,11 +11673,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateSnippetRequestDto"];
+                "application/json": components["schemas"]["CreateSnippetBodyDto"];
             };
         };
         responses: {
-            /** @description Snippet created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -15432,43 +11686,22 @@ export interface operations {
                     "application/json": components["schemas"]["CreateSnippetResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
             /** @description Snippet name already exists. */
@@ -15478,18 +11711,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15503,77 +11731,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteSnippetRequestDto"];
+                "application/json": components["schemas"]["DeleteSnippetBodyDto"];
             };
         };
         responses: {
-            /** @description Snippet deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeleteSnippetResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Snippet not found */
-            404: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15587,11 +11780,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateSnippetRequestDto"];
+                "application/json": components["schemas"]["UpdateSnippetBodyDto"];
             };
         };
         responses: {
-            /** @description Snippet updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -15600,51 +11793,23 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateSnippetResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Snippet not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
             /** @description Snippet name already exists. */
             409: {
@@ -15653,18 +11818,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15678,7 +11838,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Internal squads retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -15687,57 +11847,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetInternalSquadsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15751,11 +11885,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateInternalSquadRequestDto"];
+                "application/json": components["schemas"]["CreateInternalSquadBodyDto"];
             };
         };
         responses: {
-            /** @description Internal squad created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -15764,43 +11898,22 @@ export interface operations {
                     "application/json": components["schemas"]["CreateInternalSquadResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
             /** @description Internal squad already exists */
@@ -15810,18 +11923,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15835,11 +11943,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateInternalSquadRequestDto"];
+                "application/json": components["schemas"]["UpdateInternalSquadBodyDto"];
             };
         };
         responses: {
-            /** @description Internal squad updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -15848,51 +11956,23 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateInternalSquadResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Internal squad not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
             /** @description Internal squad already exists */
             409: {
@@ -15901,18 +11981,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -15928,66 +12003,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Internal squad retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetInternalSquadByUuidResponseDto"];
+                    "application/json": components["schemas"]["GetInternalSquadResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16003,73 +12052,38 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Internal squad deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeleteInternalSquadResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Internal squad not found */
-            404: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16079,14 +12093,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the internal squad */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Internal squad accessible nodes fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -16095,64 +12108,92 @@ export interface operations {
                     "application/json": components["schemas"]["GetInternalSquadAccessibleNodesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Internal squad not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    InternalSquadController_getInternalSquadUsage: {
+        parameters: {
+            query: {
+                /** @description Start date (YYYY-MM-DD) */
+                start: string;
+                /** @description End date (YYYY-MM-DD) */
+                end: string;
+                /** @description Only include users whose total usage over the period is >= this (bytes) */
+                minTotalBytes?: number;
+                /** @description Number of users to return, no more than 1000 */
+                limit?: number;
+                /** @description Pass the nextCursor from the previous response. Omit on the first request. */
+                cursor?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Internal squad UUID */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetInternalSquadUsageResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16168,73 +12209,38 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Task added to internal job queue */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AddUsersToInternalSquadResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Internal squad not found */
-            404: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16250,73 +12256,38 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Task added to internal job queue */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveUsersFromInternalSquadResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Internal squad not found */
-            404: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16330,11 +12301,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReorderInternalSquadsRequestDto"];
+                "application/json": components["schemas"]["ReorderInternalSquadsBodyDto"];
             };
         };
         responses: {
-            /** @description Internal squads reordered successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -16343,57 +12314,250 @@ export interface operations {
                     "application/json": components["schemas"]["ReorderInternalSquadsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    InternalSquadController_addManyUsersToInternalSquad: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddManyUsersToInternalSquadBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    InternalSquadController_removeManyUsersFromInternalSquad: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteManyUsersFromInternalSquadBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    InternalSquadStatsController_getInternalSquadUsage: {
+        parameters: {
+            query: {
+                /** @description Start date (YYYY-MM-DD) */
+                start: string;
+                /** @description End date (YYYY-MM-DD) */
+                end: string;
+                /** @description Only include users whose total usage over the period is >= this (bytes) */
+                minTotalBytes?: number;
+                /** @description Number of users to return, no more than 1000 */
+                limit?: number;
+                /** @description Pass the nextCursor from the previous response. Omit on the first request. */
+                cursor?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Internal squad UUID */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetInternalSquadUsageResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    InternalSquadStatsController_getInternalSquadUserUsage: {
+        parameters: {
+            query: {
+                /** @description Start date (YYYY-MM-DD) */
+                start: string;
+                /** @description End date (YYYY-MM-DD) */
+                end: string;
+            };
+            header?: never;
+            path: {
+                /** @description Internal squad UUID */
+                squadUuid: string;
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetInternalSquadUserUsageResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16407,7 +12571,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description External squads retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -16416,57 +12580,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetExternalSquadsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16480,11 +12618,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateExternalSquadRequestDto"];
+                "application/json": components["schemas"]["CreateExternalSquadBodyDto"];
             };
         };
         responses: {
-            /** @description External squad created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -16493,43 +12631,22 @@ export interface operations {
                     "application/json": components["schemas"]["CreateExternalSquadResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
             /** @description External squad already exists */
@@ -16539,18 +12656,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16564,11 +12676,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateExternalSquadRequestDto"];
+                "application/json": components["schemas"]["UpdateExternalSquadBodyDto"];
             };
         };
         responses: {
-            /** @description External squad updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -16577,51 +12689,23 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateExternalSquadResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description External squad not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
             /** @description External squad already exists */
             409: {
@@ -16630,18 +12714,13 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16651,13 +12730,14 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description UUID of the external squad */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description External squad retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -16666,57 +12746,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetExternalSquadByUuidResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16726,79 +12780,45 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description UUID of the external squad */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description External squad deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeleteExternalSquadResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description External squad not found */
-            404: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16808,79 +12828,45 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description UUID of the external squad */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Task added to external job queue */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AddUsersToExternalSquadResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description External squad not found */
-            404: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16890,79 +12876,45 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description UUID of the external squad */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Task added to external job queue */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RemoveUsersFromExternalSquadResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description External squad not found */
-            404: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -16976,11 +12928,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReorderExternalSquadsRequestDto"];
+                "application/json": components["schemas"]["ReorderExternalSquadsBodyDto"];
             };
         };
         responses: {
-            /** @description External squads reordered successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -16989,57 +12941,31 @@ export interface operations {
                     "application/json": components["schemas"]["ReorderExternalSquadsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17053,71 +12979,45 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Get SECRET_KEY for Remnawave Node */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetPubKeyResponseDto"];
+                    "application/json": components["schemas"]["GetNodeSecretKeyResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    NodesController_getAllNodesTags: {
+    NodesController_getNodesTags: {
         parameters: {
             query?: never;
             header?: never;
@@ -17126,71 +13026,45 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Nodes tags fetched */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetAllNodesTagsResponseDto"];
+                    "application/json": components["schemas"]["GetNodesTagsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    NodesController_getAllNodes: {
+    NodesController_getNodes: {
         parameters: {
             query?: never;
             header?: never;
@@ -17199,66 +13073,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Nodes fetched */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetAllNodesResponseDto"];
+                    "application/json": components["schemas"]["GetNodesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17272,70 +13120,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateNodeRequestDto"];
+                "application/json": components["schemas"]["CreateNodeBodyDto"];
             };
         };
         responses: {
-            /** @description Node created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateNodeResponseDto"];
+                    "application/json": components["schemas"]["NodeResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17349,146 +13171,93 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateNodeRequestDto"];
+                "application/json": components["schemas"]["UpdateNodeBodyDto"];
             };
         };
         responses: {
-            /** @description Node updated */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpdateNodeResponseDto"];
+                    "application/json": components["schemas"]["NodeResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    NodesController_getOneNode: {
+    NodesController_getNode: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Node UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Node fetched */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetOneNodeResponseDto"];
+                    "application/json": components["schemas"]["NodeResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17498,73 +13267,44 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Node UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Node deleted */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["DeleteNodeResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17574,73 +13314,46 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Node UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Node enabled */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EnableNodeResponseDto"];
+                    "application/json": components["schemas"]["NodeResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17650,73 +13363,46 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Node UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Node disabled */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DisableNodeResponseDto"];
+                    "application/json": components["schemas"]["NodeResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17726,77 +13412,48 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Node UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["RestartNodeRequestBodyDto"];
+                "application/json": components["schemas"]["RestartNodeBodyDto"];
             };
         };
         responses: {
-            /** @description Node restarted */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["RestartNodeResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17806,73 +13463,44 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Node UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Event sent */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ResetNodeTrafficResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17886,70 +13514,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["RestartAllNodesRequestBodyDto"];
+                "application/json": components["schemas"]["RestartAllNodesBodyDto"];
             };
         };
         responses: {
-            /** @description All nodes restarted */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["RestartAllNodesResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -17963,70 +13563,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReorderNodeRequestDto"];
+                "application/json": components["schemas"]["ReorderNodesBodyDto"];
             };
         };
         responses: {
-            /** @description Nodes reordered successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ReorderNodeResponseDto"];
+                    "application/json": components["schemas"]["ReorderNodesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18040,70 +13614,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ProfileModificationRequestDto"];
+                "application/json": components["schemas"]["ProfileModificationBodyDto"];
             };
         };
         responses: {
-            /** @description Event sent successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ProfileModificationResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18117,70 +13663,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkNodesActionsRequestDto"];
+                "application/json": components["schemas"]["BulkNodesActionsBodyDto"];
             };
         };
         responses: {
-            /** @description Event sent successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkNodesActionsResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18194,70 +13712,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkNodesUpdateRequestDto"];
+                "application/json": components["schemas"]["BulkNodesUpdateBodyDto"];
             };
         };
         responses: {
-            /** @description Event sent successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkNodesUpdateResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18265,10 +13755,22 @@ export interface operations {
     TorrentBlockerReportsController_getTorrentBlockerReports: {
         parameters: {
             query?: {
-                /** @description Page size for pagination */
-                size?: number;
-                /** @description Offset for pagination */
+                /** @description Start index (offset) of the results to return, default is 0 */
                 start?: number;
+                /** @description Number of results to return, no more than 1000 */
+                size?: number;
+                filters?: {
+                    id: string;
+                    value: unknown;
+                }[];
+                filterModes?: {
+                    [key: string]: string;
+                };
+                globalFilterMode?: string;
+                sorting?: {
+                    id: string;
+                    desc: boolean;
+                }[];
             };
             header?: never;
             path?: never;
@@ -18276,7 +13778,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Torrent blocker reports fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -18285,57 +13787,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetTorrentBlockerReportsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18349,7 +13825,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Torrent blocker reports stats fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -18358,57 +13834,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetTorrentBlockerReportsStatsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18422,66 +13872,38 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Torrent blocker reports truncated successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["TruncateTorrentBlockerReportsResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18495,7 +13917,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Node plugins retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -18504,57 +13926,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetNodePluginsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18568,12 +13964,12 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateNodePluginRequestDto"];
+                "application/json": components["schemas"]["CreateNodePluginBodyDto"];
             };
         };
         responses: {
-            /** @description Node plugin created successfully */
-            200: {
+            /** @description Resource created successfully */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -18581,57 +13977,31 @@ export interface operations {
                     "application/json": components["schemas"]["CreateNodePluginResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18645,11 +14015,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateNodePluginRequestDto"];
+                "application/json": components["schemas"]["UpdateNodePluginBodyDto"];
             };
         };
         responses: {
-            /** @description Node plugin updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -18658,57 +14028,31 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateNodePluginResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18718,14 +14062,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Node plugin UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Node plugin retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -18734,57 +14077,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetNodePluginResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18794,73 +14111,44 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description Node plugin UUID */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Node plugin deleted successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["DeleteNodePluginResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18874,11 +14162,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReorderNodePluginsRequestDto"];
+                "application/json": components["schemas"]["ReorderNodePluginsBodyDto"];
             };
         };
         responses: {
-            /** @description Node plugins reordered successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -18887,57 +14175,31 @@ export interface operations {
                     "application/json": components["schemas"]["ReorderNodePluginsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -18951,11 +14213,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CloneNodePluginRequestDto"];
+                "application/json": components["schemas"]["CloneNodePluginBodyDto"];
             };
         };
         responses: {
-            /** @description Node plugin cloned successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -18964,57 +14226,31 @@ export interface operations {
                     "application/json": components["schemas"]["CloneNodePluginResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19028,75 +14264,47 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PluginExecutorRequestDto"];
+                "application/json": components["schemas"]["PluginExecutorBodyDto"];
             };
         };
         responses: {
-            /** @description Node plugin cloned successfully */
-            200: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["PluginExecutorResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    HostsController_getAllHostTags: {
+    HostsController_getHostsTags: {
         parameters: {
             query?: never;
             header?: never;
@@ -19105,71 +14313,45 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Host tags fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetAllHostTagsResponseDto"];
+                    "application/json": components["schemas"]["GetHostsTagsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    HostsController_getAllHosts: {
+    HostsController_getHosts: {
         parameters: {
             query?: never;
             header?: never;
@@ -19178,66 +14360,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Hosts fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetAllHostsResponseDto"];
+                    "application/json": components["schemas"]["GetHostsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19251,70 +14407,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateHostRequestDto"];
+                "application/json": components["schemas"]["CreateHostBodyDto"];
             };
         };
         responses: {
-            /** @description Host created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateHostResponseDto"];
+                    "application/json": components["schemas"]["HostResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19328,70 +14458,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateHostRequestDto"];
+                "application/json": components["schemas"]["UpdateHostBodyDto"];
             };
         };
         responses: {
-            /** @description Host updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UpdateHostResponseDto"];
+                    "application/json": components["schemas"]["HostResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19401,73 +14505,46 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the host */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Host fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetOneHostResponseDto"];
+                    "application/json": components["schemas"]["HostResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19477,80 +14554,44 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the host */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Host deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeleteHostResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description Host not found */
-            404: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19564,70 +14605,44 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ReorderHostRequestDto"];
+                "application/json": components["schemas"]["ReorderHostsBodyDto"];
             };
         };
         responses: {
-            /** @description Hosts reordered successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ReorderHostResponseDto"];
+                    "application/json": components["schemas"]["ReorderHostsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19641,70 +14656,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkDeleteHostsRequestDto"];
+                "application/json": components["schemas"]["BulkDeleteHostsBodyDto"];
             };
         };
         responses: {
-            /** @description Hosts deleted successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkDeleteHostsResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19718,70 +14705,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkDisableHostsRequestDto"];
+                "application/json": components["schemas"]["BulkDisableHostsBodyDto"];
             };
         };
         responses: {
-            /** @description Hosts disabled successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkDisableHostsResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19795,70 +14754,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BulkEnableHostsRequestDto"];
+                "application/json": components["schemas"]["BulkEnableHostsBodyDto"];
             };
         };
         responses: {
-            /** @description Hosts enabled successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BulkEnableHostsResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -19872,151 +14803,100 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateManyHostsRequestDto"];
+                "application/json": components["schemas"]["UpdateManyHostsBodyDto"];
             };
         };
         responses: {
-            /** @description Hosts updated successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["UpdateManyHostsResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    BandwidthStatsNodesController_getNodeUserUsage: {
+    BandwidthStatsNodesController_getNodeUsage: {
         parameters: {
             query: {
-                /** @description Start date */
+                /** @description Start date (YYYY-MM-DD) */
                 start: string;
-                /** @description End date */
+                /** @description End date (YYYY-MM-DD) */
                 end: string;
+                /** @description Only include users whose total usage over the period is >= this (bytes) */
+                minTotalBytes?: number;
             };
             header?: never;
-            path: {
-                /** @description UUID of the node */
-                uuid: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetNodeUsageBodyDto"];
+            };
+        };
         responses: {
-            /** @description Nodes users usage by range (legacy) fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetLegacyStatsNodesUsersUsageResponseDto"];
+                    "application/json": components["schemas"]["GetNodeUsageResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20024,23 +14904,21 @@ export interface operations {
     BandwidthStatsNodesController_getStatsNodeUsersUsage: {
         parameters: {
             query: {
-                /** @description Limit of top users to return */
-                topUsersLimit: number;
                 /** @description Start date (YYYY-MM-DD) */
                 start: string;
                 /** @description End date (YYYY-MM-DD) */
                 end: string;
+                topUsersLimit?: number;
             };
             header?: never;
             path: {
-                /** @description UUID of the node */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Stats node users usage fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20049,57 +14927,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetStatsNodeUsersUsageResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20107,12 +14959,11 @@ export interface operations {
     BandwidthStatsNodesController_getStatsNodesUsersUsage: {
         parameters: {
             query: {
-                /** @description Limit of top users to return */
-                topUsersLimit: number;
                 /** @description Start date (YYYY-MM-DD) */
                 start: string;
                 /** @description End date (YYYY-MM-DD) */
                 end: string;
+                topUsersLimit?: number;
             };
             header?: never;
             path?: never;
@@ -20120,11 +14971,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["GetStatsNodesUsersUsageRequestDto"];
+                "application/json": components["schemas"]["GetStatsNodesUsersUsageBodyDto"];
             };
         };
         responses: {
-            /** @description Stats node users usage fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20133,145 +14984,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetStatsNodesUsersUsageResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    BandwidthStatsUsersController_getUserUsageByRange: {
-        parameters: {
-            query: {
-                /** @description Start date */
-                start: string;
-                /** @description End date */
-                end: string;
-            };
-            header?: never;
-            path: {
-                /** @description UUID of the user */
-                uuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description User usage by range (legacy) fetched successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GetLegacyStatsUserUsageResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20279,23 +15016,22 @@ export interface operations {
     BandwidthStatsUsersController_getStatsNodesUsage: {
         parameters: {
             query: {
-                /** @description Limit of top nodes to return */
-                topNodesLimit: number;
                 /** @description Start date (YYYY-MM-DD) */
                 start: string;
                 /** @description End date (YYYY-MM-DD) */
                 end: string;
+                topNodesLimit?: number;
             };
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                /** @description ID of the user */
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Stats user usage fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20304,57 +15040,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetStatsUserUsageResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20362,10 +15072,22 @@ export interface operations {
     HwidUserDevicesController_getAllUsers: {
         parameters: {
             query?: {
-                /** @description Page size for pagination */
-                size?: number;
-                /** @description Offset for pagination */
+                /** @description Start index (offset) of the results to return, default is 0 */
                 start?: number;
+                /** @description Number of results to return, no more than 1000 */
+                size?: number;
+                filters?: {
+                    id: string;
+                    value: unknown;
+                }[];
+                filterModes?: {
+                    [key: string]: string;
+                };
+                globalFilterMode?: string;
+                sorting?: {
+                    id: string;
+                    desc: boolean;
+                }[];
             };
             header?: never;
             path?: never;
@@ -20373,66 +15095,40 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Hwid devices fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetAllHwidDevicesResponseDto"];
+                    "application/json": components["schemas"]["GetHwidDevicesQueryResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20446,11 +15142,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateUserHwidDeviceRequestDto"];
+                "application/json": components["schemas"]["CreateUserHwidDeviceBodyDto"];
             };
         };
         responses: {
-            /** @description User HWID device created successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20459,64 +15155,31 @@ export interface operations {
                     "application/json": components["schemas"]["CreateUserHwidDeviceResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description One of requested resources not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20530,11 +15193,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteUserHwidDeviceRequestDto"];
+                "application/json": components["schemas"]["DeleteUserHwidDeviceBodyDto"];
             };
         };
         responses: {
-            /** @description User HWID device deleted successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20543,64 +15206,31 @@ export interface operations {
                     "application/json": components["schemas"]["DeleteUserHwidDeviceResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description One of requested resources not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20614,11 +15244,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeleteAllUserHwidDevicesRequestDto"];
+                "application/json": components["schemas"]["DeleteAllUserHwidDevicesBodyDto"];
             };
         };
         responses: {
-            /** @description User HWID devices deleted successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20627,64 +15257,31 @@ export interface operations {
                     "application/json": components["schemas"]["DeleteAllUserHwidDevicesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description One of requested resources not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20698,7 +15295,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Hwid devices stats fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20707,57 +15304,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetHwidDevicesStatsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20765,10 +15336,10 @@ export interface operations {
     HwidUserDevicesController_getTopUsersByHwidDevices: {
         parameters: {
             query?: {
-                /** @description Page size for pagination */
-                size?: number;
-                /** @description Offset for pagination */
+                /** @description Start index (offset) of the results to return, default is 0 */
                 start?: number;
+                /** @description Number of results to return, no more than 100 */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -20776,7 +15347,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Top users by HWID devices fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20785,57 +15356,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetTopUsersByHwidDevicesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20845,14 +15390,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                userUuid: string;
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description User HWID devices fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20861,64 +15405,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetUserHwidDevicesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description One of requested resources not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -20926,12 +15437,12 @@ export interface operations {
     NodesUsageHistoryController_getStatsNodesUsage: {
         parameters: {
             query: {
-                /** @description Limit of top nodes to return */
-                topNodesLimit: number;
                 /** @description Start date (YYYY-MM-DD) */
                 start: string;
                 /** @description End date (YYYY-MM-DD) */
                 end: string;
+                /** @description Limit of top nodes to return */
+                topNodesLimit?: number;
             };
             header?: never;
             path?: never;
@@ -20939,7 +15450,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Stats nodes usage fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -20948,57 +15459,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetStatsNodesUsageResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -21012,7 +15497,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Infra providers retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -21021,57 +15506,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetInfraProvidersResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -21085,11 +15544,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateInfraProviderRequestDto"];
+                "application/json": components["schemas"]["CreateInfraProviderBodyDto"];
             };
         };
         responses: {
-            /** @description Infra provider created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -21098,57 +15557,31 @@ export interface operations {
                     "application/json": components["schemas"]["CreateInfraProviderResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -21162,11 +15595,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateInfraProviderRequestDto"];
+                "application/json": components["schemas"]["UpdateInfraProviderBodyDto"];
             };
         };
         responses: {
-            /** @description Infra provider updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -21175,62 +15608,36 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateInfraProviderResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    InfraBillingController_getInfraProviderByUuid: {
+    InfraBillingController_getInfraProvider: {
         parameters: {
             query?: never;
             header?: never;
@@ -21241,226 +15648,144 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Infra provider retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetInfraProviderByUuidResponseDto"];
+                    "application/json": components["schemas"]["GetInfraProviderResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Infra provider not found */
+            /** @description Resource not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    InfraBillingController_delteInfraProvider: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
-                };
-            };
-        };
-    };
-    InfraBillingController_deleteInfraProviderByUuid: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                uuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Infra provider deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeleteInfraProviderByUuidResponseDto"];
-                };
-            };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    InfraBillingController_getInfraBillingHistoryRecords: {
+    InfraBillingController_getInfraBillingRecords: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Start index (offset) of the billing history records to return, default is 0 */
+                start?: number;
+                /** @description Number of billing records to return, no more than 500 */
+                size?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Infra billing history records retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GetInfraBillingHistoryRecordsResponseDto"];
+                    "application/json": components["schemas"]["GetInfraBillingRecordsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    InfraBillingController_createInfraBillingHistoryRecord: {
+    InfraBillingController_createInfraBillingRecord: {
         parameters: {
             query?: never;
             header?: never;
@@ -21469,75 +15794,49 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateInfraBillingHistoryRecordRequestDto"];
+                "application/json": components["schemas"]["CreateInfraBillingRecordBodyDto"];
             };
         };
         responses: {
-            /** @description Infra billing history record created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateInfraBillingHistoryRecordResponseDto"];
+                    "application/json": components["schemas"]["CreateInfraBillingRecordResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    InfraBillingController_deleteInfraBillingHistoryRecordByUuid: {
+    InfraBillingController_deleteInfraBillingRecord: {
         parameters: {
             query?: never;
             header?: never;
@@ -21548,66 +15847,38 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Infra billing history record deleted successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["DeleteInfraBillingHistoryRecordByUuidResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -21621,7 +15892,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Infra billing nodes retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -21630,57 +15901,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetInfraBillingNodesResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -21694,11 +15939,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateInfraBillingNodeRequestDto"];
+                "application/json": components["schemas"]["CreateInfraBillingNodeBodyDto"];
             };
         };
         responses: {
-            /** @description Infra billing node created successfully */
+            /** @description Resource created successfully */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -21707,57 +15952,31 @@ export interface operations {
                     "application/json": components["schemas"]["CreateInfraBillingNodeResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -21771,11 +15990,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateInfraBillingNodeRequestDto"];
+                "application/json": components["schemas"]["UpdateInfraBillingNodeBodyDto"];
             };
         };
         responses: {
-            /** @description Infra billing node updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -21784,62 +16003,36 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateInfraBillingNodeResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    InfraBillingController_deleteInfraBillingNodeByUuid: {
+    InfraBillingController_deleteInfraBillingNode: {
         parameters: {
             query?: never;
             header?: never;
@@ -21850,66 +16043,38 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Infra billing node deleted successfully */
-            200: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["DeleteInfraBillingNodeByUuidResponseDto"];
-                };
+                content?: never;
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -21917,10 +16082,22 @@ export interface operations {
     UserSubscriptionRequestHistoryController_getSubscriptionRequestHistory: {
         parameters: {
             query?: {
-                /** @description Page size for pagination */
-                size?: number;
-                /** @description Offset for pagination */
+                /** @description Start index (offset) of the results to return, default is 0 */
                 start?: number;
+                /** @description Number of results to return, no more than 1000 */
+                size?: number;
+                filters?: {
+                    id: string;
+                    value: unknown;
+                }[];
+                filterModes?: {
+                    [key: string]: string;
+                };
+                globalFilterMode?: string;
+                sorting?: {
+                    id: string;
+                    desc: boolean;
+                }[];
             };
             header?: never;
             path?: never;
@@ -21928,7 +16105,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription request history fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -21937,57 +16114,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetSubscriptionRequestHistoryResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22001,7 +16152,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description User subscription request history stats fetched successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22010,57 +16161,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetSubscriptionRequestHistoryStatsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22074,7 +16199,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Returns system metadata */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22083,57 +16208,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetMetadataResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22147,7 +16246,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Returns system statistics */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22156,71 +16255,47 @@ export interface operations {
                     "application/json": components["schemas"]["GetStatsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
     SystemController_getBandwidthStats: {
         parameters: {
-            query?: never;
+            query?: {
+                tz?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Returns bandwidth statistics */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22229,57 +16304,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetBandwidthStatsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22293,7 +16342,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Returns nodes statistics */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22302,57 +16351,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetNodesStatisticsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22366,7 +16389,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Returns Remnawave health */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22375,57 +16398,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetRemnawaveHealthResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22439,7 +16436,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Returns nodes metrics from Prometheus metrics endpoint */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22448,57 +16445,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetNodesMetricsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22512,7 +16483,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Returns x25519 keypairs */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22521,57 +16492,31 @@ export interface operations {
                     "application/json": components["schemas"]["GenerateX25519ResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22585,12 +16530,12 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DebugSrrMatcherRequestDto"];
+                "application/json": components["schemas"]["DebugSrrMatcherBodyDto"];
             };
         };
         responses: {
-            /** @description Debug SRR matcher information */
-            201: {
+            /** @description Operation successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -22598,57 +16543,31 @@ export interface operations {
                     "application/json": components["schemas"]["DebugSrrMatcherResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22662,7 +16581,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Returns system recap */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22671,57 +16590,130 @@ export interface operations {
                     "application/json": components["schemas"]["GetRecapResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    SystemController_getStatsDigest: {
+        parameters: {
+            query: {
+                /** @description Start of the range, ISO 8601 datetime with timezone (e.g. 2026-07-15T00:00:00Z). Inclusive. */
+                start: string;
+                /** @description End of the range, ISO 8601 datetime with timezone (e.g. 2026-07-16T00:00:00Z). Exclusive. */
+                end: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetStatsDigestResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    SystemController_getHttpStats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetHttpStatsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22735,7 +16727,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Subscription settings retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22744,57 +16736,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetSubscriptionSettingsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -22808,11 +16774,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateSubscriptionSettingsRequestDto"];
+                "application/json": components["schemas"]["UpdateSubscriptionSettingsBodyDto"];
             };
         };
         responses: {
-            /** @description Subscription settings updated successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -22821,228 +16787,134 @@ export interface operations {
                     "application/json": components["schemas"]["UpdateSubscriptionSettingsResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    IpControlController_fetchUserIps: {
+    ConnectionsController_connectionsByUser: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Return jobId for further processing */
-            200: {
+            /** @description Resource created successfully */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FetchIpsResponseDto"];
+                    "application/json": components["schemas"]["ConnectionsByUserResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    IpControlController_getFetchIpsResult: {
+    ConnectionsController_connectionsByUserResult: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Job ID */
                 jobId: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Return result or status of the job */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FetchIpsResultResponseDto"];
+                    "application/json": components["schemas"]["ConnectionsByUserResultResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Job not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    IpControlController_dropConnections: {
+    ConnectionsController_dropConnections: {
         parameters: {
             query?: never;
             header?: never;
@@ -23051,243 +16923,141 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DropConnectionsRequestDto"];
+                "application/json": components["schemas"]["DropConnectionsBodyDto"];
             };
         };
         responses: {
-            /** @description Event sent to background executor */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DropConnectionsResponseDto"];
-                };
-            };
-            /** @description Validation error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
-                };
-            };
-            /** @description User not found // Connected nodes not found */
-            404: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Server error */
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    IpControlController_fetchUsersIps: {
+    ConnectionsController_connectionsByNode: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the node */
+                /** @description Node UUID */
                 nodeUuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Return jobId for further processing */
-            200: {
+            /** @description Resource created successfully */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FetchUsersIpsResponseDto"];
+                    "application/json": components["schemas"]["ConnectionsByNodeResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Node not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
     };
-    IpControlController_getFetchUsersIpsResult: {
+    ConnectionsController_connectionsByNodeResult: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Job ID */
                 jobId: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Return result or status of the job */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FetchUsersIpsResultResponseDto"];
+                    "application/json": components["schemas"]["ConnectionsByNodeResultResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Job not found */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -23297,14 +17067,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                userId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description User Metadata retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -23313,78 +17082,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetUserMetadataResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User or Metadata not found (see errorCode for more details) */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        /** @enum {string} */
-                        errorCode?: "A025";
-                    } | {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        /** @enum {string} */
-                        errorCode?: "A226";
-                    };
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -23394,18 +17116,17 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the user */
-                uuid: string;
+                userId: number;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpsertUserMetadataRequestBodyDto"];
+                "application/json": components["schemas"]["UpsertUserMetadataBodyDto"];
             };
         };
         responses: {
-            /** @description User Metadata upserted successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -23414,72 +17135,31 @@ export interface operations {
                     "application/json": components["schemas"]["UpsertUserMetadataResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description User not found (see errorCode for more details) */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        /** @enum {string} */
-                        errorCode?: "A025";
-                    };
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -23489,14 +17169,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the node */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Node Metadata retrieved successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -23505,78 +17184,31 @@ export interface operations {
                     "application/json": components["schemas"]["GetNodeMetadataResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Node or Metadata not found (see errorCode for more details) */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        /** @enum {string} */
-                        errorCode?: "A011";
-                    } | {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        /** @enum {string} */
-                        errorCode?: "A226";
-                    };
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
@@ -23586,18 +17218,17 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description UUID of the node */
                 uuid: string;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpsertNodeMetadataRequestBodyDto"];
+                "application/json": components["schemas"]["UpsertNodeMetadataBodyDto"];
             };
         };
         responses: {
-            /** @description Node Metadata upserted successfully */
+            /** @description Operation successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -23606,72 +17237,31 @@ export interface operations {
                     "application/json": components["schemas"]["UpsertNodeMetadataResponseDto"];
                 };
             };
-            /** @description Validation error */
+            /** @description Bad request / Validation error */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        message?: string;
-                        /** @example 400 */
-                        statusCode?: number;
-                        /**
-                         * @example [
-                         *       {
-                         *         "validation": "uuid",
-                         *         "code": "invalid_string",
-                         *         "message": "Invalid uuid",
-                         *         "path": [
-                         *           "uuid"
-                         *         ]
-                         *       }
-                         *     ]
-                         */
-                        errors?: {
-                            /** @example uuid */
-                            validation: string;
-                            /** @example invalid_string */
-                            code: string;
-                            /** @example Invalid uuid */
-                            message: string;
-                            /**
-                             * @example [
-                             *       "uuid"
-                             *     ]
-                             */
-                            path: string[];
-                        }[];
-                    };
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
                 };
             };
-            /** @description Node not found (see errorCode for more details) */
+            /** @description Resource not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        /** @enum {string} */
-                        errorCode?: "A011";
-                    };
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
                 };
             };
-            /** @description Server error */
+            /** @description Internal server error */
             500: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        timestamp?: string;
-                        path?: string;
-                        message?: string;
-                        errorCode?: string;
-                    };
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
                 };
             };
         };
