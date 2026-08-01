@@ -39,6 +39,7 @@ export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any
         await addProfile(
             context.from.id,
             user.response.uuid,
+            user.response.id,
             profile
         );
     } catch (error) {
@@ -114,6 +115,7 @@ export const newProfileStars = async (context: SuccessfulPaymentContext<Bot>) =>
         await addProfile(
             context.from.id,
             user.response.uuid,
+            user.response.id,
             profile
         );
     } catch (error) {

@@ -2,6 +2,8 @@ import { Composer } from 'gramio';
 import { acceptPolicy, findUser, upsertUser } from '../database/users.js';
 import { mainMenuKeyboard, policyKeyboard } from '../keyboards/main.js';
 import { mainMenuText } from '../utils/text/main-menu-text.js';
+import { remnawave } from '../services/remnawave/index.js';
+import { allProfiles, updateProfileRwId } from '../database/user_profiles.js';
 
 export const start = new Composer({ name: 'start' })
     .command('start', async context => {
@@ -82,4 +84,22 @@ ${context.args ? `- Payload: <code>${context.args}</code>` : ''}
             parse_mode: 'HTML',
             reply_markup: await mainMenuKeyboard(Boolean(context.dbuser?.trial_key), context.from.id)
         });
+    })
+    .command('changeid', async context => {
+        // TEMP CMD FOR UPDATE PANEL TO v3.0.0
+        if (!context.dbuser?.is_admin) return;
+
+        const userProfiles = await allProfiles();
+
+        for (const profile of userProfiles) {
+            try {
+                const remnaUser = await remnawave.getUserByUUID(profile.uuid);
+
+                await updateProfileRwId(remnaUser!.response.id, profile.uuid);
+            } catch {
+                await context.send(`error profile: ${profile.id}`);
+            }
+        }
+
+        await context.send(`complete`);
     });

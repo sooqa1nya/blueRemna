@@ -1,10 +1,10 @@
 import type { IUserProfiles } from './types.js';
 import sql from './index.js';
 
-export const addProfile = async (userId: number, uuid: string, username: string): Promise<void> => {
+export const addProfile = async (userId: number, uuid: string, rwId: number, username: string): Promise<void> => {
     await sql`
-        INSERT INTO user_profiles (user_id, uuid, username)
-        VALUES (${userId}, ${uuid}, ${username})
+        INSERT INTO user_profiles (user_id, uuid, rw_user_id, username)
+        VALUES (${userId}, ${uuid}, ${rwId} ${username})
     `;
 };
 
@@ -34,5 +34,21 @@ export const setLimitExtended = async (id: number, limitExtended: boolean) => {
         UPDATE user_profiles
         SET is_limit_extended = ${limitExtended}
         WHERE id = ${id}    
+    `;
+};
+
+// TEMP
+export const allProfiles = async () => {
+    return await sql<IUserProfiles[]>`
+        SELECT * FROM user_profiles
+    `;
+};
+
+// TEMP
+export const updateProfileRwId = async (userId: number, uuid: string) => {
+    return await sql<IUserProfiles[]>`
+        UPDATE user_profiles
+        SET rw_user_id = ${userId}
+        WHERE uuid = ${uuid}
     `;
 };

@@ -38,11 +38,13 @@ export const initDatabase = async () => {
                 payload TEXT
             )
         `;
+        // TEMP uuid
         await sql`
             CREATE TABLE IF NOT EXISTS user_profiles (
                 id SERIAL PRIMARY KEY,
                 user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
                 uuid TEXT,
+                rw_user_id BIGINT,
                 username TEXT,
                 is_limit_extended BOOLEAN DEFAULT FALSE
             )
