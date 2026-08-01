@@ -11,6 +11,8 @@ services:
       PGTZ: "Europe/Moscow"
     ports:
       - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - vpnNetwork
 
@@ -32,3 +34,6 @@ networks:
   vpnNetwork:
   shared-network:
     external: true
+
+volumes:
+  postgres_data:
