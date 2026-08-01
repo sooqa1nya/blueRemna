@@ -38,14 +38,13 @@ export const newProfile = async (context: CallbackQueryShorthandContext<Bot, any
     try {
         await addProfile(
             context.from.id,
-            user.response.uuid,
             user.response.id,
             profile
         );
     } catch (error) {
         await context.answerCallbackQuery('❌ Ошибка при добавлении профиля в БД. Обратитесь в поддержку.');
         console.error('Ошибка при добавлении профиля в БД', error);
-        await remnawave.deleteUser(user.response.uuid);
+        await remnawave.deleteUser(user.response.id);
         return;
     }
 
@@ -114,7 +113,6 @@ export const newProfileStars = async (context: SuccessfulPaymentContext<Bot>) =>
     try {
         await addProfile(
             context.from.id,
-            user.response.uuid,
             user.response.id,
             profile
         );
@@ -124,7 +122,7 @@ export const newProfileStars = async (context: SuccessfulPaymentContext<Bot>) =>
         await message.delete();
 
         console.error('Ошибка при добавлении профиля в БД', error);
-        await remnawave.deleteUser(user.response.uuid);
+        await remnawave.deleteUser(user.response.id);
         return;
     }
 

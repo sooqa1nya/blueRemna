@@ -29,7 +29,7 @@ class RemnaWaveService {
         return response;
     }
 
-    public async createUser(data: components['schemas']['CreateUserRequestDto']) {
+    public async createUser(data: components['schemas']['CreateUserBodyDto']) {
         const { data: response, error } = await this.client.POST('/api/users', {
             body: data
         });
@@ -40,7 +40,7 @@ class RemnaWaveService {
         return response;
     };
 
-    public async updateUser(data: components['schemas']['UpdateUserRequestDto']) {
+    public async updateUser(data: components['schemas']['UpdateUserBodyDto']) {
         const { data: response, error } = await this.client.PATCH('/api/users', {
             body: data
         });
@@ -51,9 +51,9 @@ class RemnaWaveService {
         return response;
     };
 
-    public async getUserByUUID(uuid: string) {
-        const { data, error } = await this.client.GET('/api/users/{uuid}', {
-            params: { path: { uuid } }
+    public async getUserByUserId(userId: number) {
+        const { data, error } = await this.client.GET('/api/users/{userId}', {
+            params: { path: { userId } }
         });
         if (error) {
             console.error('RemnaWave API error:', error);
@@ -63,8 +63,13 @@ class RemnaWaveService {
     };
 
     public async getUserByTelegramId(tg: string) {
-        const { data, error } = await this.client.GET('/api/users/by-telegram-id/{telegramId}', {
-            params: { path: { telegramId: tg } }
+        const { data, error } = await this.client.GET('/api/users/stream', {
+            params: {
+                query: {
+                    telegramId: tg,
+                    size: 1000
+                }
+            }
         });
         if (error) {
             console.error('RemnaWave API error:', error);
@@ -73,9 +78,9 @@ class RemnaWaveService {
         return data;
     };
 
-    public async deleteUser(uuid: string) {
-        const { data, error } = await this.client.DELETE('/api/users/{uuid}', {
-            params: { path: { uuid } }
+    public async deleteUser(userId: number) {
+        const { data, error } = await this.client.DELETE('/api/users/{userId}', {
+            params: { path: { userId } }
         });
         if (error) {
             console.error('RemnaWave API error:', error);
@@ -172,9 +177,9 @@ class RemnaWaveService {
         return hosts;
     }
 
-    public async getUserHwidDevices(uuid: string) {
-        const { data, error } = await this.client.GET('/api/hwid/devices/{userUuid}', {
-            params: { path: { userUuid: uuid } }
+    public async getUserHwidDevices(userId: number) {
+        const { data, error } = await this.client.GET('/api/hwid/devices/{userId}', {
+            params: { path: { userId } }
         });
         if (error) {
             console.error('RemnaWave API error:', error);
@@ -183,7 +188,7 @@ class RemnaWaveService {
         return data;
     }
 
-    public async deleteUserHwidDevice(data: components['schemas']['DeleteUserHwidDeviceRequestDto']) {
+    public async deleteUserHwidDevice(data: components['schemas']['DeleteUserHwidDeviceBodyDto']) {
         const { data: response, error } = await this.client.POST('/api/hwid/devices/delete', {
             body: data
         });

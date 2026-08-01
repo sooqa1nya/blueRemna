@@ -1,10 +1,10 @@
 import type { IUserProfiles } from './types.js';
 import sql from './index.js';
 
-export const addProfile = async (userId: number, uuid: string, rwId: number, username: string): Promise<void> => {
+export const addProfile = async (userId: number, rwId: number, username: string): Promise<void> => {
     await sql`
-        INSERT INTO user_profiles (user_id, uuid, rw_user_id, username)
-        VALUES (${userId}, ${uuid}, ${rwId} ${username})
+        INSERT INTO user_profiles (user_id, rw_user_id, username)
+        VALUES (${userId}, ${rwId} ${username})
     `;
 };
 
@@ -15,10 +15,10 @@ export const getProfiles = async (userId: number) => {
     `;
 };
 
-export const getProfile = async (uuid: string) => {
+export const getProfile = async (rwId: number) => {
     return await sql<IUserProfiles[]>`
         SELECT * FROM user_profiles
-        WHERE uuid = ${uuid}
+        WHERE rw_user_id = ${rwId}
     `;
 };
 

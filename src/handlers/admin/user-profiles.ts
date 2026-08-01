@@ -68,7 +68,7 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
 
     .callbackQuery(adminUserProfilesData, async context => {
         const [userProfile] = await getProfileByID(context.queryData.k);
-        const rw = await remnawave.getUserByUUID(userProfile.uuid);
+        const rw = await remnawave.getUserByUserId(userProfile.uuid);
         if (!rw) {
             return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
         }
@@ -84,7 +84,7 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
     .callbackQuery(switchDeviceLimitData, async context => {
         await setLimitExtended(Number(context.queryData.k), !context.queryData.l);
         const [userProfile] = await getProfileByID(context.queryData.k);
-        const rw = await remnawave.getUserByUUID(userProfile.uuid);
+        const rw = await remnawave.getUserByUserId(userProfile.uuid);
         if (!rw) {
             return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
         }
@@ -120,7 +120,7 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
 
     .callbackQuery(aChangeDaysData, async context => {
         const [userProfile] = await getProfileByID(context.queryData.k);
-        const rw = await remnawave.getUserByUUID(userProfile.uuid);
+        const rw = await remnawave.getUserByUserId(userProfile.uuid);
         if (!rw) {
             return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
         }
@@ -155,7 +155,7 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
 
     .callbackQuery(switchSubStatus, async context => {
         const [userProfile] = await getProfileByID(context.queryData.k);
-        let rw = await remnawave.getUserByUUID(userProfile.uuid);
+        let rw = await remnawave.getUserByUserId(userProfile.uuid);
         if (!rw) {
             return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
         }
@@ -171,7 +171,7 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
             return await context.answerCallbackQuery('❌ Ошибка обновления пользователя');
         }
 
-        rw = await remnawave.getUserByUUID(userProfile.uuid);
+        rw = await remnawave.getUserByUserId(userProfile.uuid);
         if (!rw) {
             return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
         }

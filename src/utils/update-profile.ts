@@ -15,7 +15,7 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
         return;
     }
 
-    const user = await remnawave.getUserByUUID(profile.uuid);
+    const user = await remnawave.getUserByUserId(profile.uuid);
     if (!user) {
         await context.answerCallbackQuery('❌ Ошибка #2 при продлении подписки. Обратитесь в поддержку.');
         console.error('Ошибка #2 при продлении подписки', user);
@@ -72,7 +72,7 @@ export const updateProfileStars = async (context: SuccessfulPaymentContext<Bot>)
         return;
     }
 
-    const user = await remnawave.getUserByUUID(profile.uuid);
+    const user = await remnawave.getUserByUserId(profile.uuid);
     if (!user) {
         const message = await context.send('❌ Ошибка #2 при продлении подписки. Обратитесь в поддержку.');
         await scheduler.wait(10000);

@@ -14,7 +14,7 @@ export const userKeysKeyboard = async (userId: number) => {
     const userProfiles = await getProfiles(userId);
 
     const userWithStatus = await Promise.all(userProfiles.map(async x => {
-        const remoteUser = await remnawave.getUserByUUID(x.uuid);
+        const remoteUser = await remnawave.getUserByUserId(x.user_id);
         return {
             profile: x,
             status: remoteUser?.response?.status ?? 'UNKNOWN'
@@ -54,8 +54,8 @@ export const extendDeviceLimitData = new CallbackData('extend_limit')
     .number('k');
 export const userHwidDevicesData = new CallbackData('user_hwid_devices')
     .number('k')
-    .string('uuid'); // uuid
-export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit: boolean, uuid: string) => {
+    .number('rwId'); // rwUserId
+export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit: boolean, rwId: number) => {
     return new InlineKeyboard()
         .combine(importHappKeyboard(subUrl))
         .row()
@@ -66,7 +66,7 @@ export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit
         .combine(connectHelpKeyboard)
         .row()
         .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key })))
-        .text('📱 Мои устройства', userHwidDevicesData.pack({ k: key, uuid }))
+        .text('📱 Мои устройства', userHwidDevicesData.pack({ k: key, rwId }))
         .row()
         .text('🔄 Продлить', currentKeysData.pack({ k: key }))
         .row()
@@ -109,8 +109,8 @@ export const extendPaymentInvoiceKeyboard = async (key: number, paymentId: numbe
 export const deviceInfoData = new CallbackData('di')
     .string('h') // hwid
     .number('u'); // user profile id
-export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: number) => {
-    const devices = (await remnawave.getUserHwidDevices(uuid))!.response.devices;
+export const userHwidDevicesKeyboard = async (rwId: number, userProfileId: number) => {
+    const devices = (await remnawave.getUserHwidDevices(rwId))!.response.devices;
 
     const keyboard = new InlineKeyboard();
 
@@ -135,9 +135,9 @@ export const userHwidDevicesKeyboard = async (uuid: string, userProfileId: numbe
 export const removeHwidDeviceData = new CallbackData('rd')
     .string('h') // hwid
     .number('u'); // user profile id
-export const userDeviceKeyboard = async (uuid: string, hwid: string, userProfileId: number) => {
+export const userDeviceKeyboard = async (rwId: number, hwid: string, userProfileId: number) => {
     return new InlineKeyboard()
         .columns(1)
         .text('Удалить', removeHwidDeviceData.pack({ h: hwid, u: userProfileId }), { style: 'danger' })
-        .text('◀️ Назад', userHwidDevicesData.pack({ k: userProfileId, uuid }));
+        .text('◀️ Назад', userHwidDevicesData.pack({ k: userProfileId, rwId }));
 };

@@ -53,7 +53,7 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
 
             await updateProfileStars(context);
         } else {
-            const user = await remnawave.getUserByUUID((await getProfileByID(payload.k))[0]!.uuid);
+            const user = await remnawave.getUserByUserId((await getProfileByID(payload.k))[0]!.uuid);
             const limit = await getLimitExtend();
 
             // Бонуска
