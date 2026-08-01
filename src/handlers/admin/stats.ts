@@ -58,8 +58,8 @@ export const statsAdmin = new Composer({ name: 'admin-stats' })
                 }
 
                 const remnaUser = await remnawave.getUserByTelegramId(user.id.toString());
-                if (remnaUser && remnaUser.response.length) {
-                    for (const element of remnaUser.response) {
+                if (remnaUser && remnaUser.response.users.length) {
+                    for (const element of remnaUser.response.users) {
                         if (element.userTraffic.onlineAt) {
                             onlineAt++;
                             break;

@@ -15,7 +15,7 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
         return;
     }
 
-    const user = await remnawave.getUserByUserId(profile.uuid);
+    const user = await remnawave.getUserByUserId(profile.rw_user_id);
     if (!user) {
         await context.answerCallbackQuery('❌ Ошибка #2 при продлении подписки. Обратитесь в поддержку.');
         console.error('Ошибка #2 при продлении подписки', user);
@@ -29,7 +29,7 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
     date.setDate(date.getDate() + days);
 
     await remnawave.updateUser({
-        uuid: profile.uuid,
+        id: profile.rw_user_id,
         trafficLimitStrategy: 'NO_RESET',
         expireAt: date.toISOString()
     });
@@ -72,7 +72,7 @@ export const updateProfileStars = async (context: SuccessfulPaymentContext<Bot>)
         return;
     }
 
-    const user = await remnawave.getUserByUserId(profile.uuid);
+    const user = await remnawave.getUserByUserId(profile.rw_user_id);
     if (!user) {
         const message = await context.send('❌ Ошибка #2 при продлении подписки. Обратитесь в поддержку.');
         await scheduler.wait(10000);
@@ -89,7 +89,7 @@ export const updateProfileStars = async (context: SuccessfulPaymentContext<Bot>)
     date.setDate(date.getDate() + days);
 
     await remnawave.updateUser({
-        uuid: profile.uuid,
+        id: profile.rw_user_id,
         trafficLimitStrategy: 'NO_RESET',
         expireAt: date.toISOString()
     });

@@ -1,7 +1,7 @@
 import { components } from '../../services/remnawave/types.js';
 
 
-export const aSubProfileText = (rwUser: components['schemas']['GetUserByUuidResponseDto']) => {
+export const aSubProfileText = (rwUser: components['schemas']['UserResponseDto']) => {
     const sub = rwUser.response;
 
     const createDate = new Date(sub.createdAt);
@@ -9,7 +9,6 @@ export const aSubProfileText = (rwUser: components['schemas']['GetUserByUuidResp
     const onlineDate = sub.userTraffic.onlineAt ? new Date(sub.userTraffic.onlineAt) : null;
 
     return `
-uuid: <code>${sub.uuid}</code>
 Имя: <code>${sub.username}</code> <code>[${sub.id}]</code>
 Телеграм: <code>${sub.telegramId || 'Нет'}</code>
 

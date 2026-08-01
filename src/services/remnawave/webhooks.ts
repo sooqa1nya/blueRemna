@@ -19,7 +19,7 @@ type EventHandler = (body: any) => Promise<void>;
 const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
-    const [sub] = await getProfile(body.data.uuid);
+    const [sub] = await getProfile(body.data.id);
     await bot.api.sendMessage({
         chat_id: body.data.telegramId,
         text: `🛑 Доступ ограничен!\n\nСрок вашей подписки <code>${body.data.username}</code> истек. Продлите её сейчас, чтобы оставаться в безопасности и сохранить анонимность. 🔐⚡️`,
@@ -31,7 +31,7 @@ const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
 const handleUserExpiration = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
-    const [sub] = await getProfile(body.data.uuid);
+    const [sub] = await getProfile(body.data.id);
     if (body.meta?.expiration == -24) {
         await bot.api.sendMessage({
             chat_id: body.data.telegramId,
