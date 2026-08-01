@@ -74,6 +74,7 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
             await addProfile(
                 context.from.id,
                 user.response.uuid,
+                user.response.id,
                 profile
             );
         } catch (error) {
