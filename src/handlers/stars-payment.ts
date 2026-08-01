@@ -53,7 +53,7 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
 
             await updateProfileStars(context);
         } else {
-            const user = await remnawave.getUserByUserId((await getProfileByID(payload.k))[0]!.uuid);
+            const user = await remnawave.getUserByUserId((await getProfileByID(payload.k))[0]!.rw_user_id);
             const limit = await getLimitExtend();
 
             // Бонуска
@@ -65,7 +65,7 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
 
             try {
                 await remnawave.updateUser({
-                    uuid: user!.response.uuid,
+                    id: user!.response.id,
                     trafficLimitStrategy: 'NO_RESET',
                     hwidDeviceLimit: Number(user!.response.hwidDeviceLimit!) + Number(limit.devices)
                 });
