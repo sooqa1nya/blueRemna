@@ -36,19 +36,3 @@ export const setLimitExtended = async (id: number, limitExtended: boolean) => {
         WHERE id = ${id}    
     `;
 };
-
-// TEMP
-export const allProfiles = async () => {
-    return await sql<IUserProfiles[]>`
-        SELECT * FROM user_profiles
-    `;
-};
-
-// TEMP
-export const updateProfileRwId = async (userId: number, uuid: string) => {
-    return await sql<IUserProfiles[]>`
-        UPDATE user_profiles
-        SET rw_user_id = ${userId}
-        WHERE uuid = ${uuid}
-    `;
-};
