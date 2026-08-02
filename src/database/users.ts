@@ -46,10 +46,10 @@ export const findPayloadCount = async (payload: string) => {
     `;
 };
 
-export const useFreeTrial = async (id: string | number) => {
+export const useFreeTrial = async (id: string | number, status: boolean = true) => {
     const result = await sql`
         UPDATE users
-        SET trial_key = TRUE
+        SET trial_key = ${status}
         WHERE id = ${id} AND trial_key = FALSE
         RETURNING id
     `;

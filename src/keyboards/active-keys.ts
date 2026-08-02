@@ -14,7 +14,7 @@ export const userKeysKeyboard = async (userId: number) => {
     const userProfiles = await getProfiles(userId);
 
     const userWithStatus = await Promise.all(userProfiles.map(async x => {
-        const remoteUser = await remnawave.getUserByUserId(x.user_id);
+        const remoteUser = await remnawave.getUserByUserId(x.rw_user_id);
         return {
             profile: x,
             status: remoteUser?.response?.status ?? 'UNKNOWN'
