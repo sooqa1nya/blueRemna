@@ -3360,8 +3360,10 @@ export interface components {
                     userId: number;
                     /** Format: date-time */
                     requestAt: string;
+                    srrResponseType: string;
                     requestIp?: string | null;
                     userAgent?: string | null;
+                    srrRuleName?: string | null;
                 }[];
             };
         };
@@ -4832,6 +4834,7 @@ export interface components {
             response: {
                 /** Format: uuid */
                 uuid: string;
+                id: number;
                 name: string;
                 address: string;
                 port: number | null;
@@ -4927,6 +4930,7 @@ export interface components {
             response: {
                 /** Format: uuid */
                 uuid: string;
+                id: number;
                 name: string;
                 address: string;
                 port: number | null;
@@ -5061,6 +5065,7 @@ export interface components {
             response: {
                 /** Format: uuid */
                 uuid: string;
+                id: number;
                 name: string;
                 address: string;
                 port: number | null;
@@ -6178,6 +6183,8 @@ export interface components {
                 records: {
                     id: number;
                     userId: number;
+                    srrResponseType: string;
+                    srrRuleName: string | null;
                     requestIp: string | null;
                     userAgent: string | null;
                     /** Format: date-time */
@@ -7084,6 +7091,7 @@ export interface components {
             data: {
                 /** Format: uuid */
                 uuid: string;
+                id: number;
                 name: string;
                 address: string;
                 port: number | null;
@@ -7244,6 +7252,7 @@ export interface components {
                 node: {
                     /** Format: uuid */
                     uuid: string;
+                    id: number;
                     name: string;
                     address: string;
                     port: number | null;
@@ -7415,6 +7424,104 @@ export interface components {
                 };
             };
         };
+        RemnawaveNotFoundErrorDto: {
+            /** @description Time when the error occurred, in ISO 8601 format. */
+            timestamp: string;
+            /** @description Path of the request that caused the error. */
+            path: string;
+            /**
+             * @description Human-readable error message.
+             * @enum {string}
+             */
+            message: "Requested token not found" | "Node not found" | "Configuration not found" | "User not found" | "Host not found" | "Users not found" | "User with specified params not found" | "Admin not found" | "Subscription settings not found" | "Inbound not found" | "Config profile not found" | "Internal squad not found" | "Config profile inbound not found in specified profile" | "Infra provider not found" | "OAuth2 provider not found" | "Snippet not found" | "Subscription template not found" | "External squad not found" | "Passkey not found" | "HWID device not found" | "Subscription page config not found" | "Job result fetch failed or job not found" | "Connected nodes not found" | "Node plugin not found" | "Metadata not found";
+            /**
+             * @description Error code. Possible values:
+             *
+             *     - `A007` — Requested token not found
+             *     - `A011` — Node not found
+             *     - `A012` — Configuration not found
+             *     - `A025` — User not found
+             *     - `A046` — Host not found
+             *     - `A062` — Users not found
+             *     - `A063` — User with specified params not found
+             *     - `A065` — Admin not found
+             *     - `A071` — Subscription settings not found
+             *     - `A076` — Inbound not found
+             *     - `A111` — Config profile not found
+             *     - `A118` — Internal squad not found
+             *     - `A124` — Config profile inbound not found in specified profile
+             *     - `A128` — Infra provider not found
+             *     - `A147` — OAuth2 provider not found
+             *     - `A162` — Snippet not found
+             *     - `A170` — Subscription template not found
+             *     - `A182` — External squad not found
+             *     - `A191` — Passkey not found
+             *     - `A204` — HWID device not found
+             *     - `A206` — Subscription page config not found
+             *     - `A218` — Job result fetch failed or job not found
+             *     - `A219` — Connected nodes not found
+             *     - `A220` — Node plugin not found
+             *     - `A226` — Metadata not found
+             * @enum {string}
+             */
+            errorCode: "A007" | "A011" | "A012" | "A025" | "A046" | "A062" | "A063" | "A065" | "A071" | "A076" | "A111" | "A118" | "A124" | "A128" | "A147" | "A162" | "A170" | "A182" | "A191" | "A204" | "A206" | "A218" | "A219" | "A220" | "A226";
+        };
+        RemnawaveBadRequestErrorDto: {
+            /** @description Time when the error occurred, in ISO 8601 format. */
+            timestamp: string;
+            /** @description Path of the request that caused the error. */
+            path: string;
+            /**
+             * @description Human-readable error message.
+             * @enum {string}
+             */
+            message: "User username already exists" | "User short UUID already exists" | "User subscription UUID already exists" | "User already disabled" | "User already enabled" | "Node name already exists" | "Node address already exists" | "Host remark already exists" | "LIMITED and EXPIRED statuses are not allowed to be set manually." | "User hwid device already exists" | "User hwid device limit reached" | "This name is reserved by Remnawave. Please use a different name." | "Node is disabled" | "Name or config is required" | "Name or inbounds is required" | "Snippet name already exists" | "Snippet cannot be empty" | "Snippet cannot contain empty objects" | "This name is reserved. Please use a different name." | "Template JSON is not allowed for YAML template" | "Template YAML is not allowed for JSON template" | "Template JSON and YAML cannot be updated simultaneously" | "Template name already exists for this type" | "Reserved template cannot be deleted" | "Template type not allowed" | "External squad name already exists" | "Name or templates are required" | "Passkeys not configured" | "Passkeys not enabled. Please enable it first." | "Reserved config name" | "Config name already exists" | "Reserved subpage config cannot be deleted" | "Invalid subscription page config" | "Invalid Remnawave injector" | "Node plugin name already exists" | "One or more provided API token scopes are invalid" | "Either nodeUuid or name must be provided" | "Start date must be before or equal to end date";
+            /**
+             * @description Error code. Possible values:
+             *
+             *     - `A019` — User username already exists
+             *     - `A020` — User short UUID already exists
+             *     - `A021` — User subscription UUID already exists
+             *     - `A029` — User already disabled
+             *     - `A030` — User already enabled
+             *     - `A033` — Node name already exists
+             *     - `A034` — Node address already exists
+             *     - `A045` — Host remark already exists
+             *     - `A089` — LIMITED and EXPIRED statuses are not allowed to be set manually.
+             *     - `A098` — User hwid device already exists
+             *     - `A099` — User hwid device limit reached
+             *     - `A144` — This name is reserved by Remnawave. Please use a different name.
+             *     - `A145` — This name is reserved by Remnawave. Please use a different name.
+             *     - `A149` — Node is disabled
+             *     - `A152` — Name or config is required
+             *     - `A153` — Name or inbounds is required
+             *     - `A164` — Snippet name already exists
+             *     - `A166` — Snippet cannot be empty
+             *     - `A167` — Snippet cannot contain empty objects
+             *     - `A172` — This name is reserved. Please use a different name.
+             *     - `A173` — Template JSON is not allowed for YAML template
+             *     - `A174` — Template YAML is not allowed for JSON template
+             *     - `A175` — Template JSON and YAML cannot be updated simultaneously
+             *     - `A176` — Template name already exists for this type
+             *     - `A178` — Reserved template cannot be deleted
+             *     - `A180` — Template type not allowed
+             *     - `A189` — External squad name already exists
+             *     - `A190` — Name or templates are required
+             *     - `A194` — Passkeys not configured
+             *     - `A195` — Passkeys not enabled. Please enable it first.
+             *     - `A209` — Reserved config name
+             *     - `A210` — Config name already exists
+             *     - `A212` — Reserved subpage config cannot be deleted
+             *     - `A215` — Invalid subscription page config
+             *     - `A216` — Invalid Remnawave injector
+             *     - `A223` — Node plugin name already exists
+             *     - `A229` — One or more provided API token scopes are invalid
+             *     - `A230` — Either nodeUuid or name must be provided
+             *     - `A235` — Start date must be before or equal to end date
+             * @enum {string}
+             */
+            errorCode: "A019" | "A020" | "A021" | "A029" | "A030" | "A033" | "A034" | "A045" | "A089" | "A098" | "A099" | "A144" | "A145" | "A149" | "A152" | "A153" | "A164" | "A166" | "A167" | "A172" | "A173" | "A174" | "A175" | "A176" | "A178" | "A180" | "A189" | "A190" | "A194" | "A195" | "A209" | "A210" | "A212" | "A215" | "A216" | "A223" | "A229" | "A230" | "A235";
+        };
         RemnawaveInternalServerErrorDto: {
             /** @description Time when the error occurred, in ISO 8601 format. */
             timestamp: string;
@@ -7424,7 +7531,7 @@ export interface components {
              * @description Human-readable error message.
              * @enum {string}
              */
-            message: "Server error" | "Login error" | "Create API token error" | "Delete API token error" | "Find all API tokens error" | "Get public key error" | "Enable node error" | "Error updating configuration" | "Error retrieving configuration" | "Delete many inbounds error" | "Create many inbounds error" | "Find all inbounds error" | "Failed to create user" | "User creation successful, but inbound creation failed. User not created." | "User creation successful, but failed to get created user with inbounds." | "Get all users error" | "Get user by error" | "Revoke user subscription error" | "Disable user error" | "Enable user error" | "Create node error" | "Restart node error" | "Get config with users error" | "Delete user error" | "Update node error" | "Update user error" | "Increment used traffic error" | "Get all nodes error" | "Get one node error" | "Delete node error" | "Create host error" | "Delete host error" | "Get user stats error" | "Update user with inbounds error" | "Get all hosts error" | "Reorder hosts error" | "Update host error" | "Create config error" | "Get nodes usage by range error" | "Reset user traffic error" | "Reorder nodes error" | "Get all inbounds error" | "Bulk delete users by status error" | "Update inbound error" | "Update exceeded traffic users error" | "Create admin error" | "Get auth status error" | "Disable node error" | "Get one host error" | "Get subscription settings error" | "Update subscription settings error" | "Add inbound to users error" | "Remove inbound from users error" | "Add inbound to nodes error" | "Remove inbound from nodes error" | "Delete hosts error" | "Bulk enable hosts error" | "Bulk disable hosts error" | "Bulk delete users by UUID error" | "Bulk revoke users subscription error" | "Bulk reset user traffic error" | "Bulk update users error" | "Bulk add inbounds to users error" | "Bulk update all users error" | "Keypair creation error" | "Get user usage by range error" | "Keypair not found. Restart app." | "Activate all inbounds error" | "Create hwid user device error" | "Check hwid exists error" | "Get user hwid devices error" | "Delete hwid user device error" | "Upsert hwid user device error" | "Get all tags error" | "Getting all subscriptions error" | "Trigger threshold notification error" | "Bulk delete by status error" | "Clean old usage records error" | "Vacuum table error" | "Get config profiles error" | "Get config profile by UUID error" | "Create config profile error" | "Get inbounds by profile UUID error" | "Get internal squads error" | "Get internal squad by UUID error" | "Create internal squad error" | "Update internal squad error" | "Delete internal squad error" | "Create user with internal squad error" | "Get user accessible nodes error" | "Get infra providers error" | "Get infra provider by UUID error" | "Delete infra provider by UUID error" | "Create infra provider error" | "Update infra provider error" | "Create infra billing history record error" | "Get infra billing history records error" | "Delete infra billing history record by UUID error" | "Get billing nodes error" | "Update infra billing node error" | "Create infra billing node error" | "Delete infra billing node by UUID error" | "Get billing nodes for notifications error" | "Add users to internal squad error" | "Internal squad bulk actions error" | "Remove users from internal squad error" | "Delete config profile by UUID error" | "Update config profile error" | "OAuth2 authorize error" | "Sync active profile error" | "Get all host tags error" | "Get internal squad accessible nodes error" | "Delete hwid user devices error" | "Create user subscription request history error" | "Get user subscription request history error" | "Get all hwid devices error" | "Get hwid devices stats error" | "Get user subscription request history stats error" | "Get snippets error" | "Delete snippet by name error" | "Update snippet error" | "Get all subscription templates error" | "Get subscription template by UUID error" | "Update subscription template error" | "Delete subscription template error" | "Create subscription template error" | "Get external squads error" | "Create external squad error" | "Update external squad error" | "Delete external squad error" | "Add users to external squad error" | "Remove users from external squad error" | "Get external squad by UUID error" | "Get Remnawave settings error" | "Update Remnawave settings error" | "Generate passkey registration options error" | "Verify passkey registration error" | "Get active passkeys error" | "Delete passkey error" | "Get computed config profile by UUID error" | "Reset node traffic error" | "Update passkey error" | "Generic reorder error" | "Bulk extend expiration date error" | "Get subscription page config by UUID error" | "Get all subscription page configs error" | "Update subscription page config error" | "Delete subscription page config error" | "Create subscription page config error" | "Job creation failed" | "Get all node plugins error" | "Get node plugin by UUID error" | "Update node plugin error" | "Create node plugin error" | "Get torrent blocker reports error" | "Update hosts error" | "Get internal squad usage error" | "Add many users to internal squad error" | "Remove many users from internal squad error" | "Get stats digest error";
+            message: "Server error" | "Login error" | "Create API token error" | "Delete API token error" | "Find all API tokens error" | "Get public key error" | "Enable node error" | "Error updating configuration" | "Error retrieving configuration" | "Delete many inbounds error" | "Create many inbounds error" | "Find all inbounds error" | "Failed to create user" | "User creation successful, but inbound creation failed. User not created." | "User creation successful, but failed to get created user with inbounds." | "Get all users error" | "Get user by error" | "Revoke user subscription error" | "Disable user error" | "Enable user error" | "Create node error" | "Restart node error" | "Get config with users error" | "Delete user error" | "Update node error" | "Update user error" | "Increment used traffic error" | "Get all nodes error" | "Get one node error" | "Delete node error" | "Create host error" | "Delete host error" | "Get user stats error" | "Update user with inbounds error" | "Get all hosts error" | "Reorder hosts error" | "Update host error" | "Create config error" | "Get nodes usage by range error" | "Reset user traffic error" | "Reorder nodes error" | "Get all inbounds error" | "Bulk delete users by status error" | "Update inbound error" | "Update exceeded traffic users error" | "Create admin error" | "Get auth status error" | "Disable node error" | "Get one host error" | "Get subscription settings error" | "Update subscription settings error" | "Add inbound to users error" | "Remove inbound from users error" | "Add inbound to nodes error" | "Remove inbound from nodes error" | "Delete hosts error" | "Bulk enable hosts error" | "Bulk disable hosts error" | "Bulk delete users by user IDs error" | "Bulk revoke users subscription error" | "Bulk reset user traffic error" | "Bulk update users error" | "Bulk add inbounds to users error" | "Bulk update all users error" | "Keypair creation error" | "Get user usage by range error" | "Keypair not found. Restart app." | "Activate all inbounds error" | "Create hwid user device error" | "Check hwid exists error" | "Get user hwid devices error" | "Delete hwid user device error" | "Upsert hwid user device error" | "Get all tags error" | "Getting all subscriptions error" | "Trigger threshold notification error" | "Bulk delete by status error" | "Clean old usage records error" | "Vacuum table error" | "Get config profiles error" | "Get config profile by UUID error" | "Create config profile error" | "Get inbounds by profile UUID error" | "Get internal squads error" | "Get internal squad by UUID error" | "Create internal squad error" | "Update internal squad error" | "Delete internal squad error" | "Create user with internal squad error" | "Get user accessible nodes error" | "Get infra providers error" | "Get infra provider by UUID error" | "Delete infra provider by UUID error" | "Create infra provider error" | "Update infra provider error" | "Create infra billing history record error" | "Get infra billing history records error" | "Delete infra billing history record by UUID error" | "Get billing nodes error" | "Update infra billing node error" | "Create infra billing node error" | "Delete infra billing node by UUID error" | "Get billing nodes for notifications error" | "Add users to internal squad error" | "Internal squad bulk actions error" | "Remove users from internal squad error" | "Delete config profile by UUID error" | "Update config profile error" | "OAuth2 authorize error" | "Sync active profile error" | "Get all host tags error" | "Get internal squad accessible nodes error" | "Delete hwid user devices error" | "Create user subscription request history error" | "Get user subscription request history error" | "Get all hwid devices error" | "Get hwid devices stats error" | "Get user subscription request history stats error" | "Get snippets error" | "Delete snippet by name error" | "Update snippet error" | "Get all subscription templates error" | "Get subscription template by UUID error" | "Update subscription template error" | "Delete subscription template error" | "Create subscription template error" | "Get external squads error" | "Create external squad error" | "Update external squad error" | "Delete external squad error" | "Add users to external squad error" | "Remove users from external squad error" | "Get external squad by UUID error" | "Get Remnawave settings error" | "Update Remnawave settings error" | "Generate passkey registration options error" | "Verify passkey registration error" | "Get active passkeys error" | "Delete passkey error" | "Get computed config profile by UUID error" | "Reset node traffic error" | "Update passkey error" | "Generic reorder error" | "Bulk extend expiration date error" | "Get subscription page config by UUID error" | "Get all subscription page configs error" | "Update subscription page config error" | "Delete subscription page config error" | "Create subscription page config error" | "Job creation failed" | "Get all node plugins error" | "Get node plugin by UUID error" | "Update node plugin error" | "Create node plugin error" | "Get torrent blocker reports error" | "Update hosts error" | "Get internal squad usage error" | "Add many users to internal squad error" | "Remove many users from internal squad error" | "Get stats digest error";
             /**
              * @description Error code. Possible values:
              *
@@ -7486,7 +7593,7 @@ export interface components {
              *     - `A079` — Delete hosts error
              *     - `A080` — Bulk enable hosts error
              *     - `A081` — Bulk disable hosts error
-             *     - `A084` — Bulk delete users by UUID error
+             *     - `A084` — Bulk delete users by user IDs error
              *     - `A085` — Bulk revoke users subscription error
              *     - `A086` — Bulk reset user traffic error
              *     - `A087` — Bulk update users error
@@ -7609,105 +7716,6 @@ export interface components {
                 path: string[];
             }[];
         };
-        RemnawaveBadRequestErrorDto: {
-            /** @description Time when the error occurred, in ISO 8601 format. */
-            timestamp: string;
-            /** @description Path of the request that caused the error. */
-            path: string;
-            /**
-             * @description Human-readable error message.
-             * @enum {string}
-             */
-            message: "User username already exists" | "User short UUID already exists" | "User subscription UUID already exists" | "User already disabled" | "User already enabled" | "Node name already exists" | "Node address already exists" | "Host remark already exists" | "LIMITED and EXPIRED statuses are not allowed to be set manually." | "User hwid device already exists" | "User hwid device limit reached" | "This name is reserved by Remnawave. Please use a different name." | "Node is disabled" | "Name or config is required" | "Name or inbounds is required" | "Snippet name already exists" | "Snippet cannot be empty" | "Snippet cannot contain empty objects" | "This name is reserved. Please use a different name." | "Template JSON is not allowed for YAML template" | "Template YAML is not allowed for JSON template" | "Template JSON and YAML cannot be updated simultaneously" | "Template name already exists for this type" | "Reserved template cannot be deleted" | "Template type not allowed" | "External squad name already exists" | "Name or templates are required" | "Passkeys not configured" | "Passkeys not enabled. Please enable it first." | "Reserved config name" | "Config name already exists" | "Reserved subpage config cannot be deleted" | "Invalid subscription page config" | "Invalid Remnawave injector" | "Invalid node plugin config" | "Node plugin name already exists" | "One or more provided API token scopes are invalid" | "Either nodeUuid or name must be provided" | "Start date must be before or equal to end date";
-            /**
-             * @description Error code. Possible values:
-             *
-             *     - `A019` — User username already exists
-             *     - `A020` — User short UUID already exists
-             *     - `A021` — User subscription UUID already exists
-             *     - `A029` — User already disabled
-             *     - `A030` — User already enabled
-             *     - `A033` — Node name already exists
-             *     - `A034` — Node address already exists
-             *     - `A045` — Host remark already exists
-             *     - `A089` — LIMITED and EXPIRED statuses are not allowed to be set manually.
-             *     - `A098` — User hwid device already exists
-             *     - `A099` — User hwid device limit reached
-             *     - `A144` — This name is reserved by Remnawave. Please use a different name.
-             *     - `A145` — This name is reserved by Remnawave. Please use a different name.
-             *     - `A149` — Node is disabled
-             *     - `A152` — Name or config is required
-             *     - `A153` — Name or inbounds is required
-             *     - `A164` — Snippet name already exists
-             *     - `A166` — Snippet cannot be empty
-             *     - `A167` — Snippet cannot contain empty objects
-             *     - `A172` — This name is reserved. Please use a different name.
-             *     - `A173` — Template JSON is not allowed for YAML template
-             *     - `A174` — Template YAML is not allowed for JSON template
-             *     - `A175` — Template JSON and YAML cannot be updated simultaneously
-             *     - `A176` — Template name already exists for this type
-             *     - `A178` — Reserved template cannot be deleted
-             *     - `A180` — Template type not allowed
-             *     - `A189` — External squad name already exists
-             *     - `A190` — Name or templates are required
-             *     - `A194` — Passkeys not configured
-             *     - `A195` — Passkeys not enabled. Please enable it first.
-             *     - `A209` — Reserved config name
-             *     - `A210` — Config name already exists
-             *     - `A212` — Reserved subpage config cannot be deleted
-             *     - `A215` — Invalid subscription page config
-             *     - `A216` — Invalid Remnawave injector
-             *     - `A222` — Invalid node plugin config
-             *     - `A223` — Node plugin name already exists
-             *     - `A229` — One or more provided API token scopes are invalid
-             *     - `A230` — Either nodeUuid or name must be provided
-             *     - `A235` — Start date must be before or equal to end date
-             * @enum {string}
-             */
-            errorCode: "A019" | "A020" | "A021" | "A029" | "A030" | "A033" | "A034" | "A045" | "A089" | "A098" | "A099" | "A144" | "A145" | "A149" | "A152" | "A153" | "A164" | "A166" | "A167" | "A172" | "A173" | "A174" | "A175" | "A176" | "A178" | "A180" | "A189" | "A190" | "A194" | "A195" | "A209" | "A210" | "A212" | "A215" | "A216" | "A222" | "A223" | "A229" | "A230" | "A235";
-        };
-        RemnawaveNotFoundErrorDto: {
-            /** @description Time when the error occurred, in ISO 8601 format. */
-            timestamp: string;
-            /** @description Path of the request that caused the error. */
-            path: string;
-            /**
-             * @description Human-readable error message.
-             * @enum {string}
-             */
-            message: "Requested token not found" | "Node not found" | "Configuration not found" | "User not found" | "Host not found" | "Users not found" | "User with specified params not found" | "Admin not found" | "Subscription settings not found" | "Inbound not found" | "Config profile not found" | "Internal squad not found" | "Config profile inbound not found in specified profile" | "Infra provider not found" | "OAuth2 provider not found" | "Snippet not found" | "Subscription template not found" | "External squad not found" | "Passkey not found" | "HWID device not found" | "Subscription page config not found" | "Job result fetch failed or job not found" | "Connected nodes not found" | "Node plugin not found" | "Metadata not found";
-            /**
-             * @description Error code. Possible values:
-             *
-             *     - `A007` — Requested token not found
-             *     - `A011` — Node not found
-             *     - `A012` — Configuration not found
-             *     - `A025` — User not found
-             *     - `A046` — Host not found
-             *     - `A062` — Users not found
-             *     - `A063` — User with specified params not found
-             *     - `A065` — Admin not found
-             *     - `A071` — Subscription settings not found
-             *     - `A076` — Inbound not found
-             *     - `A111` — Config profile not found
-             *     - `A118` — Internal squad not found
-             *     - `A124` — Config profile inbound not found in specified profile
-             *     - `A128` — Infra provider not found
-             *     - `A147` — OAuth2 provider not found
-             *     - `A162` — Snippet not found
-             *     - `A170` — Subscription template not found
-             *     - `A182` — External squad not found
-             *     - `A191` — Passkey not found
-             *     - `A204` — HWID device not found
-             *     - `A206` — Subscription page config not found
-             *     - `A218` — Job result fetch failed or job not found
-             *     - `A219` — Connected nodes not found
-             *     - `A220` — Node plugin not found
-             *     - `A226` — Metadata not found
-             * @enum {string}
-             */
-            errorCode: "A007" | "A011" | "A012" | "A025" | "A046" | "A062" | "A063" | "A065" | "A071" | "A076" | "A111" | "A118" | "A124" | "A128" | "A147" | "A162" | "A170" | "A182" | "A191" | "A204" | "A206" | "A218" | "A219" | "A220" | "A226";
-        };
         /** @description A single message of the "ioraw:export:user_usage" Redis Stream (EXPORT_TO_STREAM_ENABLED). */
         RemnawaveUserUsageStreamMessageDto: {
             /**
@@ -7743,6 +7751,10 @@ export interface components {
             requestIp?: string;
             /** @description Client User-Agent, omitted if unknown. */
             userAgent?: string;
+            /** @description SRR rule name, omitted if unknown. */
+            srrRuleName?: string;
+            /** @description SRR response type. */
+            srrResponseType: string;
         };
         /** @description A single message of the "ioraw:export:node_connections" Redis Stream (EXPORT_TO_STREAM_ENABLED). Snapshot of connections on one node; retention is time-based. */
         RemnawaveNodeConnectionsStreamMessageDto: {
