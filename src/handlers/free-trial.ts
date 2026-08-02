@@ -48,6 +48,7 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
         if (!squads) {
             await context.answerCallbackQuery('❌ Ошибка при добавлении в сквад. Обратитесь в поддержку.');
             console.error('[free-trial]: ❌ Ошибка при добавлении в сквад: ' + squads);
+            await useFreeTrial(context.from.id, false);
             return;
         }
 
@@ -67,6 +68,7 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
         if (!user) {
             await context.answerCallbackQuery('❌ Ошибка при создании пользователя. Обратитесь в поддержку.');
             console.error('[free-trial]: ❌ Ошибка при создании пользователя: ' + user);
+            await useFreeTrial(context.from.id, false);
             return;
         }
 
@@ -80,6 +82,7 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
             await context.answerCallbackQuery('❌ Ошибка при добавлении профиля в БД. Обратитесь в поддержку.');
             await remnawave.deleteUser(user.response.id);
             console.error('[free-trial]: ❌ Ошибка при добавлении профиля в БД. UUID: ' + error);
+            await useFreeTrial(context.from.id, false);
             return;
         }
 

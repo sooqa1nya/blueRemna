@@ -42,7 +42,7 @@ export const initDatabase = async () => {
             CREATE TABLE IF NOT EXISTS user_profiles (
                 id SERIAL PRIMARY KEY,
                 user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
-                rw_user_id BIGINT,
+                rw_user_id INT,
                 username TEXT,
                 is_limit_extended BOOLEAN DEFAULT FALSE
             )

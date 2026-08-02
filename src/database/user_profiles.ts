@@ -4,7 +4,7 @@ import sql from './index.js';
 export const addProfile = async (userId: number, rwId: number, username: string): Promise<void> => {
     await sql`
         INSERT INTO user_profiles (user_id, rw_user_id, username)
-        VALUES (${userId}, ${rwId} ${username})
+        VALUES (${userId}, ${rwId}, ${username})
     `;
 };
 
