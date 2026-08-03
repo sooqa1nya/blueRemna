@@ -2247,6 +2247,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/system/configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Remnawave Configuration
+         * @description Returns some of the configuration values.
+         */
+        get: operations["SystemController_getConfiguration"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/system/stats": {
         parameters: {
             query?: never;
@@ -6223,6 +6243,37 @@ export interface components {
                         commitSha: string;
                         commitUrl: string;
                     };
+                };
+            };
+        };
+        GetConfigurationResponseDto: {
+            response: {
+                notifications: {
+                    /** @description WEBHOOK_ENABLED */
+                    webhook: boolean;
+                    /** @description BANDWIDTH_USAGE_NOTIFICATIONS_THRESHOLD */
+                    bandwidthUsage: number[] | null;
+                    /** @description NOT_CONNECTED_USERS_NOTIFICATIONS_AFTER_HOURS */
+                    notConnectedAfter: number[] | null;
+                    /** @description EXPIRATION_NOTIFICATIONS */
+                    expirationNotifications: number[] | null;
+                };
+                service: {
+                    /** @description SERVICE_CLEAN_USAGE_HISTORY */
+                    cleanUsageHistory: boolean;
+                    /** @description SERVICE_DISABLE_USER_USAGE_RECORDS */
+                    disableUserUsageRecords: boolean;
+                    /** @description SERVICE_DISABLE_SRH_RECORDS */
+                    disableSrhRecords: boolean;
+                    /** @description EXPORT_TO_STREAM_ENABLED */
+                    exportToRedisStream: boolean;
+                };
+                misc: {
+                    /** @description SHORT_UUID_LENGTH */
+                    shortUuidLength: number;
+                    subPublicDomain: string;
+                    /** @description USER_USAGE_IGNORE_BELOW_BYTES */
+                    userUsageIgnoreBelowBytes: number;
                 };
             };
         };
@@ -16218,6 +16269,53 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GetMetadataResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    SystemController_getConfiguration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetConfigurationResponseDto"];
                 };
             };
             /** @description Bad request / Validation error */
