@@ -194,6 +194,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/subscription-page-configs/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get tags of Subpage Configs */
+        get: operations["SubscriptionPageConfigController_getTags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set tags of Subpage Config */
+        patch: operations["SubscriptionPageConfigController_setTags"];
+        trace?: never;
+    };
     "/api/subscription-page-configs": {
         parameters: {
             query?: never;
@@ -856,6 +874,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/subscription-templates/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get tags of Subscription Templates */
+        get: operations["SubscriptionTemplateController_getTags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set tags of Subscription Template */
+        patch: operations["SubscriptionTemplateController_setTags"];
+        trace?: never;
+    };
     "/api/subscription-templates": {
         parameters: {
             query?: never;
@@ -972,6 +1008,24 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/config-profiles/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get tags of Config Profiles */
+        get: operations["ConfigProfileController_getTags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set tags of Config Profile */
+        patch: operations["ConfigProfileController_setTags"];
         trace?: never;
     };
     "/api/config-profiles": {
@@ -1097,6 +1151,44 @@ export interface paths {
         head?: never;
         /** Update snippet */
         patch: operations["SnippetsController_updateSnippet"];
+        trace?: never;
+    };
+    "/api/snippets/actions/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sync snippet to affected config profiles
+         * @description Trigger the sync of a snippet to all config profiles that reference it. Nodes which use affected config profiles will be restarted.
+         */
+        post: operations["SnippetsController_syncSnippet"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/internal-squads/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get tags of Internal Squads */
+        get: operations["InternalSquadController_getTags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set tags of Internal Squad */
+        patch: operations["InternalSquadController_setTags"];
         trace?: never;
     };
     "/api/internal-squads": {
@@ -1296,6 +1388,24 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/external-squads/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get tags of External Squads */
+        get: operations["ExternalSquadController_getTags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set tags of External Squad */
+        patch: operations["ExternalSquadController_setTags"];
         trace?: never;
     };
     "/api/external-squads": {
@@ -1664,6 +1774,84 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/node-plugins/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get tags of Node Plugins */
+        get: operations["NodePluginController_getTags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set tags of Node Plugin */
+        patch: operations["NodePluginController_setTags"];
+        trace?: never;
+    };
+    "/api/node-plugins/shared-lists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Shared Lists (Preview)
+         * @description Returns only the name, type and item count of every shared list. Use "Get Shared List by name" to fetch the items themselves.
+         */
+        get: operations["NodePluginController_getAllSharedLists"];
+        put?: never;
+        /** Create Shared List */
+        post: operations["NodePluginController_createSharedList"];
+        /** Delete Shared List by name */
+        delete: operations["NodePluginController_deleteSharedList"];
+        options?: never;
+        head?: never;
+        /** Update Shared List */
+        patch: operations["NodePluginController_updateSharedList"];
+        trace?: never;
+    };
+    "/api/node-plugins/shared-lists/by-name": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Shared List by name */
+        get: operations["NodePluginController_getSharedListByName"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/node-plugins/shared-lists/actions/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sync Shared List to nodes
+         * @description Push every plugin referencing this shared list to the nodes it is active on.
+         */
+        post: operations["NodePluginController_syncSharedList"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/node-plugins": {
         parameters: {
             query?: never;
@@ -1735,6 +1923,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/node-plugins/actions/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sync Node Plugin to nodes
+         * @description Push the current plugin config, including referenced shared lists, to every connected node this plugin is active on.
+         */
+        post: operations["NodePluginController_syncNodePlugin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/node-plugins/executor": {
         parameters: {
             query?: never;
@@ -1747,6 +1955,43 @@ export interface paths {
         /** Execute command on node plugins */
         post: operations["NodePluginController_pluginExecutor"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/node-integrations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all Node Integrations */
+        get: operations["NodeIntegrationController_getAllIntegrations"];
+        put?: never;
+        /** Create Node Integration */
+        post: operations["NodeIntegrationController_createIntegration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Node Integration */
+        patch: operations["NodeIntegrationController_updateIntegration"];
+        trace?: never;
+    };
+    "/api/node-integrations/{uuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Node Integration by uuid */
+        get: operations["NodeIntegrationController_getIntegrationByUuid"];
+        put?: never;
+        post?: never;
+        /** Delete Node Integration */
+        delete: operations["NodeIntegrationController_deleteIntegration"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2543,6 +2788,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/connections/geocheck/{nodeUuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request Geocheck for Node
+         * @description Queues a geocheck on the node and returns a job ID. Poll "Get Geocheck for Node by Job ID" for the result, the node may take up to a minute to answer.
+         */
+        post: operations["ConnectionsController_geocheckByNode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/connections/geocheck/{jobId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Geocheck for Node by Job ID */
+        get: operations["ConnectionsController_geocheckByNodeResult"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/metadata/user/{userId}": {
         parameters: {
             query?: never;
@@ -2888,15 +3170,9 @@ export interface components {
                 passkeys: {
                     id: string;
                     name: string;
-                    /**
-                     * Format: date-time
-                     * @description Created date. Format: 2025-01-17T15:38:45.065Z
-                     */
+                    /** @description Created date. Format: 2025-01-17T15:38:45.065Z */
                     createdAt: string;
-                    /**
-                     * Format: date-time
-                     * @description Last used date. Format: 2025-01-17T15:38:45.065Z
-                     */
+                    /** @description Last used date. Format: 2025-01-17T15:38:45.065Z */
                     lastUsedAt: string;
                 }[];
             };
@@ -2913,15 +3189,9 @@ export interface components {
                 passkeys: {
                     id: string;
                     name: string;
-                    /**
-                     * Format: date-time
-                     * @description Created date. Format: 2025-01-17T15:38:45.065Z
-                     */
+                    /** @description Created date. Format: 2025-01-17T15:38:45.065Z */
                     createdAt: string;
-                    /**
-                     * Format: date-time
-                     * @description Last used date. Format: 2025-01-17T15:38:45.065Z
-                     */
+                    /** @description Last used date. Format: 2025-01-17T15:38:45.065Z */
                     lastUsedAt: string;
                 }[];
             };
@@ -3002,6 +3272,23 @@ export interface components {
                 accessToken: string;
             };
         };
+        GetSubpageConfigsTagsResponseDto: {
+            response: {
+                tags: string[];
+            };
+        };
+        SetSubpageConfigsTagsBodyDto: {
+            /** Format: uuid */
+            uuid: string;
+            tags: string[];
+        };
+        SetSubpageConfigsTagsResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                tags: string[];
+            };
+        };
         GetSubpageConfigsResponseDto: {
             response: {
                 total: number;
@@ -3010,6 +3297,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     config: unknown;
                 }[];
             };
@@ -3020,6 +3308,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 config: unknown;
             };
         };
@@ -3035,6 +3324,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 config: unknown;
             };
         };
@@ -3047,6 +3337,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 config: unknown;
             };
         };
@@ -3065,6 +3356,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     config: unknown;
                 }[];
             };
@@ -3079,6 +3371,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 config: unknown;
             };
         };
@@ -3110,20 +3403,11 @@ export interface components {
              * @enum {string}
              */
             trafficLimitStrategy: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-            /**
-             * Format: date-time
-             * @description Account expiration date. Required. Format: 2025-01-17T15:38:45.065Z
-             */
+            /** @description Account expiration date. Required. Format: 2025-01-17T15:38:45.065Z */
             expireAt: string;
-            /**
-             * Format: date-time
-             * @description Optional. Account creation date. Format: 2025-01-17T15:38:45.065Z
-             */
+            /** @description Optional. Account creation date. Format: 2025-01-17T15:38:45.065Z */
             createdAt?: string;
-            /**
-             * Format: date-time
-             * @description Optional. Date of last traffic reset. Format: 2025-01-17T15:38:45.065Z
-             */
+            /** @description Optional. Date of last traffic reset. Format: 2025-01-17T15:38:45.065Z */
             lastTrafficResetAt?: string;
             /** @description Optional. Additional notes or description for the user account. */
             description?: string;
@@ -3214,10 +3498,7 @@ export interface components {
              * @enum {string}
              */
             trafficLimitStrategy?: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-            /**
-             * Format: date-time
-             * @description Expiration date: 2025-01-17T15:38:45.065Z
-             */
+            /** @description Expiration date: 2025-01-17T15:38:45.065Z */
             expireAt?: string;
             description?: string | null;
             tag?: string | null;
@@ -3437,10 +3718,7 @@ export interface components {
                  * @enum {string}
                  */
                 trafficLimitStrategy?: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-                /**
-                 * Format: date-time
-                 * @description Expiration date: 2025-01-17T15:38:45.065Z
-                 */
+                /** @description Expiration date: 2025-01-17T15:38:45.065Z */
                 expireAt?: string;
                 description?: string | null;
                 telegramId?: number | null;
@@ -3473,10 +3751,7 @@ export interface components {
              * @enum {string}
              */
             trafficLimitStrategy?: "NO_RESET" | "DAY" | "WEEK" | "MONTH" | "MONTH_ROLLING";
-            /**
-             * Format: date-time
-             * @description Expiration date: 2025-01-17T15:38:45.065Z
-             */
+            /** @description Expiration date: 2025-01-17T15:38:45.065Z */
             expireAt?: string;
             description?: string | null;
             telegramId?: number | null;
@@ -3631,6 +3906,30 @@ export interface components {
                 subscriptionUrl: string;
             };
         };
+        GetRawSubscriptionByShortUuidResponseDto__schema0: (string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema0"][] | {
+            [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema0"];
+        }) | null;
+        GetRawSubscriptionByShortUuidResponseDto__schema1: (string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema1"][] | {
+            [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema1"];
+        }) | null;
+        GetRawSubscriptionByShortUuidResponseDto__schema2: (string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema2"][] | {
+            [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema2"];
+        }) | null;
+        GetRawSubscriptionByShortUuidResponseDto__schema3: (string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema3"][] | {
+            [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema3"];
+        }) | null;
+        GetRawSubscriptionByShortUuidResponseDto__schema4: (string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema4"][] | {
+            [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema4"];
+        }) | null;
+        GetRawSubscriptionByShortUuidResponseDto__schema5: (string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema5"][] | {
+            [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema5"];
+        }) | null;
+        GetRawSubscriptionByShortUuidResponseDto__schema6: (string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema6"][] | {
+            [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema6"];
+        }) | null;
+        GetRawSubscriptionByShortUuidResponseDto__schema7: (string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema7"][] | {
+            [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema7"];
+        }) | null;
         GetRawSubscriptionByShortUuidResponseDto: {
             response: {
                 user: {
@@ -3700,29 +3999,399 @@ export interface components {
                 headers: {
                     [key: string]: string;
                 };
-                resolvedProxyConfigs: {
+                resolvedProxyConfigs: ({
                     finalRemark: string;
                     address: string;
                     port: number;
+                    streamOverrides: {
+                        finalMask: unknown;
+                        sockopt: unknown;
+                    };
+                    mux: unknown;
+                    clientOverrides: {
+                        shuffleHost: boolean;
+                        mihomoX25519: boolean;
+                        /** @enum {string|null} */
+                        mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
+                        serverDescription: string | null;
+                        xrayJsonTemplate: unknown;
+                        /** Host Mapper */
+                        mapper: {
+                            /** Xray JSON */
+                            xrayJson?: ({
+                                /**
+                                 * Copy
+                                 * @enum {string}
+                                 */
+                                op: "copy";
+                                /**
+                                 * Source path
+                                 * @example streamSettings.tlsSettings.cipherSuites
+                                 * @example streamSettings.tlsSettings.alpn
+                                 * @example streamSettings.realitySettings.serverNames.0
+                                 * @example $host.address
+                                 * @example $host.securityOptions.serverName
+                                 * @example $host.transportOptions.path
+                                 * @example $host.mux.smux
+                                 */
+                                from: string;
+                                /**
+                                 * Target path
+                                 * @example streamSettings.tlsSettings.enableSessionResumption
+                                 * @example streamSettings.tlsSettings.cipherSuites
+                                 */
+                                to: string;
+                            } | {
+                                /**
+                                 * Set
+                                 * @enum {string}
+                                 */
+                                op: "set";
+                                /** Value */
+                                value: string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema0"][] | {
+                                    [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema1"];
+                                };
+                                /**
+                                 * Target path
+                                 * @example streamSettings.tlsSettings.enableSessionResumption
+                                 * @example streamSettings.tlsSettings.cipherSuites
+                                 */
+                                to: string;
+                            } | {
+                                /**
+                                 * Unset
+                                 * @enum {string}
+                                 */
+                                op: "unset";
+                                /**
+                                 * Target path
+                                 * @example streamSettings.tlsSettings.enableSessionResumption
+                                 * @example streamSettings.tlsSettings.cipherSuites
+                                 */
+                                to: string;
+                            })[];
+                            /** Mihomo */
+                            mihomo?: ({
+                                /**
+                                 * Copy
+                                 * @enum {string}
+                                 */
+                                op: "copy";
+                                /**
+                                 * Source path
+                                 * @example streamSettings.tlsSettings.cipherSuites
+                                 * @example streamSettings.tlsSettings.alpn
+                                 * @example streamSettings.realitySettings.serverNames.0
+                                 * @example $host.address
+                                 * @example $host.securityOptions.serverName
+                                 * @example $host.transportOptions.path
+                                 * @example $host.mux.smux
+                                 */
+                                from: string;
+                                /**
+                                 * Target path
+                                 * @example ip-version
+                                 * @example client-fingerprint
+                                 * @example tfo
+                                 * @example reality-opts.support-x25519mlkem768
+                                 */
+                                to: string;
+                            } | {
+                                /**
+                                 * Set
+                                 * @enum {string}
+                                 */
+                                op: "set";
+                                /** Value */
+                                value: string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema2"][] | {
+                                    [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema3"];
+                                };
+                                /**
+                                 * Target path
+                                 * @example ip-version
+                                 * @example client-fingerprint
+                                 * @example tfo
+                                 * @example reality-opts.support-x25519mlkem768
+                                 */
+                                to: string;
+                            } | {
+                                /**
+                                 * Unset
+                                 * @enum {string}
+                                 */
+                                op: "unset";
+                                /**
+                                 * Target path
+                                 * @example ip-version
+                                 * @example client-fingerprint
+                                 * @example tfo
+                                 * @example reality-opts.support-x25519mlkem768
+                                 */
+                                to: string;
+                            })[];
+                            /** Base64 */
+                            base64?: ({
+                                /**
+                                 * Copy
+                                 * @enum {string}
+                                 */
+                                op: "copy";
+                                /**
+                                 * Source path
+                                 * @example streamSettings.tlsSettings.cipherSuites
+                                 * @example streamSettings.tlsSettings.alpn
+                                 * @example streamSettings.realitySettings.serverNames.0
+                                 * @example $host.address
+                                 * @example $host.securityOptions.serverName
+                                 * @example $host.transportOptions.path
+                                 * @example $host.mux.smux
+                                 */
+                                from: string;
+                                /**
+                                 * Target path
+                                 * @example $link.address
+                                 * @example $link.port
+                                 * @example $link.password
+                                 * @example $link.remark
+                                 * @example $link.method
+                                 * @example alpn
+                                 * @example authority
+                                 * @example cs
+                                 * @example encryption
+                                 * @example extra
+                                 * @example flow
+                                 * @example fm
+                                 * @example fp
+                                 * @example headerType
+                                 * @example heartbeatPeriod
+                                 * @example host
+                                 * @example mode
+                                 * @example mtu
+                                 * @example obfs
+                                 * @example obfs-password
+                                 * @example path
+                                 * @example pbk
+                                 * @example pcs
+                                 * @example pinSHA256
+                                 * @example pqv
+                                 * @example security
+                                 * @example serviceName
+                                 * @example sid
+                                 * @example sni
+                                 * @example spx
+                                 * @example tti
+                                 * @example type
+                                 * @example vcn
+                                 */
+                                to: string;
+                            } | {
+                                /**
+                                 * Set
+                                 * @enum {string}
+                                 */
+                                op: "set";
+                                /** Value */
+                                value: string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema4"][] | {
+                                    [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema5"];
+                                };
+                                /**
+                                 * Target path
+                                 * @example $link.address
+                                 * @example $link.port
+                                 * @example $link.password
+                                 * @example $link.remark
+                                 * @example $link.method
+                                 * @example alpn
+                                 * @example authority
+                                 * @example cs
+                                 * @example encryption
+                                 * @example extra
+                                 * @example flow
+                                 * @example fm
+                                 * @example fp
+                                 * @example headerType
+                                 * @example heartbeatPeriod
+                                 * @example host
+                                 * @example mode
+                                 * @example mtu
+                                 * @example obfs
+                                 * @example obfs-password
+                                 * @example path
+                                 * @example pbk
+                                 * @example pcs
+                                 * @example pinSHA256
+                                 * @example pqv
+                                 * @example security
+                                 * @example serviceName
+                                 * @example sid
+                                 * @example sni
+                                 * @example spx
+                                 * @example tti
+                                 * @example type
+                                 * @example vcn
+                                 */
+                                to: string;
+                            } | {
+                                /**
+                                 * Unset
+                                 * @enum {string}
+                                 */
+                                op: "unset";
+                                /**
+                                 * Target path
+                                 * @example $link.address
+                                 * @example $link.port
+                                 * @example $link.password
+                                 * @example $link.remark
+                                 * @example $link.method
+                                 * @example alpn
+                                 * @example authority
+                                 * @example cs
+                                 * @example encryption
+                                 * @example extra
+                                 * @example flow
+                                 * @example fm
+                                 * @example fp
+                                 * @example headerType
+                                 * @example heartbeatPeriod
+                                 * @example host
+                                 * @example mode
+                                 * @example mtu
+                                 * @example obfs
+                                 * @example obfs-password
+                                 * @example path
+                                 * @example pbk
+                                 * @example pcs
+                                 * @example pinSHA256
+                                 * @example pqv
+                                 * @example security
+                                 * @example serviceName
+                                 * @example sid
+                                 * @example sni
+                                 * @example spx
+                                 * @example tti
+                                 * @example type
+                                 * @example vcn
+                                 */
+                                to: string;
+                            })[];
+                            /** sing-box */
+                            singbox?: ({
+                                /**
+                                 * Copy
+                                 * @enum {string}
+                                 */
+                                op: "copy";
+                                /**
+                                 * Source path
+                                 * @example streamSettings.tlsSettings.cipherSuites
+                                 * @example streamSettings.tlsSettings.alpn
+                                 * @example streamSettings.realitySettings.serverNames.0
+                                 * @example $host.address
+                                 * @example $host.securityOptions.serverName
+                                 * @example $host.transportOptions.path
+                                 * @example $host.mux.smux
+                                 */
+                                from: string;
+                                /**
+                                 * Target path
+                                 * @example domain_resolver
+                                 * @example multiplex.protocol
+                                 * @example packet_encoding
+                                 * @example tcp_fast_open
+                                 * @example tls.insecure
+                                 * @example tls.utls.fingerprint
+                                 */
+                                to: string;
+                            } | {
+                                /**
+                                 * Set
+                                 * @enum {string}
+                                 */
+                                op: "set";
+                                /** Value */
+                                value: string | number | boolean | components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema6"][] | {
+                                    [key: string]: components["schemas"]["GetRawSubscriptionByShortUuidResponseDto__schema7"];
+                                };
+                                /**
+                                 * Target path
+                                 * @example domain_resolver
+                                 * @example multiplex.protocol
+                                 * @example packet_encoding
+                                 * @example tcp_fast_open
+                                 * @example tls.insecure
+                                 * @example tls.utls.fingerprint
+                                 */
+                                to: string;
+                            } | {
+                                /**
+                                 * Unset
+                                 * @enum {string}
+                                 */
+                                op: "unset";
+                                /**
+                                 * Target path
+                                 * @example domain_resolver
+                                 * @example multiplex.protocol
+                                 * @example packet_encoding
+                                 * @example tcp_fast_open
+                                 * @example tls.insecure
+                                 * @example tls.utls.fingerprint
+                                 */
+                                to: string;
+                            })[];
+                        };
+                    };
+                    metadata: {
+                        /** Format: uuid */
+                        uuid: string;
+                        tags: string[];
+                        excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                        inboundTag: string;
+                        /** Format: uuid */
+                        configProfileUuid: string | null;
+                        /** Format: uuid */
+                        configProfileInboundUuid: string | null;
+                        isDisabled: boolean;
+                        isHidden: boolean;
+                        viewPosition: number;
+                        remark: string;
+                        vlessRouteId: number | null;
+                        rawInbound: unknown;
+                    };
+                } & ({
                     /** @enum {string} */
-                    protocol: "vless" | "trojan" | "shadowsocks" | "hysteria";
+                    protocol: "vless";
                     protocolOptions: {
                         encryption: string;
                         id: string;
                         /** @enum {string} */
                         flow: "" | "xtls-rprx-vision" | "xtls-rprx-vision-udp443";
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    protocol: "trojan";
+                    protocolOptions: {
                         password: string;
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    protocol: "shadowsocks";
+                    protocolOptions: {
                         method: string;
                         password: string;
                         uot: boolean;
                         uotVersion: number;
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    protocol: "hysteria";
+                    protocolOptions: {
                         version: number;
                     };
+                }) & ({
                     /** @enum {string} */
-                    transport: "tcp" | "xhttp" | "ws" | "httpupgrade" | "grpc" | "kcp" | "hysteria";
+                    transport: "tcp";
                     transportOptions: {
                         header: ({
                             /** @enum {string} */
@@ -3747,7 +4416,11 @@ export interface components {
                                 };
                             };
                         }) | null;
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    transport: "xhttp";
+                    transportOptions: {
                         path: string | null;
                         host: string | null;
                         /** @enum {string} */
@@ -3755,34 +4428,55 @@ export interface components {
                         extra: {
                             [key: string]: unknown;
                         } | null;
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    transport: "ws";
+                    transportOptions: {
                         path: string | null;
                         host: string | null;
                         headers: {
                             [key: string]: string;
                         } | null;
                         heartbeatPeriod: number | null;
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    transport: "httpupgrade";
+                    transportOptions: {
                         path: string | null;
                         host: string | null;
                         headers: {
                             [key: string]: string;
                         } | null;
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    transport: "grpc";
+                    transportOptions: {
                         authority: string | null;
                         serviceName: string | null;
                         multiMode: boolean;
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    transport: "kcp";
+                    transportOptions: {
                         clientMtu: number;
                         clientTti: number;
                         congestion: boolean;
-                    } | {
+                    };
+                } | {
+                    /** @enum {string} */
+                    transport: "hysteria";
+                    transportOptions: {
                         version: number;
                         auth: string;
                     };
+                }) & ({
                     /** @enum {string} */
-                    security: "tls" | "reality" | "none";
-                    securityOptions?: {
+                    security: "tls";
+                    securityOptions: {
                         pinnedPeerCertSha256: string | null;
                         verifyPeerCertByName: string | null;
                         alpn: string | null;
@@ -3792,7 +4486,12 @@ export interface components {
                         echConfigList: string | null;
                         echForceQuery: string | null;
                         echSockopt: unknown;
-                    } | {
+                        cipherSuites: string | null;
+                    };
+                } | {
+                    /** @enum {string} */
+                    security: "reality";
+                    securityOptions: {
                         fingerprint: string;
                         publicKey: string;
                         shortId: string | null;
@@ -3800,37 +4499,10 @@ export interface components {
                         spiderX: string | null;
                         mldsa65Verify: string | null;
                     };
-                    streamOverrides: {
-                        finalMask: unknown;
-                        sockopt: unknown;
-                    };
-                    mux: unknown;
-                    clientOverrides: {
-                        shuffleHost: boolean;
-                        mihomoX25519: boolean;
-                        /** @enum {string|null} */
-                        mihomoIpVersion: "dual" | "ipv4" | "ipv6" | "ipv4-prefer" | "ipv6-prefer" | null;
-                        serverDescription: string | null;
-                        xrayJsonTemplate: unknown;
-                    };
-                    metadata: {
-                        /** Format: uuid */
-                        uuid: string;
-                        tags: string[];
-                        excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
-                        inboundTag: string;
-                        /** Format: uuid */
-                        configProfileUuid: string | null;
-                        /** Format: uuid */
-                        configProfileInboundUuid: string | null;
-                        isDisabled: boolean;
-                        isHidden: boolean;
-                        viewPosition: number;
-                        remark: string;
-                        vlessRouteId: number | null;
-                        rawInbound: unknown;
-                    };
-                }[];
+                } | {
+                    /** @enum {string} */
+                    security: "none";
+                }))[];
             };
         };
         GetSubpageConfigByShortUuidBodyDto: {
@@ -3852,6 +4524,23 @@ export interface components {
                 disabledKeys: string[];
             };
         };
+        GetSubscriptionTemplatesTagsResponseDto: {
+            response: {
+                tags: string[];
+            };
+        };
+        SetSubscriptionTemplatesTagsBodyDto: {
+            /** Format: uuid */
+            uuid: string;
+            tags: string[];
+        };
+        SetSubscriptionTemplatesTagsResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                tags: string[];
+            };
+        };
         GetTemplatesResponseDto: {
             response: {
                 total: number;
@@ -3860,6 +4549,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     /** @enum {string} */
                     templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                     templateJson: unknown;
@@ -3873,6 +4563,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 /** @enum {string} */
                 templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                 templateJson: unknown;
@@ -3894,6 +4585,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 /** @enum {string} */
                 templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                 templateJson: unknown;
@@ -3911,6 +4603,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 /** @enum {string} */
                 templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                 templateJson: unknown;
@@ -3932,6 +4625,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     /** @enum {string} */
                     templateType: "XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX";
                     templateJson: unknown;
@@ -4000,6 +4694,23 @@ export interface components {
                 }[];
             };
         };
+        GetConfigProfilesTagsResponseDto: {
+            response: {
+                tags: string[];
+            };
+        };
+        SetConfigProfilesTagsBodyDto: {
+            /** Format: uuid */
+            uuid: string;
+            tags: string[];
+        };
+        SetConfigProfilesTagsResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                tags: string[];
+            };
+        };
         GetConfigProfilesResponseDto: {
             response: {
                 total: number;
@@ -4008,6 +4719,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     config: unknown;
                     inbounds: {
                         /** Format: uuid */
@@ -4076,6 +4788,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 config: unknown;
                 inbounds: {
                     /** Format: uuid */
@@ -4107,6 +4820,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 config: unknown;
                 inbounds: {
                     /** Format: uuid */
@@ -4144,6 +4858,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 config: unknown;
                 inbounds: {
                     /** Format: uuid */
@@ -4183,6 +4898,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 config: unknown;
                 inbounds: {
                     /** Format: uuid */
@@ -4223,6 +4939,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     config: unknown;
                     inbounds: {
                         /** Format: uuid */
@@ -4258,6 +4975,9 @@ export interface components {
                 }[];
             };
         };
+        SyncSnippetBodyDto: {
+            name: string;
+        };
         DeleteSnippetBodyDto: {
             name: string;
         };
@@ -4291,6 +5011,23 @@ export interface components {
                 }[];
             };
         };
+        GetInternalSquadsTagsResponseDto: {
+            response: {
+                tags: string[];
+            };
+        };
+        SetInternalSquadsTagsBodyDto: {
+            /** Format: uuid */
+            uuid: string;
+            tags: string[];
+        };
+        SetInternalSquadsTagsResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                tags: string[];
+            };
+        };
         GetInternalSquadsResponseDto: {
             response: {
                 total: number;
@@ -4299,6 +5036,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     info: {
                         membersCount: number;
                         inboundsCount: number;
@@ -4328,6 +5066,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 info: {
                     membersCount: number;
                     inboundsCount: number;
@@ -4360,6 +5099,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 info: {
                     membersCount: number;
                     inboundsCount: number;
@@ -4425,6 +5165,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 info: {
                     membersCount: number;
                     inboundsCount: number;
@@ -4462,6 +5203,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     info: {
                         membersCount: number;
                         inboundsCount: number;
@@ -4505,6 +5247,23 @@ export interface components {
                 }[];
             };
         };
+        GetExternalSquadsTagsResponseDto: {
+            response: {
+                tags: string[];
+            };
+        };
+        SetExternalSquadsTagsBodyDto: {
+            /** Format: uuid */
+            uuid: string;
+            tags: string[];
+        };
+        SetExternalSquadsTagsResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                tags: string[];
+            };
+        };
         GetExternalSquadsResponseDto: {
             response: {
                 total: number;
@@ -4513,6 +5272,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     info: {
                         membersCount: number;
                     };
@@ -4563,6 +5323,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 info: {
                     membersCount: number;
                 };
@@ -4615,6 +5376,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 info: {
                     membersCount: number;
                 };
@@ -4712,6 +5474,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 info: {
                     membersCount: number;
                 };
@@ -4770,6 +5533,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     info: {
                         membersCount: number;
                     };
@@ -4848,7 +5612,13 @@ export interface components {
             tags?: string[];
             /** Format: uuid */
             activePluginUuid?: string | null;
+            integrationUuids?: string[];
             note?: string;
+            ips?: {
+                ip: string;
+                /** @enum {string} */
+                status: "INBOUND" | "OUTBOUND" | "MANAGEMENT" | "TRANSIT" | "MONITORING" | "RESERVE" | "BLOCKED" | "FLAGGED" | "DEPRECATED" | "UNKNOWN";
+            }[];
         };
         NodeResponseDto: {
             response: {
@@ -4875,6 +5645,12 @@ export interface components {
                 consumptionMultiplier: number;
                 nodeConsumptionMultiplier: number;
                 tags: string[];
+                integrationUuids: string[];
+                ips: {
+                    ip: string;
+                    /** @enum {string} */
+                    status: "INBOUND" | "OUTBOUND" | "MANAGEMENT" | "TRANSIT" | "MONITORING" | "RESERVE" | "BLOCKED" | "FLAGGED" | "DEPRECATED" | "UNKNOWN";
+                }[];
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -4971,6 +5747,12 @@ export interface components {
                 consumptionMultiplier: number;
                 nodeConsumptionMultiplier: number;
                 tags: string[];
+                integrationUuids: string[];
+                ips: {
+                    ip: string;
+                    /** @enum {string} */
+                    status: "INBOUND" | "OUTBOUND" | "MANAGEMENT" | "TRANSIT" | "MONITORING" | "RESERVE" | "BLOCKED" | "FLAGGED" | "DEPRECATED" | "UNKNOWN";
+                }[];
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -5066,7 +5848,13 @@ export interface components {
             tags?: string[];
             /** Format: uuid */
             activePluginUuid?: string | null;
+            integrationUuids?: string[];
             note?: string | null;
+            ips?: {
+                ip: string;
+                /** @enum {string} */
+                status: "INBOUND" | "OUTBOUND" | "MANAGEMENT" | "TRANSIT" | "MONITORING" | "RESERVE" | "BLOCKED" | "FLAGGED" | "DEPRECATED" | "UNKNOWN";
+            }[];
         };
         RestartNodeBodyDto: {
             forceRestart: boolean;
@@ -5106,6 +5894,12 @@ export interface components {
                 consumptionMultiplier: number;
                 nodeConsumptionMultiplier: number;
                 tags: string[];
+                integrationUuids: string[];
+                ips: {
+                    ip: string;
+                    /** @enum {string} */
+                    status: "INBOUND" | "OUTBOUND" | "MANAGEMENT" | "TRANSIT" | "MONITORING" | "RESERVE" | "BLOCKED" | "FLAGGED" | "DEPRECATED" | "UNKNOWN";
+                }[];
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -5201,6 +5995,7 @@ export interface components {
                 tags?: string[];
                 /** Format: uuid */
                 activePluginUuid?: string | null;
+                integrationUuids?: string[];
                 note?: string | null;
             };
         };
@@ -5224,10 +6019,8 @@ export interface components {
                             blocked: boolean;
                             ip: string;
                             blockDuration: number;
-                            /** Format: date-time */
                             willUnblockAt: string;
                             userId: string;
-                            /** Format: date-time */
                             processedAt: string;
                         };
                         xrayReport: {
@@ -5276,6 +6069,75 @@ export interface components {
                 }[];
             };
         };
+        GetNodePluginsTagsResponseDto: {
+            response: {
+                tags: string[];
+            };
+        };
+        SetNodePluginsTagsBodyDto: {
+            /** Format: uuid */
+            uuid: string;
+            tags: string[];
+        };
+        SetNodePluginsTagsResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                tags: string[];
+            };
+        };
+        GetSharedListsResponseDto: {
+            response: {
+                total: number;
+                sharedLists: {
+                    name: string;
+                    type: string;
+                    itemsCount: number;
+                }[];
+            };
+        };
+        GetSharedListResponseDto: {
+            response: {
+                name: string;
+                config: {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        CreateSharedListBodyDto: {
+            name: string;
+            config: {
+                [key: string]: unknown;
+            };
+        };
+        CreateSharedListResponseDto: {
+            response: {
+                name: string;
+                config: {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        UpdateSharedListBodyDto: {
+            name: string;
+            config: {
+                [key: string]: unknown;
+            };
+        };
+        UpdateSharedListResponseDto: {
+            response: {
+                name: string;
+                config: {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        SyncSharedListBodyDto: {
+            name: string;
+        };
+        DeleteSharedListBodyDto: {
+            name: string;
+        };
         GetNodePluginsResponseDto: {
             response: {
                 total: number;
@@ -5284,6 +6146,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     pluginConfig: unknown;
                 }[];
             };
@@ -5294,6 +6157,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 pluginConfig: unknown;
             };
         };
@@ -5309,6 +6173,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 pluginConfig: unknown;
             };
         };
@@ -5321,6 +6186,7 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 pluginConfig: unknown;
             };
         };
@@ -5339,6 +6205,7 @@ export interface components {
                     uuid: string;
                     viewPosition: number;
                     name: string;
+                    tags: string[];
                     pluginConfig: unknown;
                 }[];
             };
@@ -5353,8 +6220,13 @@ export interface components {
                 uuid: string;
                 viewPosition: number;
                 name: string;
+                tags: string[];
                 pluginConfig: unknown;
             };
+        };
+        SyncNodePluginBodyDto: {
+            /** Format: uuid */
+            uuid: string;
         };
         PluginExecutorBodyDto: {
             command: {
@@ -5381,11 +6253,99 @@ export interface components {
                 nodeUuids: string[];
             };
         };
+        GetNodeIntegrationsResponseDto: {
+            response: {
+                total: number;
+                nodeIntegrations: {
+                    /** Format: uuid */
+                    uuid: string;
+                    name: string;
+                    description: string | null;
+                    config: {
+                        [key: string]: unknown;
+                    };
+                }[];
+            };
+        };
+        GetNodeIntegrationResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                name: string;
+                description: string | null;
+                config: {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        CreateNodeIntegrationBodyDto: {
+            name: string;
+            description?: string | null;
+            config: {
+                [key: string]: unknown;
+            };
+        };
+        CreateNodeIntegrationResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                name: string;
+                description: string | null;
+                config: {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        UpdateNodeIntegrationBodyDto: {
+            /** Format: uuid */
+            uuid: string;
+            name?: string;
+            description?: string | null;
+            config?: {
+                [key: string]: unknown;
+            };
+            restartNodes?: boolean;
+        };
+        UpdateNodeIntegrationResponseDto: {
+            response: {
+                /** Format: uuid */
+                uuid: string;
+                name: string;
+                description: string | null;
+                config: {
+                    [key: string]: unknown;
+                };
+            };
+        };
         GetHostsTagsResponseDto: {
             response: {
                 tags: string[];
             };
         };
+        CreateHostBodyDto__schema0: (string | number | boolean | components["schemas"]["CreateHostBodyDto__schema0"][] | {
+            [key: string]: components["schemas"]["CreateHostBodyDto__schema0"];
+        }) | null;
+        CreateHostBodyDto__schema1: (string | number | boolean | components["schemas"]["CreateHostBodyDto__schema1"][] | {
+            [key: string]: components["schemas"]["CreateHostBodyDto__schema1"];
+        }) | null;
+        CreateHostBodyDto__schema2: (string | number | boolean | components["schemas"]["CreateHostBodyDto__schema2"][] | {
+            [key: string]: components["schemas"]["CreateHostBodyDto__schema2"];
+        }) | null;
+        CreateHostBodyDto__schema3: (string | number | boolean | components["schemas"]["CreateHostBodyDto__schema3"][] | {
+            [key: string]: components["schemas"]["CreateHostBodyDto__schema3"];
+        }) | null;
+        CreateHostBodyDto__schema4: (string | number | boolean | components["schemas"]["CreateHostBodyDto__schema4"][] | {
+            [key: string]: components["schemas"]["CreateHostBodyDto__schema4"];
+        }) | null;
+        CreateHostBodyDto__schema5: (string | number | boolean | components["schemas"]["CreateHostBodyDto__schema5"][] | {
+            [key: string]: components["schemas"]["CreateHostBodyDto__schema5"];
+        }) | null;
+        CreateHostBodyDto__schema6: (string | number | boolean | components["schemas"]["CreateHostBodyDto__schema6"][] | {
+            [key: string]: components["schemas"]["CreateHostBodyDto__schema6"];
+        }) | null;
+        CreateHostBodyDto__schema7: (string | number | boolean | components["schemas"]["CreateHostBodyDto__schema7"][] | {
+            [key: string]: components["schemas"]["CreateHostBodyDto__schema7"];
+        }) | null;
         CreateHostBodyDto: {
             inbound: {
                 /** Format: uuid */
@@ -5433,11 +6393,364 @@ export interface components {
             nodes?: string[];
             /** Format: uuid */
             xrayJsonTemplateUuid?: string | null;
-            /** @description Optional. Internal squads from which the host will be excluded. */
-            excludedInternalSquads?: string[];
             /** @description Optional. Subscription types from which the host will be excluded from. */
             excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+            /** Host Mapper */
+            mapper?: {
+                /** Xray JSON */
+                xrayJson?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["CreateHostBodyDto__schema0"][] | {
+                        [key: string]: components["schemas"]["CreateHostBodyDto__schema1"];
+                    };
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                })[];
+                /** Mihomo */
+                mihomo?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["CreateHostBodyDto__schema2"][] | {
+                        [key: string]: components["schemas"]["CreateHostBodyDto__schema3"];
+                    };
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                })[];
+                /** Base64 */
+                base64?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["CreateHostBodyDto__schema4"][] | {
+                        [key: string]: components["schemas"]["CreateHostBodyDto__schema5"];
+                    };
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                })[];
+                /** sing-box */
+                singbox?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["CreateHostBodyDto__schema6"][] | {
+                        [key: string]: components["schemas"]["CreateHostBodyDto__schema7"];
+                    };
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                })[];
+            };
+            internalSquads?: {
+                /** @enum {string} */
+                mode: "EXCLUDE" | "ALLOW_ONLY";
+                squads: string[];
+            };
         };
+        HostResponseDto__schema0: (string | number | boolean | components["schemas"]["HostResponseDto__schema0"][] | {
+            [key: string]: components["schemas"]["HostResponseDto__schema0"];
+        }) | null;
+        HostResponseDto__schema1: (string | number | boolean | components["schemas"]["HostResponseDto__schema1"][] | {
+            [key: string]: components["schemas"]["HostResponseDto__schema1"];
+        }) | null;
+        HostResponseDto__schema2: (string | number | boolean | components["schemas"]["HostResponseDto__schema2"][] | {
+            [key: string]: components["schemas"]["HostResponseDto__schema2"];
+        }) | null;
+        HostResponseDto__schema3: (string | number | boolean | components["schemas"]["HostResponseDto__schema3"][] | {
+            [key: string]: components["schemas"]["HostResponseDto__schema3"];
+        }) | null;
+        HostResponseDto__schema4: (string | number | boolean | components["schemas"]["HostResponseDto__schema4"][] | {
+            [key: string]: components["schemas"]["HostResponseDto__schema4"];
+        }) | null;
+        HostResponseDto__schema5: (string | number | boolean | components["schemas"]["HostResponseDto__schema5"][] | {
+            [key: string]: components["schemas"]["HostResponseDto__schema5"];
+        }) | null;
+        HostResponseDto__schema6: (string | number | boolean | components["schemas"]["HostResponseDto__schema6"][] | {
+            [key: string]: components["schemas"]["HostResponseDto__schema6"];
+        }) | null;
+        HostResponseDto__schema7: (string | number | boolean | components["schemas"]["HostResponseDto__schema7"][] | {
+            [key: string]: components["schemas"]["HostResponseDto__schema7"];
+        }) | null;
         HostResponseDto: {
             response: {
                 /** Format: uuid */
@@ -5487,10 +6800,364 @@ export interface components {
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
                 excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                /** Host Mapper */
+                mapper: {
+                    /** Xray JSON */
+                    xrayJson?: ({
+                        /**
+                         * Copy
+                         * @enum {string}
+                         */
+                        op: "copy";
+                        /**
+                         * Source path
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         * @example streamSettings.tlsSettings.alpn
+                         * @example streamSettings.realitySettings.serverNames.0
+                         * @example $host.address
+                         * @example $host.securityOptions.serverName
+                         * @example $host.transportOptions.path
+                         * @example $host.mux.smux
+                         */
+                        from: string;
+                        /**
+                         * Target path
+                         * @example streamSettings.tlsSettings.enableSessionResumption
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Set
+                         * @enum {string}
+                         */
+                        op: "set";
+                        /** Value */
+                        value: string | number | boolean | components["schemas"]["HostResponseDto__schema0"][] | {
+                            [key: string]: components["schemas"]["HostResponseDto__schema1"];
+                        };
+                        /**
+                         * Target path
+                         * @example streamSettings.tlsSettings.enableSessionResumption
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Unset
+                         * @enum {string}
+                         */
+                        op: "unset";
+                        /**
+                         * Target path
+                         * @example streamSettings.tlsSettings.enableSessionResumption
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         */
+                        to: string;
+                    })[];
+                    /** Mihomo */
+                    mihomo?: ({
+                        /**
+                         * Copy
+                         * @enum {string}
+                         */
+                        op: "copy";
+                        /**
+                         * Source path
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         * @example streamSettings.tlsSettings.alpn
+                         * @example streamSettings.realitySettings.serverNames.0
+                         * @example $host.address
+                         * @example $host.securityOptions.serverName
+                         * @example $host.transportOptions.path
+                         * @example $host.mux.smux
+                         */
+                        from: string;
+                        /**
+                         * Target path
+                         * @example ip-version
+                         * @example client-fingerprint
+                         * @example tfo
+                         * @example reality-opts.support-x25519mlkem768
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Set
+                         * @enum {string}
+                         */
+                        op: "set";
+                        /** Value */
+                        value: string | number | boolean | components["schemas"]["HostResponseDto__schema2"][] | {
+                            [key: string]: components["schemas"]["HostResponseDto__schema3"];
+                        };
+                        /**
+                         * Target path
+                         * @example ip-version
+                         * @example client-fingerprint
+                         * @example tfo
+                         * @example reality-opts.support-x25519mlkem768
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Unset
+                         * @enum {string}
+                         */
+                        op: "unset";
+                        /**
+                         * Target path
+                         * @example ip-version
+                         * @example client-fingerprint
+                         * @example tfo
+                         * @example reality-opts.support-x25519mlkem768
+                         */
+                        to: string;
+                    })[];
+                    /** Base64 */
+                    base64?: ({
+                        /**
+                         * Copy
+                         * @enum {string}
+                         */
+                        op: "copy";
+                        /**
+                         * Source path
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         * @example streamSettings.tlsSettings.alpn
+                         * @example streamSettings.realitySettings.serverNames.0
+                         * @example $host.address
+                         * @example $host.securityOptions.serverName
+                         * @example $host.transportOptions.path
+                         * @example $host.mux.smux
+                         */
+                        from: string;
+                        /**
+                         * Target path
+                         * @example $link.address
+                         * @example $link.port
+                         * @example $link.password
+                         * @example $link.remark
+                         * @example $link.method
+                         * @example alpn
+                         * @example authority
+                         * @example cs
+                         * @example encryption
+                         * @example extra
+                         * @example flow
+                         * @example fm
+                         * @example fp
+                         * @example headerType
+                         * @example heartbeatPeriod
+                         * @example host
+                         * @example mode
+                         * @example mtu
+                         * @example obfs
+                         * @example obfs-password
+                         * @example path
+                         * @example pbk
+                         * @example pcs
+                         * @example pinSHA256
+                         * @example pqv
+                         * @example security
+                         * @example serviceName
+                         * @example sid
+                         * @example sni
+                         * @example spx
+                         * @example tti
+                         * @example type
+                         * @example vcn
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Set
+                         * @enum {string}
+                         */
+                        op: "set";
+                        /** Value */
+                        value: string | number | boolean | components["schemas"]["HostResponseDto__schema4"][] | {
+                            [key: string]: components["schemas"]["HostResponseDto__schema5"];
+                        };
+                        /**
+                         * Target path
+                         * @example $link.address
+                         * @example $link.port
+                         * @example $link.password
+                         * @example $link.remark
+                         * @example $link.method
+                         * @example alpn
+                         * @example authority
+                         * @example cs
+                         * @example encryption
+                         * @example extra
+                         * @example flow
+                         * @example fm
+                         * @example fp
+                         * @example headerType
+                         * @example heartbeatPeriod
+                         * @example host
+                         * @example mode
+                         * @example mtu
+                         * @example obfs
+                         * @example obfs-password
+                         * @example path
+                         * @example pbk
+                         * @example pcs
+                         * @example pinSHA256
+                         * @example pqv
+                         * @example security
+                         * @example serviceName
+                         * @example sid
+                         * @example sni
+                         * @example spx
+                         * @example tti
+                         * @example type
+                         * @example vcn
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Unset
+                         * @enum {string}
+                         */
+                        op: "unset";
+                        /**
+                         * Target path
+                         * @example $link.address
+                         * @example $link.port
+                         * @example $link.password
+                         * @example $link.remark
+                         * @example $link.method
+                         * @example alpn
+                         * @example authority
+                         * @example cs
+                         * @example encryption
+                         * @example extra
+                         * @example flow
+                         * @example fm
+                         * @example fp
+                         * @example headerType
+                         * @example heartbeatPeriod
+                         * @example host
+                         * @example mode
+                         * @example mtu
+                         * @example obfs
+                         * @example obfs-password
+                         * @example path
+                         * @example pbk
+                         * @example pcs
+                         * @example pinSHA256
+                         * @example pqv
+                         * @example security
+                         * @example serviceName
+                         * @example sid
+                         * @example sni
+                         * @example spx
+                         * @example tti
+                         * @example type
+                         * @example vcn
+                         */
+                        to: string;
+                    })[];
+                    /** sing-box */
+                    singbox?: ({
+                        /**
+                         * Copy
+                         * @enum {string}
+                         */
+                        op: "copy";
+                        /**
+                         * Source path
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         * @example streamSettings.tlsSettings.alpn
+                         * @example streamSettings.realitySettings.serverNames.0
+                         * @example $host.address
+                         * @example $host.securityOptions.serverName
+                         * @example $host.transportOptions.path
+                         * @example $host.mux.smux
+                         */
+                        from: string;
+                        /**
+                         * Target path
+                         * @example domain_resolver
+                         * @example multiplex.protocol
+                         * @example packet_encoding
+                         * @example tcp_fast_open
+                         * @example tls.insecure
+                         * @example tls.utls.fingerprint
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Set
+                         * @enum {string}
+                         */
+                        op: "set";
+                        /** Value */
+                        value: string | number | boolean | components["schemas"]["HostResponseDto__schema6"][] | {
+                            [key: string]: components["schemas"]["HostResponseDto__schema7"];
+                        };
+                        /**
+                         * Target path
+                         * @example domain_resolver
+                         * @example multiplex.protocol
+                         * @example packet_encoding
+                         * @example tcp_fast_open
+                         * @example tls.insecure
+                         * @example tls.utls.fingerprint
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Unset
+                         * @enum {string}
+                         */
+                        op: "unset";
+                        /**
+                         * Target path
+                         * @example domain_resolver
+                         * @example multiplex.protocol
+                         * @example packet_encoding
+                         * @example tcp_fast_open
+                         * @example tls.insecure
+                         * @example tls.utls.fingerprint
+                         */
+                        to: string;
+                    })[];
+                };
+                internalSquads: {
+                    /** @enum {string} */
+                    mode: "EXCLUDE" | "ALLOW_ONLY";
+                    squads: string[];
+                };
             };
         };
+        UpdateHostBodyDto__schema0: (string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema0"][] | {
+            [key: string]: components["schemas"]["UpdateHostBodyDto__schema0"];
+        }) | null;
+        UpdateHostBodyDto__schema1: (string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema1"][] | {
+            [key: string]: components["schemas"]["UpdateHostBodyDto__schema1"];
+        }) | null;
+        UpdateHostBodyDto__schema2: (string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema2"][] | {
+            [key: string]: components["schemas"]["UpdateHostBodyDto__schema2"];
+        }) | null;
+        UpdateHostBodyDto__schema3: (string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema3"][] | {
+            [key: string]: components["schemas"]["UpdateHostBodyDto__schema3"];
+        }) | null;
+        UpdateHostBodyDto__schema4: (string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema4"][] | {
+            [key: string]: components["schemas"]["UpdateHostBodyDto__schema4"];
+        }) | null;
+        UpdateHostBodyDto__schema5: (string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema5"][] | {
+            [key: string]: components["schemas"]["UpdateHostBodyDto__schema5"];
+        }) | null;
+        UpdateHostBodyDto__schema6: (string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema6"][] | {
+            [key: string]: components["schemas"]["UpdateHostBodyDto__schema6"];
+        }) | null;
+        UpdateHostBodyDto__schema7: (string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema7"][] | {
+            [key: string]: components["schemas"]["UpdateHostBodyDto__schema7"];
+        }) | null;
         UpdateHostBodyDto: {
             /** Format: uuid */
             uuid: string;
@@ -5509,8 +7176,7 @@ export interface components {
             /** @enum {string|null} */
             alpn?: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
             fingerprint?: string | null;
-            /** @default false */
-            isDisabled: boolean;
+            isDisabled?: boolean;
             /** @enum {string} */
             securityLayer?: "DEFAULT" | "TLS" | "NONE";
             xhttpExtraParams?: unknown;
@@ -5532,11 +7198,364 @@ export interface components {
             nodes?: string[];
             /** Format: uuid */
             xrayJsonTemplateUuid?: string | null;
-            /** @description Optional. Internal squads from which the host will be excluded. */
-            excludedInternalSquads?: string[];
             /** @description Optional. Subscription types from which the host will be excluded from. */
             excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+            /** Host Mapper */
+            mapper?: {
+                /** Xray JSON */
+                xrayJson?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema0"][] | {
+                        [key: string]: components["schemas"]["UpdateHostBodyDto__schema1"];
+                    };
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                })[];
+                /** Mihomo */
+                mihomo?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema2"][] | {
+                        [key: string]: components["schemas"]["UpdateHostBodyDto__schema3"];
+                    };
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                })[];
+                /** Base64 */
+                base64?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema4"][] | {
+                        [key: string]: components["schemas"]["UpdateHostBodyDto__schema5"];
+                    };
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                })[];
+                /** sing-box */
+                singbox?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["UpdateHostBodyDto__schema6"][] | {
+                        [key: string]: components["schemas"]["UpdateHostBodyDto__schema7"];
+                    };
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                })[];
+            };
+            internalSquads?: {
+                /** @enum {string} */
+                mode: "EXCLUDE" | "ALLOW_ONLY";
+                squads: string[];
+            };
         };
+        GetHostsResponseDto__schema0: (string | number | boolean | components["schemas"]["GetHostsResponseDto__schema0"][] | {
+            [key: string]: components["schemas"]["GetHostsResponseDto__schema0"];
+        }) | null;
+        GetHostsResponseDto__schema1: (string | number | boolean | components["schemas"]["GetHostsResponseDto__schema1"][] | {
+            [key: string]: components["schemas"]["GetHostsResponseDto__schema1"];
+        }) | null;
+        GetHostsResponseDto__schema2: (string | number | boolean | components["schemas"]["GetHostsResponseDto__schema2"][] | {
+            [key: string]: components["schemas"]["GetHostsResponseDto__schema2"];
+        }) | null;
+        GetHostsResponseDto__schema3: (string | number | boolean | components["schemas"]["GetHostsResponseDto__schema3"][] | {
+            [key: string]: components["schemas"]["GetHostsResponseDto__schema3"];
+        }) | null;
+        GetHostsResponseDto__schema4: (string | number | boolean | components["schemas"]["GetHostsResponseDto__schema4"][] | {
+            [key: string]: components["schemas"]["GetHostsResponseDto__schema4"];
+        }) | null;
+        GetHostsResponseDto__schema5: (string | number | boolean | components["schemas"]["GetHostsResponseDto__schema5"][] | {
+            [key: string]: components["schemas"]["GetHostsResponseDto__schema5"];
+        }) | null;
+        GetHostsResponseDto__schema6: (string | number | boolean | components["schemas"]["GetHostsResponseDto__schema6"][] | {
+            [key: string]: components["schemas"]["GetHostsResponseDto__schema6"];
+        }) | null;
+        GetHostsResponseDto__schema7: (string | number | boolean | components["schemas"]["GetHostsResponseDto__schema7"][] | {
+            [key: string]: components["schemas"]["GetHostsResponseDto__schema7"];
+        }) | null;
         GetHostsResponseDto: {
             response: {
                 /** Format: uuid */
@@ -5586,8 +7605,338 @@ export interface components {
                 nodes: string[];
                 /** Format: uuid */
                 xrayJsonTemplateUuid: string | null;
-                excludedInternalSquads: string[];
                 excludeFromSubscriptionTypes: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+                /** Host Mapper */
+                mapper: {
+                    /** Xray JSON */
+                    xrayJson?: ({
+                        /**
+                         * Copy
+                         * @enum {string}
+                         */
+                        op: "copy";
+                        /**
+                         * Source path
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         * @example streamSettings.tlsSettings.alpn
+                         * @example streamSettings.realitySettings.serverNames.0
+                         * @example $host.address
+                         * @example $host.securityOptions.serverName
+                         * @example $host.transportOptions.path
+                         * @example $host.mux.smux
+                         */
+                        from: string;
+                        /**
+                         * Target path
+                         * @example streamSettings.tlsSettings.enableSessionResumption
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Set
+                         * @enum {string}
+                         */
+                        op: "set";
+                        /** Value */
+                        value: string | number | boolean | components["schemas"]["GetHostsResponseDto__schema0"][] | {
+                            [key: string]: components["schemas"]["GetHostsResponseDto__schema1"];
+                        };
+                        /**
+                         * Target path
+                         * @example streamSettings.tlsSettings.enableSessionResumption
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Unset
+                         * @enum {string}
+                         */
+                        op: "unset";
+                        /**
+                         * Target path
+                         * @example streamSettings.tlsSettings.enableSessionResumption
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         */
+                        to: string;
+                    })[];
+                    /** Mihomo */
+                    mihomo?: ({
+                        /**
+                         * Copy
+                         * @enum {string}
+                         */
+                        op: "copy";
+                        /**
+                         * Source path
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         * @example streamSettings.tlsSettings.alpn
+                         * @example streamSettings.realitySettings.serverNames.0
+                         * @example $host.address
+                         * @example $host.securityOptions.serverName
+                         * @example $host.transportOptions.path
+                         * @example $host.mux.smux
+                         */
+                        from: string;
+                        /**
+                         * Target path
+                         * @example ip-version
+                         * @example client-fingerprint
+                         * @example tfo
+                         * @example reality-opts.support-x25519mlkem768
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Set
+                         * @enum {string}
+                         */
+                        op: "set";
+                        /** Value */
+                        value: string | number | boolean | components["schemas"]["GetHostsResponseDto__schema2"][] | {
+                            [key: string]: components["schemas"]["GetHostsResponseDto__schema3"];
+                        };
+                        /**
+                         * Target path
+                         * @example ip-version
+                         * @example client-fingerprint
+                         * @example tfo
+                         * @example reality-opts.support-x25519mlkem768
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Unset
+                         * @enum {string}
+                         */
+                        op: "unset";
+                        /**
+                         * Target path
+                         * @example ip-version
+                         * @example client-fingerprint
+                         * @example tfo
+                         * @example reality-opts.support-x25519mlkem768
+                         */
+                        to: string;
+                    })[];
+                    /** Base64 */
+                    base64?: ({
+                        /**
+                         * Copy
+                         * @enum {string}
+                         */
+                        op: "copy";
+                        /**
+                         * Source path
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         * @example streamSettings.tlsSettings.alpn
+                         * @example streamSettings.realitySettings.serverNames.0
+                         * @example $host.address
+                         * @example $host.securityOptions.serverName
+                         * @example $host.transportOptions.path
+                         * @example $host.mux.smux
+                         */
+                        from: string;
+                        /**
+                         * Target path
+                         * @example $link.address
+                         * @example $link.port
+                         * @example $link.password
+                         * @example $link.remark
+                         * @example $link.method
+                         * @example alpn
+                         * @example authority
+                         * @example cs
+                         * @example encryption
+                         * @example extra
+                         * @example flow
+                         * @example fm
+                         * @example fp
+                         * @example headerType
+                         * @example heartbeatPeriod
+                         * @example host
+                         * @example mode
+                         * @example mtu
+                         * @example obfs
+                         * @example obfs-password
+                         * @example path
+                         * @example pbk
+                         * @example pcs
+                         * @example pinSHA256
+                         * @example pqv
+                         * @example security
+                         * @example serviceName
+                         * @example sid
+                         * @example sni
+                         * @example spx
+                         * @example tti
+                         * @example type
+                         * @example vcn
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Set
+                         * @enum {string}
+                         */
+                        op: "set";
+                        /** Value */
+                        value: string | number | boolean | components["schemas"]["GetHostsResponseDto__schema4"][] | {
+                            [key: string]: components["schemas"]["GetHostsResponseDto__schema5"];
+                        };
+                        /**
+                         * Target path
+                         * @example $link.address
+                         * @example $link.port
+                         * @example $link.password
+                         * @example $link.remark
+                         * @example $link.method
+                         * @example alpn
+                         * @example authority
+                         * @example cs
+                         * @example encryption
+                         * @example extra
+                         * @example flow
+                         * @example fm
+                         * @example fp
+                         * @example headerType
+                         * @example heartbeatPeriod
+                         * @example host
+                         * @example mode
+                         * @example mtu
+                         * @example obfs
+                         * @example obfs-password
+                         * @example path
+                         * @example pbk
+                         * @example pcs
+                         * @example pinSHA256
+                         * @example pqv
+                         * @example security
+                         * @example serviceName
+                         * @example sid
+                         * @example sni
+                         * @example spx
+                         * @example tti
+                         * @example type
+                         * @example vcn
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Unset
+                         * @enum {string}
+                         */
+                        op: "unset";
+                        /**
+                         * Target path
+                         * @example $link.address
+                         * @example $link.port
+                         * @example $link.password
+                         * @example $link.remark
+                         * @example $link.method
+                         * @example alpn
+                         * @example authority
+                         * @example cs
+                         * @example encryption
+                         * @example extra
+                         * @example flow
+                         * @example fm
+                         * @example fp
+                         * @example headerType
+                         * @example heartbeatPeriod
+                         * @example host
+                         * @example mode
+                         * @example mtu
+                         * @example obfs
+                         * @example obfs-password
+                         * @example path
+                         * @example pbk
+                         * @example pcs
+                         * @example pinSHA256
+                         * @example pqv
+                         * @example security
+                         * @example serviceName
+                         * @example sid
+                         * @example sni
+                         * @example spx
+                         * @example tti
+                         * @example type
+                         * @example vcn
+                         */
+                        to: string;
+                    })[];
+                    /** sing-box */
+                    singbox?: ({
+                        /**
+                         * Copy
+                         * @enum {string}
+                         */
+                        op: "copy";
+                        /**
+                         * Source path
+                         * @example streamSettings.tlsSettings.cipherSuites
+                         * @example streamSettings.tlsSettings.alpn
+                         * @example streamSettings.realitySettings.serverNames.0
+                         * @example $host.address
+                         * @example $host.securityOptions.serverName
+                         * @example $host.transportOptions.path
+                         * @example $host.mux.smux
+                         */
+                        from: string;
+                        /**
+                         * Target path
+                         * @example domain_resolver
+                         * @example multiplex.protocol
+                         * @example packet_encoding
+                         * @example tcp_fast_open
+                         * @example tls.insecure
+                         * @example tls.utls.fingerprint
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Set
+                         * @enum {string}
+                         */
+                        op: "set";
+                        /** Value */
+                        value: string | number | boolean | components["schemas"]["GetHostsResponseDto__schema6"][] | {
+                            [key: string]: components["schemas"]["GetHostsResponseDto__schema7"];
+                        };
+                        /**
+                         * Target path
+                         * @example domain_resolver
+                         * @example multiplex.protocol
+                         * @example packet_encoding
+                         * @example tcp_fast_open
+                         * @example tls.insecure
+                         * @example tls.utls.fingerprint
+                         */
+                        to: string;
+                    } | {
+                        /**
+                         * Unset
+                         * @enum {string}
+                         */
+                        op: "unset";
+                        /**
+                         * Target path
+                         * @example domain_resolver
+                         * @example multiplex.protocol
+                         * @example packet_encoding
+                         * @example tcp_fast_open
+                         * @example tls.insecure
+                         * @example tls.utls.fingerprint
+                         */
+                        to: string;
+                    })[];
+                };
+                internalSquads: {
+                    /** @enum {string} */
+                    mode: "EXCLUDE" | "ALLOW_ONLY";
+                    squads: string[];
+                };
             }[];
         };
         ReorderHostsBodyDto: {
@@ -5611,6 +7960,30 @@ export interface components {
         BulkEnableHostsBodyDto: {
             uuids: string[];
         };
+        UpdateManyHostsBodyDto__schema0: (string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema0"][] | {
+            [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema0"];
+        }) | null;
+        UpdateManyHostsBodyDto__schema1: (string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema1"][] | {
+            [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema1"];
+        }) | null;
+        UpdateManyHostsBodyDto__schema2: (string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema2"][] | {
+            [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema2"];
+        }) | null;
+        UpdateManyHostsBodyDto__schema3: (string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema3"][] | {
+            [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema3"];
+        }) | null;
+        UpdateManyHostsBodyDto__schema4: (string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema4"][] | {
+            [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema4"];
+        }) | null;
+        UpdateManyHostsBodyDto__schema5: (string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema5"][] | {
+            [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema5"];
+        }) | null;
+        UpdateManyHostsBodyDto__schema6: (string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema6"][] | {
+            [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema6"];
+        }) | null;
+        UpdateManyHostsBodyDto__schema7: (string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema7"][] | {
+            [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema7"];
+        }) | null;
         UpdateManyHostsBodyDto: {
             inbound?: {
                 /** Format: uuid */
@@ -5627,8 +8000,7 @@ export interface components {
             /** @enum {string|null} */
             alpn?: "h3" | "h2" | "http/1.1" | "h2,http/1.1" | "h3,h2,http/1.1" | "h3,h2" | null;
             fingerprint?: string | null;
-            /** @default false */
-            isDisabled: boolean;
+            isDisabled?: boolean;
             /** @enum {string} */
             securityLayer?: "DEFAULT" | "TLS" | "NONE";
             xhttpExtraParams?: unknown;
@@ -5650,10 +8022,339 @@ export interface components {
             nodes?: string[];
             /** Format: uuid */
             xrayJsonTemplateUuid?: string | null;
-            /** @description Optional. Internal squads from which the host will be excluded. */
-            excludedInternalSquads?: string[];
             /** @description Optional. Subscription types from which the host will be excluded from. */
             excludeFromSubscriptionTypes?: ("XRAY_JSON" | "XRAY_BASE64" | "MIHOMO" | "STASH" | "CLASH" | "SINGBOX")[];
+            /** Host Mapper */
+            mapper?: {
+                /** Xray JSON */
+                xrayJson?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema0"][] | {
+                        [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema1"];
+                    };
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example streamSettings.tlsSettings.enableSessionResumption
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     */
+                    to: string;
+                })[];
+                /** Mihomo */
+                mihomo?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema2"][] | {
+                        [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema3"];
+                    };
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example ip-version
+                     * @example client-fingerprint
+                     * @example tfo
+                     * @example reality-opts.support-x25519mlkem768
+                     */
+                    to: string;
+                })[];
+                /** Base64 */
+                base64?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema4"][] | {
+                        [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema5"];
+                    };
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example $link.address
+                     * @example $link.port
+                     * @example $link.password
+                     * @example $link.remark
+                     * @example $link.method
+                     * @example alpn
+                     * @example authority
+                     * @example cs
+                     * @example encryption
+                     * @example extra
+                     * @example flow
+                     * @example fm
+                     * @example fp
+                     * @example headerType
+                     * @example heartbeatPeriod
+                     * @example host
+                     * @example mode
+                     * @example mtu
+                     * @example obfs
+                     * @example obfs-password
+                     * @example path
+                     * @example pbk
+                     * @example pcs
+                     * @example pinSHA256
+                     * @example pqv
+                     * @example security
+                     * @example serviceName
+                     * @example sid
+                     * @example sni
+                     * @example spx
+                     * @example tti
+                     * @example type
+                     * @example vcn
+                     */
+                    to: string;
+                })[];
+                /** sing-box */
+                singbox?: ({
+                    /**
+                     * Copy
+                     * @enum {string}
+                     */
+                    op: "copy";
+                    /**
+                     * Source path
+                     * @example streamSettings.tlsSettings.cipherSuites
+                     * @example streamSettings.tlsSettings.alpn
+                     * @example streamSettings.realitySettings.serverNames.0
+                     * @example $host.address
+                     * @example $host.securityOptions.serverName
+                     * @example $host.transportOptions.path
+                     * @example $host.mux.smux
+                     */
+                    from: string;
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Set
+                     * @enum {string}
+                     */
+                    op: "set";
+                    /** Value */
+                    value: string | number | boolean | components["schemas"]["UpdateManyHostsBodyDto__schema6"][] | {
+                        [key: string]: components["schemas"]["UpdateManyHostsBodyDto__schema7"];
+                    };
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                } | {
+                    /**
+                     * Unset
+                     * @enum {string}
+                     */
+                    op: "unset";
+                    /**
+                     * Target path
+                     * @example domain_resolver
+                     * @example multiplex.protocol
+                     * @example packet_encoding
+                     * @example tcp_fast_open
+                     * @example tls.insecure
+                     * @example tls.utls.fingerprint
+                     */
+                    to: string;
+                })[];
+            };
+            internalSquads?: {
+                /** @enum {string} */
+                mode: "EXCLUDE" | "ALLOW_ONLY";
+                squads: string[];
+            };
             uuids: string[];
         };
         GetNodeUsageBodyDto: {
@@ -6000,10 +8701,7 @@ export interface components {
             /** Format: uuid */
             providerUuid: string;
             amount: number;
-            /**
-             * Format: date-time
-             * @description Billing date. Format: 2025-01-17T15:38:45.065Z
-             */
+            /** @description Billing date. Format: 2025-01-17T15:38:45.065Z */
             billedAt: string;
         };
         CreateInfraBillingRecordResponseDto: {
@@ -6093,7 +8791,6 @@ export interface components {
         };
         UpdateInfraBillingNodeBodyDto: {
             uuids: string[];
-            /** Format: date-time */
             nextBillingAt: string;
         };
         UpdateInfraBillingNodeResponseDto: {
@@ -6147,10 +8844,7 @@ export interface components {
             /** Format: uuid */
             nodeUuid: string | null;
             name: string | null;
-            /**
-             * Format: date-time
-             * @description Next billing date. Format: 2025-01-17T15:38:45.065Z
-             */
+            /** @description Next billing date. Format: 2025-01-17T15:38:45.065Z */
             nextBillingAt: string;
         };
         CreateInfraBillingNodeResponseDto: {
@@ -6463,6 +9157,8 @@ export interface components {
                         };
                         /** Exclude Hosts by Tags */
                         excludeHostsByTags?: string[];
+                        /** Respond With Remarks */
+                        respondWithRemarks?: string[];
                     };
                 }[];
             };
@@ -6530,6 +9226,8 @@ export interface components {
                         };
                         /** Exclude Hosts by Tags */
                         excludeHostsByTags?: string[];
+                        /** Respond With Remarks */
+                        respondWithRemarks?: string[];
                     };
                 } | null;
                 inputHeaders: {
@@ -6555,7 +9253,6 @@ export interface components {
                     distinctCountries: number;
                 };
                 version: string;
-                /** Format: date-time */
                 initDate: string;
             };
         };
@@ -6671,6 +9368,8 @@ export interface components {
                             };
                             /** Exclude Hosts by Tags */
                             excludeHostsByTags?: string[];
+                            /** Respond With Remarks */
+                            respondWithRemarks?: string[];
                         };
                     }[];
                 } | null;
@@ -6771,6 +9470,8 @@ export interface components {
                         };
                         /** Exclude Hosts by Tags */
                         excludeHostsByTags?: string[];
+                        /** Respond With Remarks */
+                        respondWithRemarks?: string[];
                     };
                 }[];
             };
@@ -6867,6 +9568,8 @@ export interface components {
                             };
                             /** Exclude Hosts by Tags */
                             excludeHostsByTags?: string[];
+                            /** Respond With Remarks */
+                            respondWithRemarks?: string[];
                         };
                     }[];
                 } | null;
@@ -6905,7 +9608,6 @@ export interface components {
                         countryCode: string;
                         ips: {
                             ip: string;
-                            /** Format: date-time */
                             lastSeen: string;
                         }[];
                     }[];
@@ -6948,10 +9650,46 @@ export interface components {
                         userId: number;
                         ips: {
                             ip: string;
-                            /** Format: date-time */
                             lastSeen: string;
                         }[];
                     }[];
+                } | null;
+            };
+        };
+        GeocheckByNodeBodyDto: {
+            /** @description Check from this IP address */
+            ip?: string;
+            /** @description Check from this network interface */
+            interface?: string;
+        };
+        GeocheckByNodeResponseDto: {
+            response: {
+                jobId: string;
+            };
+        };
+        GeocheckByNodeResultResponseDto: {
+            response: {
+                isCompleted: boolean;
+                isFailed: boolean;
+                result: {
+                    success: boolean;
+                    /** Format: uuid */
+                    nodeUuid: string;
+                    image: {
+                        /** @enum {string} */
+                        format: "svg";
+                        /** @enum {string} */
+                        media_type: "image/svg+xml";
+                        /** @enum {string} */
+                        encoding: "base64";
+                        /** @description Base64-encoded image, ready for a data: URL */
+                        data: string;
+                    } | null;
+                    /** @description The full node report with the image object stripped out */
+                    rawReport: {
+                        [key: string]: unknown;
+                    } | null;
+                    message: string | null;
                 } | null;
             };
         };
@@ -7163,6 +9901,12 @@ export interface components {
                 consumptionMultiplier: number;
                 nodeConsumptionMultiplier: number;
                 tags: string[];
+                integrationUuids: string[];
+                ips: {
+                    ip: string;
+                    /** @enum {string} */
+                    status: "INBOUND" | "OUTBOUND" | "MANAGEMENT" | "TRANSIT" | "MONITORING" | "RESERVE" | "BLOCKED" | "FLAGGED" | "DEPRECATED" | "UNKNOWN";
+                }[];
                 /** Format: date-time */
                 createdAt: string;
                 /** Format: date-time */
@@ -7324,6 +10068,12 @@ export interface components {
                     consumptionMultiplier: number;
                     nodeConsumptionMultiplier: number;
                     tags: string[];
+                    integrationUuids: string[];
+                    ips: {
+                        ip: string;
+                        /** @enum {string} */
+                        status: "INBOUND" | "OUTBOUND" | "MANAGEMENT" | "TRANSIT" | "MONITORING" | "RESERVE" | "BLOCKED" | "FLAGGED" | "DEPRECATED" | "UNKNOWN";
+                    }[];
                     /** Format: date-time */
                     createdAt: string;
                     /** Format: date-time */
@@ -7451,10 +10201,8 @@ export interface components {
                         blocked: boolean;
                         ip: string;
                         blockDuration: number;
-                        /** Format: date-time */
                         willUnblockAt: string;
                         userId: string;
-                        /** Format: date-time */
                         processedAt: string;
                     };
                     xrayReport: {
@@ -7484,7 +10232,7 @@ export interface components {
              * @description Human-readable error message.
              * @enum {string}
              */
-            message: "Requested token not found" | "Node not found" | "Configuration not found" | "User not found" | "Host not found" | "Users not found" | "User with specified params not found" | "Admin not found" | "Subscription settings not found" | "Inbound not found" | "Config profile not found" | "Internal squad not found" | "Config profile inbound not found in specified profile" | "Infra provider not found" | "OAuth2 provider not found" | "Snippet not found" | "Subscription template not found" | "External squad not found" | "Passkey not found" | "HWID device not found" | "Subscription page config not found" | "Job result fetch failed or job not found" | "Connected nodes not found" | "Node plugin not found" | "Metadata not found";
+            message: "Requested token not found" | "Node not found" | "Configuration not found" | "User not found" | "Host not found" | "Users not found" | "User with specified params not found" | "Admin not found" | "Subscription settings not found" | "Inbound not found" | "Config profile not found" | "Internal squad not found" | "Config profile inbound not found in specified profile" | "Infra provider not found" | "OAuth2 provider not found" | "Snippet not found" | "Subscription template not found" | "External squad not found" | "Passkey not found" | "HWID device not found" | "Subscription page config not found" | "Job result fetch failed or job not found" | "Connected nodes not found" | "Node plugin not found" | "Metadata not found" | "Node integration not found" | "Shared list not found";
             /**
              * @description Error code. Possible values:
              *
@@ -7513,9 +10261,11 @@ export interface components {
              *     - `A219` — Connected nodes not found
              *     - `A220` — Node plugin not found
              *     - `A226` — Metadata not found
+             *     - `A238` — Node integration not found
+             *     - `A245` — Shared list not found
              * @enum {string}
              */
-            errorCode: "A007" | "A011" | "A012" | "A025" | "A046" | "A062" | "A063" | "A065" | "A071" | "A076" | "A111" | "A118" | "A124" | "A128" | "A147" | "A162" | "A170" | "A182" | "A191" | "A204" | "A206" | "A218" | "A219" | "A220" | "A226";
+            errorCode: "A007" | "A011" | "A012" | "A025" | "A046" | "A062" | "A063" | "A065" | "A071" | "A076" | "A111" | "A118" | "A124" | "A128" | "A147" | "A162" | "A170" | "A182" | "A191" | "A204" | "A206" | "A218" | "A219" | "A220" | "A226" | "A238" | "A245";
         };
         RemnawaveBadRequestErrorDto: {
             /** @description Time when the error occurred, in ISO 8601 format. */
@@ -7526,7 +10276,7 @@ export interface components {
              * @description Human-readable error message.
              * @enum {string}
              */
-            message: "User username already exists" | "User short UUID already exists" | "User subscription UUID already exists" | "User already disabled" | "User already enabled" | "Node name already exists" | "Node address already exists" | "Host remark already exists" | "LIMITED and EXPIRED statuses are not allowed to be set manually." | "User hwid device already exists" | "User hwid device limit reached" | "This name is reserved by Remnawave. Please use a different name." | "Node is disabled" | "Name or config is required" | "Name or inbounds is required" | "Snippet name already exists" | "Snippet cannot be empty" | "Snippet cannot contain empty objects" | "This name is reserved. Please use a different name." | "Template JSON is not allowed for YAML template" | "Template YAML is not allowed for JSON template" | "Template JSON and YAML cannot be updated simultaneously" | "Template name already exists for this type" | "Reserved template cannot be deleted" | "Template type not allowed" | "External squad name already exists" | "Name or templates are required" | "Passkeys not configured" | "Passkeys not enabled. Please enable it first." | "Reserved config name" | "Config name already exists" | "Reserved subpage config cannot be deleted" | "Invalid subscription page config" | "Invalid Remnawave injector" | "Node plugin name already exists" | "One or more provided API token scopes are invalid" | "Either nodeUuid or name must be provided" | "Start date must be before or equal to end date";
+            message: "User username already exists" | "User short UUID already exists" | "User subscription UUID already exists" | "User already disabled" | "User already enabled" | "Node name already exists" | "Node address already exists" | "Host remark already exists" | "LIMITED and EXPIRED statuses are not allowed to be set manually." | "User hwid device already exists" | "User hwid device limit reached" | "This name is reserved by Remnawave. Please use a different name." | "Node is disabled" | "Name or config is required" | "Name or inbounds is required" | "Snippet name already exists" | "Snippet cannot be empty" | "Snippet cannot contain empty objects" | "This name is reserved. Please use a different name." | "Template JSON is not allowed for YAML template" | "Template YAML is not allowed for JSON template" | "Template JSON and YAML cannot be updated simultaneously" | "Template name already exists for this type" | "Reserved template cannot be deleted" | "Template type not allowed" | "External squad name already exists" | "Name or templates are required" | "Passkeys not configured" | "Passkeys not enabled. Please enable it first." | "Reserved config name" | "Config name already exists" | "Reserved subpage config cannot be deleted" | "Invalid subscription page config" | "Invalid Remnawave injector" | "Node plugin name already exists" | "One or more provided API token scopes are invalid" | "Either nodeUuid or name must be provided" | "Start date must be before or equal to end date" | "Node integration name already exists" | "Shared list name already exists";
             /**
              * @description Error code. Possible values:
              *
@@ -7569,9 +10319,11 @@ export interface components {
              *     - `A229` — One or more provided API token scopes are invalid
              *     - `A230` — Either nodeUuid or name must be provided
              *     - `A235` — Start date must be before or equal to end date
+             *     - `A244` — Node integration name already exists
+             *     - `A246` — Shared list name already exists
              * @enum {string}
              */
-            errorCode: "A019" | "A020" | "A021" | "A029" | "A030" | "A033" | "A034" | "A045" | "A089" | "A098" | "A099" | "A144" | "A145" | "A149" | "A152" | "A153" | "A164" | "A166" | "A167" | "A172" | "A173" | "A174" | "A175" | "A176" | "A178" | "A180" | "A189" | "A190" | "A194" | "A195" | "A209" | "A210" | "A212" | "A215" | "A216" | "A223" | "A229" | "A230" | "A235";
+            errorCode: "A019" | "A020" | "A021" | "A029" | "A030" | "A033" | "A034" | "A045" | "A089" | "A098" | "A099" | "A144" | "A145" | "A149" | "A152" | "A153" | "A164" | "A166" | "A167" | "A172" | "A173" | "A174" | "A175" | "A176" | "A178" | "A180" | "A189" | "A190" | "A194" | "A195" | "A209" | "A210" | "A212" | "A215" | "A216" | "A223" | "A229" | "A230" | "A235" | "A244" | "A246";
         };
         RemnawaveInternalServerErrorDto: {
             /** @description Time when the error occurred, in ISO 8601 format. */
@@ -7582,7 +10334,7 @@ export interface components {
              * @description Human-readable error message.
              * @enum {string}
              */
-            message: "Server error" | "Login error" | "Create API token error" | "Delete API token error" | "Find all API tokens error" | "Get public key error" | "Enable node error" | "Error updating configuration" | "Error retrieving configuration" | "Delete many inbounds error" | "Create many inbounds error" | "Find all inbounds error" | "Failed to create user" | "User creation successful, but inbound creation failed. User not created." | "User creation successful, but failed to get created user with inbounds." | "Get all users error" | "Get user by error" | "Revoke user subscription error" | "Disable user error" | "Enable user error" | "Create node error" | "Restart node error" | "Get config with users error" | "Delete user error" | "Update node error" | "Update user error" | "Increment used traffic error" | "Get all nodes error" | "Get one node error" | "Delete node error" | "Create host error" | "Delete host error" | "Get user stats error" | "Update user with inbounds error" | "Get all hosts error" | "Reorder hosts error" | "Update host error" | "Create config error" | "Get nodes usage by range error" | "Reset user traffic error" | "Reorder nodes error" | "Get all inbounds error" | "Bulk delete users by status error" | "Update inbound error" | "Update exceeded traffic users error" | "Create admin error" | "Get auth status error" | "Disable node error" | "Get one host error" | "Get subscription settings error" | "Update subscription settings error" | "Add inbound to users error" | "Remove inbound from users error" | "Add inbound to nodes error" | "Remove inbound from nodes error" | "Delete hosts error" | "Bulk enable hosts error" | "Bulk disable hosts error" | "Bulk delete users by user IDs error" | "Bulk revoke users subscription error" | "Bulk reset user traffic error" | "Bulk update users error" | "Bulk add inbounds to users error" | "Bulk update all users error" | "Keypair creation error" | "Get user usage by range error" | "Keypair not found. Restart app." | "Activate all inbounds error" | "Create hwid user device error" | "Check hwid exists error" | "Get user hwid devices error" | "Delete hwid user device error" | "Upsert hwid user device error" | "Get all tags error" | "Getting all subscriptions error" | "Trigger threshold notification error" | "Bulk delete by status error" | "Clean old usage records error" | "Vacuum table error" | "Get config profiles error" | "Get config profile by UUID error" | "Create config profile error" | "Get inbounds by profile UUID error" | "Get internal squads error" | "Get internal squad by UUID error" | "Create internal squad error" | "Update internal squad error" | "Delete internal squad error" | "Create user with internal squad error" | "Get user accessible nodes error" | "Get infra providers error" | "Get infra provider by UUID error" | "Delete infra provider by UUID error" | "Create infra provider error" | "Update infra provider error" | "Create infra billing history record error" | "Get infra billing history records error" | "Delete infra billing history record by UUID error" | "Get billing nodes error" | "Update infra billing node error" | "Create infra billing node error" | "Delete infra billing node by UUID error" | "Get billing nodes for notifications error" | "Add users to internal squad error" | "Internal squad bulk actions error" | "Remove users from internal squad error" | "Delete config profile by UUID error" | "Update config profile error" | "OAuth2 authorize error" | "Sync active profile error" | "Get all host tags error" | "Get internal squad accessible nodes error" | "Delete hwid user devices error" | "Create user subscription request history error" | "Get user subscription request history error" | "Get all hwid devices error" | "Get hwid devices stats error" | "Get user subscription request history stats error" | "Get snippets error" | "Delete snippet by name error" | "Update snippet error" | "Get all subscription templates error" | "Get subscription template by UUID error" | "Update subscription template error" | "Delete subscription template error" | "Create subscription template error" | "Get external squads error" | "Create external squad error" | "Update external squad error" | "Delete external squad error" | "Add users to external squad error" | "Remove users from external squad error" | "Get external squad by UUID error" | "Get Remnawave settings error" | "Update Remnawave settings error" | "Generate passkey registration options error" | "Verify passkey registration error" | "Get active passkeys error" | "Delete passkey error" | "Get computed config profile by UUID error" | "Reset node traffic error" | "Update passkey error" | "Generic reorder error" | "Bulk extend expiration date error" | "Get subscription page config by UUID error" | "Get all subscription page configs error" | "Update subscription page config error" | "Delete subscription page config error" | "Create subscription page config error" | "Job creation failed" | "Get all node plugins error" | "Get node plugin by UUID error" | "Update node plugin error" | "Create node plugin error" | "Get torrent blocker reports error" | "Update hosts error" | "Get internal squad usage error" | "Add many users to internal squad error" | "Remove many users from internal squad error" | "Get stats digest error";
+            message: "Server error" | "Login error" | "Create API token error" | "Delete API token error" | "Find all API tokens error" | "Get public key error" | "Enable node error" | "Error updating configuration" | "Error retrieving configuration" | "Delete many inbounds error" | "Create many inbounds error" | "Find all inbounds error" | "Failed to create user" | "User creation successful, but inbound creation failed. User not created." | "User creation successful, but failed to get created user with inbounds." | "Get all users error" | "Get user by error" | "Revoke user subscription error" | "Disable user error" | "Enable user error" | "Create node error" | "Restart node error" | "Get config with users error" | "Delete user error" | "Update node error" | "Update user error" | "Increment used traffic error" | "Get all nodes error" | "Get one node error" | "Delete node error" | "Create host error" | "Delete host error" | "Get user stats error" | "Update user with inbounds error" | "Get all hosts error" | "Reorder hosts error" | "Update host error" | "Create config error" | "Get nodes usage by range error" | "Reset user traffic error" | "Reorder nodes error" | "Get all inbounds error" | "Bulk delete users by status error" | "Update inbound error" | "Update exceeded traffic users error" | "Create admin error" | "Get auth status error" | "Disable node error" | "Get one host error" | "Get subscription settings error" | "Update subscription settings error" | "Add inbound to users error" | "Remove inbound from users error" | "Add inbound to nodes error" | "Remove inbound from nodes error" | "Delete hosts error" | "Bulk enable hosts error" | "Bulk disable hosts error" | "Bulk delete users by user IDs error" | "Bulk revoke users subscription error" | "Bulk reset user traffic error" | "Bulk update users error" | "Bulk add inbounds to users error" | "Bulk update all users error" | "Keypair creation error" | "Get user usage by range error" | "Keypair not found. Restart app." | "Activate all inbounds error" | "Create hwid user device error" | "Check hwid exists error" | "Get user hwid devices error" | "Delete hwid user device error" | "Upsert hwid user device error" | "Get all tags error" | "Getting all subscriptions error" | "Trigger threshold notification error" | "Bulk delete by status error" | "Clean old usage records error" | "Vacuum table error" | "Get config profiles error" | "Get config profile by UUID error" | "Create config profile error" | "Get inbounds by profile UUID error" | "Get internal squads error" | "Get internal squad by UUID error" | "Create internal squad error" | "Update internal squad error" | "Delete internal squad error" | "Create user with internal squad error" | "Get user accessible nodes error" | "Get infra providers error" | "Get infra provider by UUID error" | "Delete infra provider by UUID error" | "Create infra provider error" | "Update infra provider error" | "Create infra billing history record error" | "Get infra billing history records error" | "Delete infra billing history record by UUID error" | "Get billing nodes error" | "Update infra billing node error" | "Create infra billing node error" | "Delete infra billing node by UUID error" | "Get billing nodes for notifications error" | "Add users to internal squad error" | "Internal squad bulk actions error" | "Remove users from internal squad error" | "Delete config profile by UUID error" | "Update config profile error" | "OAuth2 authorize error" | "Sync active profile error" | "Get all host tags error" | "Get internal squad accessible nodes error" | "Delete hwid user devices error" | "Create user subscription request history error" | "Get user subscription request history error" | "Get all hwid devices error" | "Get hwid devices stats error" | "Get user subscription request history stats error" | "Get snippets error" | "Delete snippet by name error" | "Update snippet error" | "Get all subscription templates error" | "Get subscription template by UUID error" | "Update subscription template error" | "Delete subscription template error" | "Create subscription template error" | "Get external squads error" | "Create external squad error" | "Update external squad error" | "Delete external squad error" | "Add users to external squad error" | "Remove users from external squad error" | "Get external squad by UUID error" | "Get Remnawave settings error" | "Update Remnawave settings error" | "Generate passkey registration options error" | "Verify passkey registration error" | "Get active passkeys error" | "Delete passkey error" | "Get computed config profile by UUID error" | "Reset node traffic error" | "Update passkey error" | "Generic reorder error" | "Bulk extend expiration date error" | "Get subscription page config by UUID error" | "Get all subscription page configs error" | "Update subscription page config error" | "Delete subscription page config error" | "Create subscription page config error" | "Job creation failed" | "Get all node plugins error" | "Get node plugin by UUID error" | "Update node plugin error" | "Create node plugin error" | "Get torrent blocker reports error" | "Update hosts error" | "Get internal squad usage error" | "Add many users to internal squad error" | "Remove many users from internal squad error" | "Get stats digest error" | "Sync snippet error" | "Get all node integrations error" | "Get node integration by UUID error" | "Create node integration error" | "Update node integration error" | "Delete node integration error" | "Get all shared lists error" | "Get shared list by name error" | "Create shared list error" | "Update shared list error" | "Delete shared list error" | "Create SSH ticket error" | "Get tags error" | "Set tags error";
             /**
              * @description Error code. Possible values:
              *
@@ -7746,9 +10498,23 @@ export interface components {
              *     - `A233` — Add many users to internal squad error
              *     - `A234` — Remove many users from internal squad error
              *     - `A236` — Get stats digest error
+             *     - `A237` — Sync snippet error
+             *     - `A239` — Get all node integrations error
+             *     - `A240` — Get node integration by UUID error
+             *     - `A241` — Create node integration error
+             *     - `A242` — Update node integration error
+             *     - `A243` — Delete node integration error
+             *     - `A247` — Get all shared lists error
+             *     - `A248` — Get shared list by name error
+             *     - `A249` — Create shared list error
+             *     - `A250` — Update shared list error
+             *     - `A251` — Delete shared list error
+             *     - `A254` — Create SSH ticket error
+             *     - `A256` — Get tags error
+             *     - `A257` — Set tags error
              * @enum {string}
              */
-            errorCode: "A001" | "A002" | "A005" | "A006" | "A008" | "A009" | "A010" | "A013" | "A014" | "A015" | "A016" | "A017" | "A018" | "A022" | "A023" | "A024" | "A026" | "A027" | "A028" | "A031" | "A032" | "A035" | "A036" | "A037" | "A038" | "A039" | "A040" | "A041" | "A042" | "A043" | "A044" | "A047" | "A048" | "A049" | "A050" | "A051" | "A052" | "A053" | "A055" | "A056" | "A057" | "A058" | "A059" | "A060" | "A064" | "A066" | "A067" | "A069" | "A070" | "A072" | "A073" | "A074" | "A075" | "A077" | "A078" | "A079" | "A080" | "A081" | "A084" | "A085" | "A086" | "A087" | "A088" | "A089" | "A090" | "A091" | "A092" | "A093" | "A096" | "A097" | "A100" | "A101" | "A102" | "A103" | "A104" | "A105" | "A106" | "A107" | "A108" | "A109" | "A110" | "A112" | "A115" | "A116" | "A117" | "A119" | "A121" | "A122" | "A123" | "A125" | "A126" | "A127" | "A129" | "A130" | "A131" | "A132" | "A133" | "A134" | "A135" | "A136" | "A137" | "A138" | "A139" | "A140" | "A141" | "A142" | "A143" | "A146" | "A148" | "A150" | "A151" | "A154" | "A155" | "A156" | "A157" | "A158" | "A159" | "A160" | "A161" | "A163" | "A165" | "A168" | "A169" | "A171" | "A177" | "A179" | "A181" | "A183" | "A184" | "A185" | "A186" | "A187" | "A188" | "A192" | "A193" | "A196" | "A197" | "A198" | "A199" | "A200" | "A201" | "A202" | "A203" | "A205" | "A207" | "A208" | "A211" | "A213" | "A214" | "A217" | "A219" | "A221" | "A224" | "A225" | "A227" | "A228" | "A232" | "A233" | "A234" | "A236";
+            errorCode: "A001" | "A002" | "A005" | "A006" | "A008" | "A009" | "A010" | "A013" | "A014" | "A015" | "A016" | "A017" | "A018" | "A022" | "A023" | "A024" | "A026" | "A027" | "A028" | "A031" | "A032" | "A035" | "A036" | "A037" | "A038" | "A039" | "A040" | "A041" | "A042" | "A043" | "A044" | "A047" | "A048" | "A049" | "A050" | "A051" | "A052" | "A053" | "A055" | "A056" | "A057" | "A058" | "A059" | "A060" | "A064" | "A066" | "A067" | "A069" | "A070" | "A072" | "A073" | "A074" | "A075" | "A077" | "A078" | "A079" | "A080" | "A081" | "A084" | "A085" | "A086" | "A087" | "A088" | "A089" | "A090" | "A091" | "A092" | "A093" | "A096" | "A097" | "A100" | "A101" | "A102" | "A103" | "A104" | "A105" | "A106" | "A107" | "A108" | "A109" | "A110" | "A112" | "A115" | "A116" | "A117" | "A119" | "A121" | "A122" | "A123" | "A125" | "A126" | "A127" | "A129" | "A130" | "A131" | "A132" | "A133" | "A134" | "A135" | "A136" | "A137" | "A138" | "A139" | "A140" | "A141" | "A142" | "A143" | "A146" | "A148" | "A150" | "A151" | "A154" | "A155" | "A156" | "A157" | "A158" | "A159" | "A160" | "A161" | "A163" | "A165" | "A168" | "A169" | "A171" | "A177" | "A179" | "A181" | "A183" | "A184" | "A185" | "A186" | "A187" | "A188" | "A192" | "A193" | "A196" | "A197" | "A198" | "A199" | "A200" | "A201" | "A202" | "A203" | "A205" | "A207" | "A208" | "A211" | "A213" | "A214" | "A217" | "A219" | "A221" | "A224" | "A225" | "A227" | "A228" | "A232" | "A233" | "A234" | "A236" | "A237" | "A239" | "A240" | "A241" | "A242" | "A243" | "A247" | "A248" | "A249" | "A250" | "A251" | "A254" | "A256" | "A257";
         };
         RemnawaveValidationErrorDto: {
             /** @description Human-readable error message. */
@@ -8500,6 +11266,104 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VerifyPasskeyAuthenticationResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    SubscriptionPageConfigController_getTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetSubpageConfigsTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    SubscriptionPageConfigController_setTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetSubpageConfigsTagsBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetSubpageConfigsTagsResponseDto"];
                 };
             };
             /** @description Bad request / Validation error */
@@ -10734,6 +13598,104 @@ export interface operations {
             };
         };
     };
+    SubscriptionTemplateController_getTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetSubscriptionTemplatesTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    SubscriptionTemplateController_setTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetSubscriptionTemplatesTagsBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetSubscriptionTemplatesTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
     SubscriptionTemplateController_getAllTemplates: {
         parameters: {
             query?: never;
@@ -11192,6 +14154,104 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GetApiTokenScopesResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    ConfigProfileController_getTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetConfigProfilesTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    ConfigProfileController_setTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetConfigProfilesTagsBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetConfigProfilesTagsResponseDto"];
                 };
             };
             /** @description Bad request / Validation error */
@@ -11880,6 +14940,153 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    SnippetsController_syncSnippet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SyncSnippetBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    InternalSquadController_getTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetInternalSquadsTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    InternalSquadController_setTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetInternalSquadsTagsBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetInternalSquadsTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
             };
             /** @description Internal server error */
             500: {
@@ -12594,6 +15801,104 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GetInternalSquadUserUsageResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    ExternalSquadController_getTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetExternalSquadsTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    ExternalSquadController_setTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetExternalSquadsTagsBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetExternalSquadsTagsResponseDto"];
                 };
             };
             /** @description Bad request / Validation error */
@@ -13971,6 +17276,400 @@ export interface operations {
             };
         };
     };
+    NodePluginController_getTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetNodePluginsTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodePluginController_setTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetNodePluginsTagsBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetNodePluginsTagsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodePluginController_getAllSharedLists: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetSharedListsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodePluginController_createSharedList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSharedListBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Resource created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateSharedListResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodePluginController_deleteSharedList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteSharedListBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful, no content returned */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodePluginController_updateSharedList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSharedListBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateSharedListResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodePluginController_getSharedListByName: {
+        parameters: {
+            query: {
+                name: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetSharedListResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodePluginController_syncSharedList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SyncSharedListBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
     NodePluginController_getAllConfigs: {
         parameters: {
             query?: never;
@@ -14318,6 +18017,55 @@ export interface operations {
             };
         };
     };
+    NodePluginController_syncNodePlugin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SyncNodePluginBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation accepted and will be processed in background */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
     NodePluginController_pluginExecutor: {
         parameters: {
             query?: never;
@@ -14333,6 +18081,251 @@ export interface operations {
         responses: {
             /** @description Operation accepted and will be processed in background */
             202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodeIntegrationController_getAllIntegrations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetNodeIntegrationsResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodeIntegrationController_createIntegration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateNodeIntegrationBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Resource created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateNodeIntegrationResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodeIntegrationController_updateIntegration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateNodeIntegrationBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateNodeIntegrationResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodeIntegrationController_getIntegrationByUuid: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetNodeIntegrationResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    NodeIntegrationController_deleteIntegration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -17141,6 +21134,109 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConnectionsByNodeResultResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    ConnectionsController_geocheckByNode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Node UUID */
+                nodeUuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GeocheckByNodeBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Resource created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GeocheckByNodeResponseDto"];
+                };
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    ConnectionsController_geocheckByNodeResult: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                jobId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Operation successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GeocheckByNodeResultResponseDto"];
                 };
             };
             /** @description Bad request / Validation error */
