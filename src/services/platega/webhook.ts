@@ -22,8 +22,14 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
 
         const [payment] = await getPaymentId(body.id);
 
+        if (payment.status == 'paid') {
+            await reply.code(200).send({ status: 'ok' });
+            return;
+        }
+
         const isLocked = await lockPaymentForProcessing(payment.id);
         if (!isLocked) {
+            await reply.code(200).send({ status: 'ok' });
             return;
         }
 
@@ -82,6 +88,7 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
 
             if (!squads) {
                 console.error('[plWh] Ошибка при получении сквада для VPN', squads);
+                await reply.code(200).send({ status: 'ok' });
                 return;
             }
 
@@ -99,6 +106,7 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
 
             if (!user) {
                 console.error('[plWh] Ошибка при создании пользователя', user);
+                await reply.code(200).send({ status: 'ok' });
                 return;
             }
 
@@ -111,6 +119,7 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
             } catch (error) {
                 console.error('[plWh] Ошибка при добавлении профиля в БД', error);
                 await remnawave.deleteUser(user.response.id);
+                await reply.code(200).send({ status: 'ok' });
                 return;
             }
 
@@ -138,12 +147,14 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
             const [profile] = await getProfileByID(payment.sub_id);
             if (!profile) {
                 console.error('[plWh] Ошибка #1 при продлении подписки', profile);
+                await reply.code(200).send({ status: 'ok' });
                 return;
             }
 
             const user = await remnawave.getUserByUserId(profile.rw_user_id);
             if (!user) {
                 console.error('[plWh] Ошибка #2 при продлении подписки', user);
+                await reply.code(200).send({ status: 'ok' });
                 return;
             }
 
