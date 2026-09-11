@@ -24,7 +24,6 @@ services:
     restart: unless-stopped
     networks:
       - vpnNetwork
-      - shared-network
     ports:
       - "6663:6663"
     depends_on:

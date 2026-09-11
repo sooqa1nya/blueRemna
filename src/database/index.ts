@@ -57,6 +57,7 @@ export const initDatabase = async () => {
                 amount NUMERIC(10, 2),
                 status VARCHAR(32) DEFAULT 'pending',
                 months INT,
+                sub_id INT,
                 payload TEXT
             )
         `;

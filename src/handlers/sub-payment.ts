@@ -47,33 +47,13 @@ export const subPayment = new Composer({ name: 'subPayment' })
     })
 
     .callbackQuery(keyboard.priceData, async context => {
-        // Если хватает реф. баланса, то используем его
-        // if (context.dbuser && Number(context.dbuser.ref_balance) >= context.queryData.p) {
-        //     try {
-        //         await context.send(`💰 Покупка подписки с реферального баланса\n\n- Пользователь: <code>${context.from.id}</code>\n- Срок: <code>${context.queryData.m} мес.</code>\n- Списано: <code>${context.queryData.p}₽</code>`, {
-        //             chat_id: process.env.LOG_CHAT_ID!,
-        //             parse_mode: 'HTML'
-        //         });
-        //     } catch { }
-
-        //     // Продление или создание новой подписки
-        //     if (context.queryData.k == -1) {
-        //         await newProfile(context, context.queryData.m);
-        //         return;
-        //     }
-        //     await updateProfile(context, context.queryData.m);
-
-        //     await setRefBalance(context.from.id, Number(context.dbuser.ref_balance) - context.queryData.p);
-        //     return;
-        // }
-
         await context.editText('💳 Выберите способ оплаты', {
             reply_markup: await keyboard.paymentSystemKeyboard(context.queryData.k, context.queryData.m, context.queryData.p, Number(context.dbuser?.ref_balance))
         });
     })
 
     .callbackQuery(keyboard.paymentSystemData, async context => {
-        const payment = await createPayment(context, context.queryData.p, context.queryData.m);
+        const payment = await createPayment(context, context.queryData.p, context.queryData.m, context.queryData.k);
 
         if (!payment) {
             await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');

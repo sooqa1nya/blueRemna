@@ -40,6 +40,7 @@ export interface IPayment {
     amount: string;
     status: 'pending' | 'process' | 'paid';
     months: number;
+    sub_id: number;
     payload: string | null;
 }
 

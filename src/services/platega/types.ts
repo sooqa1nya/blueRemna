@@ -17,16 +17,12 @@ enum PaymentStatus {
  * Способы оплаты
  */
 enum PaymentMethodInt {
-    /** СБП с QR-кодом (НСПК / QR) */
     SBP_QR = 2,
-    /** Российские карты (МИР, Visa, Mastercard) */
-    CARDS_RUB = 10,
-    /** Общий карточный эквайринг */
+    ERIP = 3,
     CARD_ACQUIRING = 11,
-    /** Международные карточные платежи */
     INTERNATIONAL_ACQUIRING = 12,
-    /** Общие криптовалютные платежи */
     CRYPTO = 13,
+    SBERPAY = 14
 }
 
 // ============================================================
