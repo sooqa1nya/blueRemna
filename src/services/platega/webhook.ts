@@ -2,11 +2,13 @@ import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } fro
 import { CallbackPayload } from './types.js';
 import { completePaymentProcessing, getPaymentId, lockPaymentForProcessing } from '../../database/payment.js';
 import { remnawave } from '../remnawave/index.js';
-import { addProfile, getProfileByID } from '../../database/user_profiles.js';
+import { addProfile, getProfileByID, setLimitExtended } from '../../database/user_profiles.js';
 import { bot } from '../../bot.js';
 import { copyWebappMenuKeyboard } from '../../keyboards/other.js';
 import { findUser } from '../../database/users.js';
 import { addRefBalance } from '../../utils/add-ref-balance.js';
+import { getLimitExtend } from '../../database/settings.js';
+import { backToMainMenuKeyboard } from '../../keyboards/main.js';
 
 
 export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
@@ -41,7 +43,37 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
             console.error('Ошибка выдачи рефки (sub-payment):', e);
         }
 
-        if (payment.sub_id == -1) {
+        if (payment.months == 0) {
+            const user = await remnawave.getUserByUserId((await getProfileByID(payment.sub_id))[0]!.rw_user_id);
+            const limit = await getLimitExtend();
+
+            try {
+                await remnawave.updateUser({
+                    id: user!.response.id,
+                    trafficLimitStrategy: 'NO_RESET',
+                    hwidDeviceLimit: Number(user!.response.hwidDeviceLimit!) + Number(limit.devices)
+                });
+            } catch (e) {
+                console.error('[plWh] Ошибка при расширении лимита устройств:', e);
+            }
+
+            try {
+                await bot.api.sendMessage({
+                    text: `💳 Покупка доп устройств\n\n- Пользователь: <code>${payment.user_id}</code>\n- Сервис: <code>${payment.service}</code>\n- Цена: <code>${limit.price}₽</code>`,
+                    chat_id: process.env.LOG_CHAT_ID!,
+                    parse_mode: 'HTML'
+                });
+            } catch { }
+
+            await setLimitExtended(payment.sub_id, true);
+
+            await bot.api.sendMessage({
+                chat_id: payment.user_id,
+                text: `✅ Дополнительные устройства добавлены, приятного пользования!`,
+                parse_mode: 'HTML',
+                reply_markup: backToMainMenuKeyboard
+            });
+        } else if (payment.sub_id == -1) {
             const days = payment.months * 30;
             const date = new Date();
 
