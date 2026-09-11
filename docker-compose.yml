@@ -32,7 +32,7 @@ services:
 
 networks:
   vpnNetwork:
-  shared-network:
+  remnawave-network:
     external: true
 
 volumes:
