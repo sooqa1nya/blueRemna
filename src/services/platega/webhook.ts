@@ -98,7 +98,7 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
                 status: 'ACTIVE',
                 trafficLimitStrategy: 'NO_RESET',
                 expireAt: date.toISOString(),
-                telegramId: payment.user_id,
+                telegramId: Number(payment.user_id),
                 hwidDeviceLimit: 5,
                 activeInternalSquads: [squads.internal],
                 externalSquadUuid: squads.external
