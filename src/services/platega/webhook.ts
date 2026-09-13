@@ -112,7 +112,7 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
 
             try {
                 await addProfile(
-                    payment.user_id,
+                    Number(payment.user_id),
                     user.response.id,
                     profile
                 );

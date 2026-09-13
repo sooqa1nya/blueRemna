@@ -33,7 +33,7 @@ export interface IUserProfiles {
 
 export interface IPayment {
     id: number;
-    user_id: number;
+    user_id: string;
     service: string;
     payment_id: string;
     payment_time: Date;
