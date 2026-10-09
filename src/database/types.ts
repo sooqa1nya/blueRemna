@@ -40,7 +40,7 @@ export interface IPayment {
     amount: string;
     status: 'pending' | 'process' | 'paid';
     months: number;
-    sub_id: number;
+    sub_plan_id: string;
     payload: string | null;
 }
 
@@ -66,10 +66,22 @@ export interface IVpnClients {
     priority: number;
 }
 
+export interface ISubPlans {
+    id: number;
+    active: boolean;
+    name: string;
+    tag: string;
+    internalSquad: string;
+    info: string;
+    priority: number;
+}
+
 export interface ISubPrices {
     id: number;
     months: number;
+    days: number;
     amount: string;
+    plan_id: string;
 }
 
 declare module 'gramio' {

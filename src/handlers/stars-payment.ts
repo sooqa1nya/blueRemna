@@ -7,6 +7,7 @@ import { remnawave } from '../services/remnawave/index.js';
 import { getProfileByID, setLimitExtended } from '../database/user_profiles.js';
 import { getLimitExtend } from '../database/settings.js';
 import { backToMainMenuKeyboard } from '../keyboards/main.js';
+import { getPriceById } from '../database/sub_prices.js';
 
 
 export const starsPayment = new Composer({ name: 'starsPayment' })
@@ -20,11 +21,13 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
             return;
         }
 
-        const payload: { e: boolean; k: number; m?: number; p?: number; } = JSON.parse(context.successfulPayment.invoicePayload);
+        const payload: { e: boolean; priceId: number; } = JSON.parse(context.successfulPayment.invoicePayload);
+
+        const [price] = await getPriceById(payload.priceId);
 
         if (!payload.e) {
             try {
-                await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Stars</code>\n- Срок: <code>${payload.m} мес.</code>\n- Цена: <code>${context.successfulPayment.totalAmount} Stars</code>\n- Тип: <code>${payload.k == -1 ? 'Новая' : 'Продление'}</code>`, {
+                await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Stars</code>\n- Срок: <code>${price.months} мес.</code>\n- Цена: <code>${context.successfulPayment.totalAmount} Stars</code>}`, {
                     chat_id: process.env.LOG_CHAT_ID!,
                     parse_mode: 'HTML'
                 });
@@ -41,8 +44,8 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
                 'Stars',
                 context.successfulPayment.telegramPaymentChargeId,
                 context.successfulPayment.totalAmount * Number(process.env.STARS_COEFFICIENT!),
-                payload.m || 0,
-                payload.k,
+                price.months,
+                price.plan_id,
                 context.dbuser?.payload || null
             );
 

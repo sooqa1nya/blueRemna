@@ -44,3 +44,6 @@ export const importHappKeyboard = (subUrl: string) => {
     return new InlineKeyboard()
         .url('Подключить в Happ', happUrl, { style: 'success' });
 };
+
+export const backKeyboard = (callbackData: string) =>
+    new InlineKeyboard().text('◀️ Назад', callbackData);

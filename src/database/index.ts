@@ -111,15 +111,6 @@ export const initDatabase = async () => {
                 amount NUMERIC(10, 2)
             )
         `;
-        await sql`
-            INSERT INTO sub_prices (months, amount)
-            VALUES 
-                (1, ${process.env.SUB_PRICE_1_MONTH!}),
-                (3, ${process.env.SUB_PRICE_3_MONTHS!}),
-                (6, ${process.env.SUB_PRICE_6_MONTHS!}),
-                (12, ${process.env.SUB_PRICE_12_MONTHS!})
-            ON CONFLICT (months) DO NOTHING
-        `;
         console.log('✅ База данных инициализирована');
     } catch (error) {
         console.error('❌ Ошибка инициализации БД:', error);

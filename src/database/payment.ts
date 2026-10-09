@@ -1,10 +1,10 @@
 import type { IPayment } from './types.js';
 import sql from './index.js';
 
-export const addPayment = async (userId: number, service: string, paymentId: string, amount: number, months: number, subId: number, payload: string | null) => {
+export const addPayment = async (userId: number, service: string, paymentId: string, amount: number, months: number, subPlanId: string | null, payload: string | null) => {
     return await sql<IPayment[]>`
-        INSERT INTO payments (user_id, service, payment_id, amount, months, sub_id, payload)
-        VALUES (${userId}, ${service}, ${paymentId}, ${amount}, ${months}, ${subId}, ${payload})
+        INSERT INTO payments (user_id, service, payment_id, amount, months, sub_plan_id, payload)
+        VALUES (${userId}, ${service}, ${paymentId}, ${amount}, ${months}, ${subPlanId}, ${payload})
         RETURNING *
     `;
 };
