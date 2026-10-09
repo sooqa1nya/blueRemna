@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { bot } from './bot.js';
-import { serverFastify } from './services/remnawave/webhooks.js';
+import { serverFastify } from './services/webhooks/index.js';
 import { initDatabase } from './database/index.js';
 
 

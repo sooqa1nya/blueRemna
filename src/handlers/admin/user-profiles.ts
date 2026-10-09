@@ -130,10 +130,10 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
         const expireDate = new Date(sub.expireAt);
 
         // Выбираем источник: если подписка не истекла, добавляем к её дате, иначе к текущей
-        let date = expireDate >= currentDate ? expireDate : currentDate;
+        let date = expireDate > currentDate ? expireDate : currentDate;
         date.setDate(date.getDate() + context.queryData.d);
 
-        if (date <= currentDate) {
+        if (date < new Date()) {
             date = new Date();
             date.setMinutes(date.getMinutes() + 1);
         }

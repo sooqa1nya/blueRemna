@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import fastify, { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
 import type { components } from './types.js';
 import { bot } from '../../bot.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
@@ -12,7 +12,7 @@ type RemnawaveWebhookUserEventsDto = components['schemas']['RemnawaveWebhookUser
 type RemnawaveWebhookCrmEventsDto = components['schemas']['RemnawaveWebhookCrmEventsDto'];
 type RemnawaveWebhookNodeEventsDto = components['schemas']['RemnawaveWebhookNodeEventsDto'];
 type RemnawaveWebhookTorrentBlockerEventsDto = components['schemas']['RemnawaveWebhookTorrentBlockerEventsDto'];
-type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto | RemnawaveWebhookTorrentBlockerEventsDto;
+export type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto | RemnawaveWebhookTorrentBlockerEventsDto;
 type EventHandler = (body: any) => Promise<void>;
 
 
@@ -111,7 +111,7 @@ const handleNodeDisabled = async (body: RemnawaveWebhookNodeEventsDto) => {
 };
 
 
-const webhookHandlers: Record<string, Record<string, EventHandler>> = {
+export const webhookHandlers: Record<string, Record<string, EventHandler>> = {
     user: {
         'user.not_connected': handleUserNotConnected,
         'user.expired': handleUserExpired,
@@ -130,14 +130,12 @@ const webhookHandlers: Record<string, Record<string, EventHandler>> = {
     }
 };
 
-export const serverFastify = () => {
-    const server = fastify();
-
-    server.post('/rwwebhook', async (request, reply) => {
-        const body = request.body as WebhookBody;
+export const rwWh: FastifyPluginAsync = async (server: FastifyInstance) => {
+    server.post('/rwwebhook', async (request: FastifyRequest<{ Body: WebhookBody; }>, reply: FastifyReply) => {
+        const body = request.body;
 
         if (!body?.scope) {
-            return reply.code(200).send({ status: 'ok' });
+            return await reply.code(200).send({ status: 'ok' });
         }
 
         try {
@@ -150,23 +148,14 @@ export const serverFastify = () => {
                 console.warn(`Unhandled webhook event: ${body.scope}.${body.event}`);
             }
         } catch (error) {
-            if (!(body.scope == 'user')) return;
-            if (!body.data.telegramId) return;
-
-            const user = await findUser(body.data.telegramId);
-            if (user) {
-                await setActive(user.id, false);
+            if (body.scope === 'user' && body.data?.telegramId) {
+                const user = await findUser(body.data.telegramId);
+                if (user) {
+                    await setActive(user.id, false);
+                }
             }
         } finally {
-            return reply.code(200).send({ status: 'ok' });
+            return await reply.code(200).send({ status: 'ok' });
         }
-    });
-
-    server.listen({ host: '0.0.0.0', port: 6663 }, (err, address) => {
-        if (err) {
-            console.error(err);
-            process.exit(1);
-        }
-        console.log(`Server listening at ${address}`);
     });
 };

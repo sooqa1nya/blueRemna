@@ -3,7 +3,7 @@ import { cryptoBot } from '../services/crypto-bot/index.js';
 import { addPayment } from '../database/payment.js';
 import { platega } from '../services/platega/index.js';
 
-export const createPayment = async (context: CallbackQueryShorthandContext<Bot, any>, price: number, months: number) => {
+export const createPayment = async (context: CallbackQueryShorthandContext<Bot, any>, price: number, months: number, subId: number) => {
     let result: {
         payment_id: number;
         url: string;
@@ -28,6 +28,7 @@ export const createPayment = async (context: CallbackQueryShorthandContext<Bot, 
             invoice.result.invoice_id.toString(),
             price,
             months,
+            subId,
             context.dbuser?.payload || null
         );
 
@@ -47,7 +48,7 @@ export const createPayment = async (context: CallbackQueryShorthandContext<Bot, 
                 amount: price,
                 currency: 'RUB',
             },
-            description: `Покупка подписки на ${context.queryData.m} мес.\nПользователь: ${context.from.id}`,
+            description: JSON.stringify({ userId: context.from.id, months: context.queryData.m, subId: subId }),
             payload: context.from.id.toString()
         });
 
@@ -62,6 +63,7 @@ export const createPayment = async (context: CallbackQueryShorthandContext<Bot, 
             transaction.transactionId,
             price,
             months,
+            subId,
             context.dbuser?.payload || null
         );
 

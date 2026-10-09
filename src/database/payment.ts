@@ -1,10 +1,10 @@
 import type { IPayment } from './types.js';
 import sql from './index.js';
 
-export const addPayment = async (userId: number, service: string, paymentId: string, amount: number, months: number, payload: string | null) => {
+export const addPayment = async (userId: number, service: string, paymentId: string, amount: number, months: number, subId: number, payload: string | null) => {
     return await sql<IPayment[]>`
-        INSERT INTO payments (user_id, service, payment_id, amount, months, payload)
-        VALUES (${userId}, ${service}, ${paymentId}, ${amount}, ${months}, ${payload})
+        INSERT INTO payments (user_id, service, payment_id, amount, months, sub_id, payload)
+        VALUES (${userId}, ${service}, ${paymentId}, ${amount}, ${months}, ${subId}, ${payload})
         RETURNING *
     `;
 };
@@ -13,6 +13,13 @@ export const getPayment = async (id: number) => {
     return await sql<IPayment[]>`
         SELECT * FROM payments
         WHERE id = ${id}
+    `;
+};
+
+export const getPaymentId = async (paymentId: string) => {
+    return await sql<IPayment[]>`
+        SELECT * FROM payments
+        WHERE payment_id = ${paymentId}
     `;
 };
 

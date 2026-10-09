@@ -82,7 +82,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         const limit = await getLimitExtend();
         const price = (Number(limit.price));
 
-        const payment = await createPayment(context, price, 0);
+        const payment = await createPayment(context, price, 0, context.queryData.k);
 
         if (!payment) {
             await context.answerCallbackQuery('❌ Ошибка при создании счета. Попробуйте позже.');

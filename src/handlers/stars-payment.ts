@@ -42,6 +42,7 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
                 context.successfulPayment.telegramPaymentChargeId,
                 context.successfulPayment.totalAmount * Number(process.env.STARS_COEFFICIENT!),
                 payload.m || 0,
+                payload.k,
                 context.dbuser?.payload || null
             );
 

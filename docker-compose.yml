@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     networks:
       - vpnNetwork
-      - shared-network
+      - remnawave-network
     ports:
       - "6663:6663"
     depends_on:
@@ -32,7 +32,7 @@ services:
 
 networks:
   vpnNetwork:
-  shared-network:
+  remnawave-network:
     external: true
 
 volumes:

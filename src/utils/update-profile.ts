@@ -25,7 +25,7 @@ export const updateProfile = async (context: CallbackQueryShorthandContext<Bot, 
     const expireDate = new Date(user.response.expireAt);
 
     // Выбираем источник: если подписка не истекла, добавляем к её дате, иначе к текущей
-    const date = expireDate >= currentDate ? expireDate : currentDate;
+    const date = expireDate > currentDate ? expireDate : currentDate;
     date.setDate(date.getDate() + days);
 
     await remnawave.updateUser({
@@ -85,7 +85,7 @@ export const updateProfileStars = async (context: SuccessfulPaymentContext<Bot>)
     const expireDate = new Date(user.response.expireAt);
 
     // Выбираем источник: если подписка не истекла, добавляем к её дате, иначе к текущей
-    const date = expireDate >= currentDate ? expireDate : currentDate;
+    const date = expireDate > currentDate ? expireDate : currentDate;
     date.setDate(date.getDate() + days);
 
     await remnawave.updateUser({

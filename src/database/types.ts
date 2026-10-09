@@ -33,13 +33,14 @@ export interface IUserProfiles {
 
 export interface IPayment {
     id: number;
-    user_id: number;
+    user_id: string;
     service: string;
     payment_id: string;
     payment_time: Date;
     amount: string;
     status: 'pending' | 'process' | 'paid';
     months: number;
+    sub_id: number;
     payload: string | null;
 }
 
