@@ -1,17 +1,20 @@
-import { CallbackData, InlineKeyboard } from 'gramio';
-import { getProfiles } from '../database/user_profiles.js';
+import { InlineKeyboard } from 'gramio';
+import { getUserSub } from '../database/user_sub.js';
+import { allPlansData } from './sub-payment.js';
+
 
 export const policyKeyboard = new InlineKeyboard()
     .text('✅ Ознакомлен', 'accept_policy', { style: 'success' });
 
-export const mainMenuKeyboard = async (free_trial: boolean, id: number) => {
-    const profiles = await getProfiles(id);
+export const mainMenuKeyboard = async (free_trial: boolean, userId: number) => {
+    const [userSub] = await getUserSub(userId);
     return new InlineKeyboard()
         .addIf(!free_trial, InlineKeyboard.text('🎁 Пробный период', 'free_trial_info', { style: 'success' }))
         .row()
-        .text(profiles.length > 0 ? '🛒 Продлить подписку' : '🛒 Купить подписку', 'sub_buy')
+        .addIf(!userSub, InlineKeyboard.text('🛒 Купить подписку', 'sub_buy'))
+        .addIf(!!userSub, InlineKeyboard.text('🛒 Продлить подписку', allPlansData.pack({ planId: Number(userSub.sub_plan_id) })))
         .row()
-        .addIf(profiles.length > 0, InlineKeyboard.text('💮 Моя подписка', 'active_keys'))
+        .addIf(!!userSub, InlineKeyboard.text('💮 Моя подписка', 'active_keys'))
         .row()
         .text('ℹ️ Информация', 'about_us')
         .text('💬 Помощь', 'help')

@@ -1,0 +1,17 @@
+import sql from './index.js';
+import { IUserSub } from './types.js';
+
+
+export const createUserSub = async (id: number, rwId: number, username: string, subPlanId: string): Promise<void> => {
+    await sql`
+        INSERT INTO user_sub (id, rw_user_id, username, sub_plan_id)
+        VALUES (${id}, ${rwId}, ${username}, ${subPlanId})
+    `;
+};
+
+export const getUserSub = async (userId: string | number) => {
+    return await sql<IUserSub[]>`
+        SELECT * FROM user_sub
+        WHERE id = ${userId}
+    `;
+};

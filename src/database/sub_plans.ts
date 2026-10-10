@@ -15,3 +15,10 @@ export const getPlanById = async (id: number) => {
         WHERE id = ${id}
     `;
 };
+
+export const getPlanByTag = async (tag: string) => {
+    return await sql<ISubPlans[]>`
+        SELECT * FROM sub_plans
+        WHERE tag = ${tag}
+    `;
+};

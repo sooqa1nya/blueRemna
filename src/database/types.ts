@@ -23,11 +23,11 @@ export interface INode {
     name: string;
 }
 
-export interface IUserProfiles {
-    id: number;
-    user_id: number;
+export interface IUserSub {
+    id: string;
     rw_user_id: number;
     username: string;
+    sub_plan_id: string;
     is_limit_extended: boolean;
 }
 

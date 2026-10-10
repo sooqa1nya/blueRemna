@@ -15,20 +15,19 @@ services:
       - postgres_data:/var/lib/postgresql
     networks:
       - vpnNetwork
-
-  vpn:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: vpn-bot
-    restart: unless-stopped
-    networks:
-      - vpnNetwork
-      - remnawave-network
-    ports:
-      - "6663:6663"
-    depends_on:
-      - db
+  # vpn:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: vpn-bot
+  #   restart: unless-stopped
+  #   networks:
+  #     - vpnNetwork
+  #     - remnawave-network
+  #   ports:
+  #     - "6663:6663"
+  #   depends_on:
+  #     - db
 
 networks:
   vpnNetwork:

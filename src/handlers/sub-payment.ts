@@ -1,32 +1,42 @@
 import { Composer } from 'gramio';
 import * as keyboard from '../keyboards/index.js';
-import { getGlobalSale } from '../database/settings.js';
-import { calcSale, finalPrice } from '../utils/final-price.js';
-import { checkPayment } from '../utils/check-payment.js';
+import { finalPrice } from '../utils/final-price.js';
 import { addRefBalance } from '../utils/add-ref-balance.js';
-import { newProfile } from '../utils/new-profile.js';
-import { updateProfile } from '../utils/update-profile.js';
-import { createPayment } from '../utils/create-payment.js';
-import { getProfiles } from '../database/user_profiles.js';
 import { setRefBalance } from '../database/users.js';
 import { getPlanById } from '../database/sub_plans.js';
-import { backKeyboard } from '../keyboards/other.js';
 import { platega } from '../services/platega/index.js';
 import { getPriceById } from '../database/sub_prices.js';
-import { addPayment } from '../database/payment.js';
+import { addPayment, completePaymentProcessing, getPayment, lockPaymentForProcessing, revertPaymentProcessing } from '../database/payment.js';
 import { cryptoBot } from '../services/crypto-bot/index.js';
+import { userSubUpdate } from '../utils/userSubUpdate.js';
+import { getUserSub } from '../database/user_sub.js';
 
 export const subPayment = new Composer({ name: 'subPayment' })
-    // Тарифный план
+    // Тарифный план [Покупка подписки]
     .callbackQuery('sub_buy', async context => {
+        const [userSub] = await getUserSub(context.from.id);
+        if (!!userSub) {
+            await context.editText('❌ У вас уже есть действующая подписка, вернитесь в главное меню и попробуйте снова', {
+                reply_markup: keyboard.backToMainMenuKeyboard
+            });
+        }
+
         await context.editText(`📋 Выберите тарифный план`, {
             reply_markup: await keyboard.allPlansKeyboard(),
             parse_mode: 'HTML'
         });
 
     })
-    // Цены на подписку + информация о тарифном плане
+
+    // Цены на подписку + информация о тарифном плане + ПРОДЛЕНИЕ подписки
     .callbackQuery(keyboard.allPlansData, async context => {
+        const [userSub] = await getUserSub(context.from.id);
+        if (!userSub) {
+            await context.editText('❌ У вас нет действующей подписки, вернитесь в главное меню и попробуйте снова', {
+                reply_markup: keyboard.backToMainMenuKeyboard
+            });
+        }
+
         const [plan] = await getPlanById(context.queryData.planId);
 
         const text = `
@@ -112,7 +122,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
 
             const [payment] = await addPayment(
                 context.from.id,
-                'Platega',
+                'CryptoBot',
                 invoice.result.invoice_id.toString(),
                 fPrice,
                 price.months,
@@ -178,96 +188,59 @@ export const subPayment = new Composer({ name: 'subPayment' })
             });
         } catch { }
 
-        // Продление или создание новой подписки
-        //    ЛОГИКА ПРОДЛЕНИЯ ИЛИ ПОКУПКИ ПОДПИСКИ
+        try {
+            await userSubUpdate(context.from.id, Number(price.plan_id));
+        } catch (e) {
+            console.error('Ошибка sub-payment => userSubUpdate', e);
+            await context.answerCallbackQuery('❌ Ошибка выдачи подписки');
+        }
 
         await setRefBalance(context.from.id, Number(context.dbuser.ref_balance) - fPrice);
     })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // СДЕЛАТЬ ИЗ ЭТОГО ПРОДЛЕНИЕ ПОДПИСКИ
-    // .callbackQuery(keyboard.subBuyData, async context => {
-    //     const hasProfiles = await getProfiles(context.from.id);
-
-    //     if (hasProfiles.length) {
-    //         // выбор кол-ва дней для продления подписки по текущему плану + инфа о плане
-    //         // await context.editText('🛒 Управление подпиской', { reply_markup: keyboard.selectNewExtendKeyboard });
-    //         return;
-    //     }
-
-    //     // const globalSale = await getGlobalSale();
-    //     // const userSale = context.dbuser?.sale || 0;
-    //     // const finalSale = await calcSale(globalSale, userSale);
-
-    //     // await context.editText(`⏳ Выберите срок действия подписки${finalSale > 0 ? `\n💸 Скидка: <code>${finalSale}%</code>` : ''}`, {
-    //     //     reply_markup: await keyboard.priceKeyboard(context.queryData.k, context.dbuser?.sale || 0),
-    //     //     parse_mode: 'HTML'
-    //     // });
-
-    //     await context.editText(`📋 Выберите интересующий Вас тарифный план`, {
-    //         reply_markup: await keyboard.allPlansKeyboard(),
-    //         parse_mode: 'HTML'
-    //     });
-
-    // })
-
-
-
-
-
-
-
-
-
-    .callbackQuery('extend_key', async context => {
-        await context.editText('📋 Выберите подписку для продления', {
-            reply_markup: await keyboard.currentKeysKeyboard(context.from.id)
-        });
-    })
-
-    .callbackQuery(keyboard.currentKeysData, async context => {
-        const globalSale = await getGlobalSale();
-        const userSale = context.dbuser?.sale || 0;
-        const finalSale = await calcSale(globalSale, userSale);
-
-        await context.editText(`⏳ Выберите срок действия подписки${finalSale > 0 ? `\n💸 Скидка: <code>${finalSale}%</code>` : ''}`, {
-            reply_markup: await keyboard.priceKeyboard(context.queryData.k, context.dbuser?.sale || 0),
-            parse_mode: 'HTML'
-        });
-    })
-
+    // Проверка оплаты
     .callbackQuery(keyboard.checkPaymentData, async context => {
-        const payment = await checkPayment(context);
-        if (!payment) {
+        const [payment] = await getPayment(context.queryData.paymentId);
+
+        const isLocked = await lockPaymentForProcessing(payment.id);
+        if (!isLocked) {
+            await context.answerCallbackQuery('❌ Счет уже обрабатывается');
             return;
         }
 
         try {
-            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${payment.service}</code>\n- Срок: <code>${payment.months} мес.</code>\n- Цена: <code>${payment.amount}₽</code>\n- Тип: <code>${context.queryData.k == -1 ? 'Новая' : 'Продление'}</code>`, {
+            if (payment.service === 'Platega') {
+                const transaction = await platega.getTransactionStatus(payment.payment_id);
+
+                if (transaction.status != 'CONFIRMED') {
+                    await revertPaymentProcessing(payment.id);
+                    await context.answerCallbackQuery('❌ Счет не оплачен');
+                    return;
+                }
+            } else if (payment.service === 'CryptoBot') {
+                const invoices = await cryptoBot.getInvoices({ invoice_ids: payment.payment_id });
+                const invoice = invoices.result.items[0];
+
+                if (invoice.status != 'paid') {
+                    await revertPaymentProcessing(payment.id);
+                    await context.answerCallbackQuery('❌ Счет не оплачен');
+                    return;
+                }
+            } else {
+                await revertPaymentProcessing(payment.id);
+                console.error(`[Проверка оплаты] payment.service НЕ НАЙДЕН. id: ${payment.id} | service: ${payment.service}`);
+                return;
+            }
+        } catch (error) {
+            console.error('[Проверка оплаты]', error);
+            return;
+        }
+
+        await completePaymentProcessing(payment.id);
+        await context.answerCallbackQuery('✅ Оплата прошла!');
+
+        try {
+            await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>${payment.service}</code>\n- Срок: <code>${payment.months} мес.</code>\n- Цена: <code>${payment.amount}₽</code>`, {
                 chat_id: process.env.LOG_CHAT_ID!,
                 parse_mode: 'HTML'
             });
@@ -280,11 +253,10 @@ export const subPayment = new Composer({ name: 'subPayment' })
             console.error('Ошибка выдачи рефки (sub-payment):', e);
         }
 
-        // Продление или создание новой подписки
-        if (context.queryData.k == -1) {
-            await newProfile(context, payment.months);
-            return;
+        try {
+            await userSubUpdate(context.from.id, context.queryData.paymentId);
+        } catch (e) {
+            console.error('Ошибка sub-payment => userSubUpdate', e);
+            await context.answerCallbackQuery('❌ Ошибка выдачи подписки');
         }
-
-        await updateProfile(context, payment.months);
     });
