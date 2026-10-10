@@ -15,3 +15,11 @@ export const getUserSub = async (userId: string | number) => {
         WHERE id = ${userId}
     `;
 };
+
+export const setLimitExtended = async (userId: number, limitExtended: boolean) => {
+    await sql`
+        UPDATE user_sub
+        SET is_limit_extended = ${limitExtended}
+        WHERE id = ${userId}    
+    `;
+};

@@ -1,13 +1,13 @@
 import { Composer } from 'gramio';
 import { addRefBalance } from '../utils/add-ref-balance.js';
 import { addPayment } from '../database/payment.js';
-import { newProfileStars } from '../utils/new-profile.js';
-import { updateProfileStars } from '../utils/update-profile.js';
 import { remnawave } from '../services/remnawave/index.js';
-import { getProfileByID, setLimitExtended } from '../database/user_profiles.js';
 import { getLimitExtend } from '../database/settings.js';
 import { backToMainMenuKeyboard } from '../keyboards/main.js';
 import { getPriceById } from '../database/sub_prices.js';
+import { userSubUpdate } from '../utils/userSubUpdate.js';
+import { getUserSub, setLimitExtended } from '../database/user_sub.js';
+import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 
 
 export const starsPayment = new Composer({ name: 'starsPayment' })
@@ -21,13 +21,22 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
             return;
         }
 
-        const payload: { e: boolean; priceId: number; } = JSON.parse(context.successfulPayment.invoicePayload);
+        const payload: { e: boolean; priceId?: number; price?: number; } = JSON.parse(context.successfulPayment.invoicePayload);
 
-        const [price] = await getPriceById(payload.priceId);
+        let priceById, subPrice;
+
+        if (payload.priceId) {
+            [priceById] = await getPriceById(payload.priceId);
+        } else if (payload.price) {
+            subPrice = payload.price;
+        } else {
+            console.error('stars-payment не найдена цена подписки paymentId', payload);
+            return;
+        }
 
         if (!payload.e) {
             try {
-                await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Stars</code>\n- Срок: <code>${price.months} мес.</code>\n- Цена: <code>${context.successfulPayment.totalAmount} Stars</code>}`, {
+                await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Stars</code>\n- Срок: <code>${priceById!.months} мес.</code>\n- Цена: <code>${context.successfulPayment.totalAmount} Stars</code>}`, {
                     chat_id: process.env.LOG_CHAT_ID!,
                     parse_mode: 'HTML'
                 });
@@ -39,25 +48,40 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
                 console.error('Ошибка выдачи рефки (stars-payment):', e);
             }
 
-            await addPayment(
+            const [payment] = await addPayment(
                 context.from.id,
                 'Stars',
                 context.successfulPayment.telegramPaymentChargeId,
                 context.successfulPayment.totalAmount * Number(process.env.STARS_COEFFICIENT!),
-                price.months,
-                price.plan_id,
+                priceById!.months,
+                priceById!.plan_id,
                 context.dbuser?.payload || null
             );
 
-            // Продление или создание новой подписки
-            if (payload.k == -1) {
-                await newProfileStars(context);
-                return;
+            try {
+                await userSubUpdate(context.from.id, payment.id);
+            } catch (e) {
+                console.error('Ошибка stars-payment => userSubUpdate', e);
+                await context.send('❌ Ошибка выдачи подписки, обратитесь в поддержку');
             }
 
-            await updateProfileStars(context);
+            const text = `
+✅ Подписка активирована
+
+ℹ️ Подключение
+ <i>- Если у вас установлен Happ, нажмите кнопку "Подключить в Happ"
+ - У вас другой клиент? Нажмите кнопку "Скопировать" и добавьте ключ вручную</i>
+
+<b>❗️ Если вы не разобрались как подключиться к VPN нажмите кнопку "Помощь с подключением" или обратитесь в поддержку</b>
+            `;
+
+            await context.send(text, {
+                parse_mode: 'HTML',
+                reply_markup: await copyWebappMenuKeyboard('👤 Профиль', String(context.from.id))
+            });
         } else {
-            const user = await remnawave.getUserByUserId((await getProfileByID(payload.k))[0]!.rw_user_id);
+            const [userSub] = await getUserSub(context.from.id);
+            const user = await remnawave.getUserByUserId(userSub.rw_user_id);
             const limit = await getLimitExtend();
 
             // Бонуска
@@ -78,13 +102,13 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
             }
 
             try {
-                await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Stars</code>\n- Цена: <code>${payload.p} Stars</code>`, {
+                await context.send(`💳 Покупка доп устройств\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Stars</code>\n- Цена: <code>${subPrice} Stars</code>`, {
                     chat_id: process.env.LOG_CHAT_ID!,
                     parse_mode: 'HTML'
                 });
             } catch { }
 
-            await setLimitExtended(payload.k, true);
+            await setLimitExtended(context.from.id, true);
 
             await context.send(`✅ Дополнительные устройства добавлены, приятного пользования!`, { parse_mode: 'HTML', reply_markup: backToMainMenuKeyboard });
         }

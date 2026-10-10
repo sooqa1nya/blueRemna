@@ -14,7 +14,7 @@ export const mainMenuKeyboard = async (free_trial: boolean, userId: number) => {
         .addIf(!userSub, InlineKeyboard.text('🛒 Купить подписку', 'sub_buy'))
         .addIf(!!userSub, InlineKeyboard.text('🛒 Продлить подписку', allPlansData.pack({ planId: Number(userSub.sub_plan_id) })))
         .row()
-        .addIf(!!userSub, InlineKeyboard.text('💮 Моя подписка', 'active_keys'))
+        .addIf(!!userSub, InlineKeyboard.text('💮 Моя подписка', 'user_sub'))
         .row()
         .text('ℹ️ Информация', 'about_us')
         .text('💬 Помощь', 'help')

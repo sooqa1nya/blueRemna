@@ -1,6 +1,8 @@
 import { InlineKeyboard } from 'gramio';
 import { backToMainMenuKeyboard } from './main.js';
 import { connectHelpKeyboard } from './help.js';
+import { remnawave } from '../services/remnawave/index.js';
+import { getUserSub } from '../database/user_sub.js';
 
 export const copyLinkKeyboard = (url: string) => {
     return new InlineKeyboard()
@@ -19,13 +21,17 @@ export const copyAndMenuKeyboard = (url: string) => {
         .combine(backToMainMenuKeyboard);
 };
 
-export const copyWebappMenuKeyboard = (text: string, url: string) => {
+export const copyWebappMenuKeyboard = async (text: string, userId: string) => {
+    const [userSub] = await getUserSub(userId);
+    const user = await remnawave.getUserByUserId(userSub.rw_user_id);
+
     return new InlineKeyboard()
         .columns(1)
-        .combine(importHappKeyboard(url))
-        .combine(copyLinkKeyboard(url))
-        .combine(webAppKeyboard(text, url))
+        .combine(importHappKeyboard(user!.response.subscriptionUrl))
+        .combine(copyLinkKeyboard(user!.response.subscriptionUrl))
+        .combine(webAppKeyboard(text, user!.response.subscriptionUrl))
         .combine(connectHelpKeyboard)
+        .text('💮 Моя подписка', 'user_sub')
         .combine(backToMainMenuKeyboard);
 };
 

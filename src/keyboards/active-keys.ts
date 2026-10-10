@@ -1,61 +1,16 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
-import { getProfiles } from '../database/user_profiles.js';
 import { backToMainMenuKeyboard, sendMainMenuKeyboard } from './main.js';
 import { copyLinkKeyboard, importHappKeyboard } from './other.js';
-import { currentKeysData } from './sub-payment.js';
 import { getLimitExtend } from '../database/settings.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { connectHelpKeyboard } from './help.js';
+import { allPlansData } from './sub-payment.js';
+import { getUserSub } from '../database/user_sub.js';
 
-// Список всех подписок
-export const userKeyData = new CallbackData('active_key')
-    .number('k');
-export const userKeysKeyboard = async (userId: number) => {
-    const userProfiles = await getProfiles(userId);
 
-    const userWithStatus = await Promise.all(userProfiles.map(async x => {
-        const remoteUser = await remnawave.getUserByUserId(x.rw_user_id);
-        return {
-            profile: x,
-            status: remoteUser?.response?.status ?? 'UNKNOWN'
-        };
-    }));
-
-    const buttons = userWithStatus.map(({ profile, status }) => {
-        let statusPrefix = '';
-        switch (status) {
-            case 'ACTIVE':
-                statusPrefix = '🟢';
-                break;
-            case 'DISABLED':
-                statusPrefix = '🔴';
-                break;
-            case 'EXPIRED':
-                statusPrefix = '🟡';
-                break;
-            case 'LIMITED':
-                statusPrefix = '⚠️';
-                break;
-            default:
-                statusPrefix = '❔';
-        }
-
-        return InlineKeyboard.text(`${statusPrefix} ${profile.username}`, userKeyData.pack({ k: profile.id }));
-    });
-
-    return new InlineKeyboard()
-        .add(...buttons)
-        .combine(backToMainMenuKeyboard)
-        .columns(1);
-};
-
-// Отдельная подписка
-export const extendDeviceLimitData = new CallbackData('extend_limit')
-    .number('k');
-export const userHwidDevicesData = new CallbackData('user_hwid_devices')
-    .number('k')
-    .number('rwId'); // rwUserId
-export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit: boolean, rwId: number) => {
+// Клавиатура подписки
+export const userKeyKeyboard = async (userId: string, subUrl: string, isDeviceLimit: boolean) => {
+    const [userSub1] = await getUserSub(userId);
     return new InlineKeyboard()
         .combine(importHappKeyboard(subUrl))
         .row()
@@ -65,59 +20,52 @@ export const userKeyKeyboard = async (key: number, subUrl: string, isDeviceLimit
         .row()
         .combine(connectHelpKeyboard)
         .row()
-        .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', extendDeviceLimitData.pack({ k: key })))
-        .text('📱 Мои устройства', userHwidDevicesData.pack({ k: key, rwId }))
+        .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', 'extend_limit'))
+        .text('📱 Мои устройства', 'user_hwid_devices')
         .row()
-        .text('🔄 Продлить', currentKeysData.pack({ k: key }))
+        .text('🔄 Продлить', allPlansData.pack({ planId: Number(userSub1.sub_plan_id) }))
         .row()
         .combine(backToMainMenuKeyboard);
 };
 
-export const refExtendPaymentData = new CallbackData('ref_balance_lim_extend')
-    .number('k');
-export const extendPaymentData = new CallbackData('extend_payment')
-    .string('s')
-    .number('k');
-export const starsExtendPaymentData = new CallbackData('stars_extend_payment')
-    .string('s')
-    .number('k');
-export const extendPaymentMethodKeyboard = async (key: number, refBalance: number) => {
+// Выбор платежной системы
+export const extendPaymentMethodKeyboard = async (refBalance: number) => {
     const limit = await getLimitExtend();
     const price = Number(limit.price);
 
     return new InlineKeyboard()
         .columns(1)
-        .addIf(refBalance >= price, InlineKeyboard.text('Баланс бота', refExtendPaymentData.pack({ k: key }), { icon_custom_emoji_id: '5357080225463149588' }))
-        .text('СБП', extendPaymentData.pack({ s: 'pl', k: key }), { icon_custom_emoji_id: '5447186509029452373' })
-        .text('CryptoBot', extendPaymentData.pack({ s: 'cb', k: key }), { icon_custom_emoji_id: '5361914370068613491' })
-        .text('Stars', starsExtendPaymentData.pack({ s: 'cb', k: key }), { icon_custom_emoji_id: '5321485469249198987' })
+        .addIf(refBalance >= price, InlineKeyboard.text('Баланс бота', 'ref_balance_lim_extend', { icon_custom_emoji_id: '5357080225463149588' }))
+        .text('СБП', 'sbp_extend_payment', { icon_custom_emoji_id: '5447186509029452373' })
+        .text('CryptoBot', 'cb_extend_payment', { icon_custom_emoji_id: '5361914370068613491' })
+        .text('Stars', 'stars_extend_payment', { icon_custom_emoji_id: '5321485469249198987' })
         .combine(backToMainMenuKeyboard);
 };
 
+// Проверка оплаты
 export const extendCheckPaymentData = new CallbackData('extend_cp')
-    .number('k') // sub id
-    .number('p'); // payment id
-export const extendPaymentInvoiceKeyboard = async (key: number, paymentId: number, invoiceUrl: string) => {
+    .number('paymentId'); // payment id
+export const extendPaymentInvoiceKeyboard = async (paymentId: number, invoiceUrl: string) => {
     return new InlineKeyboard()
         .url('💳 Оплатить', invoiceUrl, { style: 'primary' })
         .row()
-        .text('✅ Проверить оплату', extendCheckPaymentData.pack({ k: key, p: paymentId }), { style: 'success' })
+        .text('✅ Проверить оплату', extendCheckPaymentData.pack({ paymentId }), { style: 'success' })
         .row()
         .combine(sendMainMenuKeyboard);
 };
 
+// Список всех подключенных устройств
 export const deviceInfoData = new CallbackData('di')
-    .string('h') // hwid
-    .number('u'); // user profile id
-export const userHwidDevicesKeyboard = async (rwId: number, userProfileId: number) => {
-    const devices = (await remnawave.getUserHwidDevices(rwId))!.response.devices;
+    .string('hwid');
+export const userHwidDevicesKeyboard = async (rwUserId: number) => {
+    const devices = (await remnawave.getUserHwidDevices(Number(rwUserId)))!.response.devices;
 
     const keyboard = new InlineKeyboard();
 
     devices.forEach((x, index) => {
         keyboard.text(
             `⏺️ ${x.deviceModel}`,
-            deviceInfoData.pack({ h: x.hwid, u: userProfileId })
+            deviceInfoData.pack({ hwid: x.hwid, })
         );
         // если устройств в ряду == 2 переносим строку
         if ((index + 1) % 2 === 0) {
@@ -127,17 +75,17 @@ export const userHwidDevicesKeyboard = async (rwId: number, userProfileId: numbe
 
     keyboard
         .row()
-        .text('◀️ Назад', userKeyData.pack({ k: userProfileId }));
+        .text('◀️ Назад', 'user_sub');
 
     return keyboard;
 };
 
+// Подключенное устройство
 export const removeHwidDeviceData = new CallbackData('rd')
-    .string('h') // hwid
-    .number('u'); // user profile id
-export const userDeviceKeyboard = async (rwId: number, hwid: string, userProfileId: number) => {
+    .string('hwid');
+export const userDeviceKeyboard = async (hwid: string,) => {
     return new InlineKeyboard()
         .columns(1)
-        .text('Удалить', removeHwidDeviceData.pack({ h: hwid, u: userProfileId }), { style: 'danger' })
-        .text('◀️ Назад', userHwidDevicesData.pack({ k: userProfileId, rwId }));
+        .text('Удалить', removeHwidDeviceData.pack({ hwid }), { style: 'danger' })
+        .text('◀️ Назад', 'user_hwid_devices');
 };

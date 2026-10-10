@@ -253,10 +253,26 @@ export const subPayment = new Composer({ name: 'subPayment' })
             console.error('Ошибка выдачи рефки (sub-payment):', e);
         }
 
+        // Выдача сабки
         try {
             await userSubUpdate(context.from.id, context.queryData.paymentId);
         } catch (e) {
             console.error('Ошибка sub-payment => userSubUpdate', e);
             await context.answerCallbackQuery('❌ Ошибка выдачи подписки');
         }
+
+        const text = `
+✅ Подписка активирована
+
+ℹ️ Подключение
+ <i>- Если у вас установлен Happ, нажмите кнопку "Подключить в Happ"
+ - У вас другой клиент? Нажмите кнопку "Скопировать" и добавьте ключ вручную</i>
+
+<b>❗️ Если вы не разобрались как подключиться к VPN нажмите кнопку "Помощь с подключением" или обратитесь в поддержку</b>
+`;
+
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.copyWebappMenuKeyboard('👤 Профиль', String(context.from.id))
+        });
     });

@@ -3,3 +3,7 @@ export * from './sub-payment.js';
 export * from './active-keys.js';
 export * from './affiliate-program.js';
 export * from './admin.js';
+export * from './free-trial.js';
+export * from './help.js';
+export * from './other.js';
+export * from './scene-cancel.js';
