@@ -16,6 +16,13 @@ export const getUserSub = async (userId: string | number) => {
     `;
 };
 
+export const getUserSubRwId = async (userId: string | number) => {
+    return await sql<IUserSub[]>`
+        SELECT * FROM user_sub
+        WHERE rw_user_id = ${userId}
+    `;
+};
+
 export const setLimitExtended = async (userId: number, limitExtended: boolean) => {
     await sql`
         UPDATE user_sub

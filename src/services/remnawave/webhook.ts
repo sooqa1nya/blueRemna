@@ -1,11 +1,11 @@
-import fastify, { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
 import type { components } from './types.js';
 import { bot } from '../../bot.js';
-import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
-import { getProfile } from '../../database/user_profiles.js';
 import { urlKeyboard } from '../../keyboards/other.js';
 import { supportKeyboard } from '../../keyboards/main.js';
 import { findUser, setActive } from '../../database/users.js';
+import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
+import { getUserSubRwId } from '../../database/user_sub.js';
 
 
 type RemnawaveWebhookUserEventsDto = components['schemas']['RemnawaveWebhookUserEventsDto'];
@@ -19,7 +19,7 @@ type EventHandler = (body: any) => Promise<void>;
 const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
-    const [sub] = await getProfile(body.data.id);
+    const [sub] = await getUserSubRwId(body.data.id);
     await bot.api.sendMessage({
         chat_id: body.data.telegramId,
         text: `🛑 Доступ ограничен!\n\nСрок вашей подписки <code>${body.data.username}</code> истек. Продлите её сейчас, чтобы оставаться в безопасности и сохранить анонимность. 🔐⚡️`,
@@ -31,7 +31,7 @@ const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
 const handleUserExpiration = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
 
-    const [sub] = await getProfile(body.data.id);
+    const [sub] = await getUserSubRwId(body.data.id);
     if (body.meta?.expiration == -24) {
         await bot.api.sendMessage({
             chat_id: body.data.telegramId,

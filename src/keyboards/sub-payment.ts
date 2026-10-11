@@ -4,6 +4,7 @@ import { finalPrice } from '../utils/final-price.js';
 import { getPriceById, getPricesByPlan } from '../database/sub_prices.js';
 import { getSubPlans } from '../database/sub_plans.js';
 import { backKeyboard } from './other.js';
+import { getUserSub } from '../database/user_sub.js';
 
 
 // Выбор тарифного плана
@@ -78,4 +79,11 @@ export const paymentInvoiceKeyboard = async (paymentId: number, invoiceUrl: stri
         .text('✅ Проверить оплату', checkPaymentData.pack({ paymentId: paymentId }), { style: 'success' })
         .row()
         .combine(sendMainMenuKeyboard);
+};
+
+// Кнопка "Продлить подписку"
+export const extendSubKeyboard = async (userId: string | number) => {
+    const [userSub] = await getUserSub(userId);
+    return new InlineKeyboard()
+        .text('🔄 Продлить', allPlansData.pack({ planId: Number(userSub.sub_plan_id) }));
 };
