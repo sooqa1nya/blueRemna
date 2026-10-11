@@ -5,7 +5,7 @@ import { urlKeyboard } from '../../keyboards/other.js';
 import { supportKeyboard } from '../../keyboards/main.js';
 import { findUser, setActive } from '../../database/users.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
-import { getUserSub, getUserSubRwId } from '../../database/user_sub.js';
+import { getUserSubRwId } from '../../database/user_sub.js';
 import { remnawave } from './index.js';
 import { getPlanById, getPlanByTag } from '../../database/sub_plans.js';
 
