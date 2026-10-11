@@ -67,7 +67,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         });
     })
 
-    // Проверка оплаты СБП платега
+    // Создание счета СБП платега
     .callbackQuery('sbp_extend_payment', async context => {
         const limit = await getLimitExtend();
         const price = (Number(limit.price));
@@ -121,7 +121,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         });
     })
 
-    // Проверка оплаты CryptoBot
+    // Создание счета CryptoBot
     .callbackQuery('cb_extend_payment', async context => {
         const limit = await getLimitExtend();
         const price = (Number(limit.price));
