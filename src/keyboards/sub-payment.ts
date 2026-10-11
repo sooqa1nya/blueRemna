@@ -1,5 +1,5 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
-import { backToMainMenuKeyboard, sendMainMenuKeyboard } from './main.js';
+import { sendMainMenuKeyboard } from './main.js';
 import { finalPrice } from '../utils/final-price.js';
 import { getPriceById, getPricesByPlan } from '../database/sub_prices.js';
 import { getSubPlans } from '../database/sub_plans.js';
@@ -26,7 +26,7 @@ export const allPlansKeyboard = async () => {
 // Цены по тарифному плану (отображение со скидкой)
 export const pricesData = new CallbackData('plan_prices')
     .number('priceId');
-export const pricesKeyboard = async (planId: number, userSale: number) => {
+export const pricesKeyboard = async (planId: number, userSale: number, isSub?: boolean) => {
     const keyboard = new InlineKeyboard();
     const prices = await getPricesByPlan(planId);
 
@@ -41,8 +41,11 @@ export const pricesKeyboard = async (planId: number, userSale: number) => {
         keyboard.text(`${x.amount}₽ [${x.months} мес]`, pricesData.pack({ priceId: x.id })).row();
     });
 
-
-    keyboard.combine(backKeyboard('sub_buy'));
+    if (!!isSub) {
+        keyboard.combine(backKeyboard('main_menu'));
+    } else {
+        keyboard.combine(backKeyboard('sub_buy'));
+    }
 
     return keyboard;
 };
@@ -65,7 +68,7 @@ export const paymentServiceKeyboard = async (priceId: number, refBalance: string
         .text('СБП', sbpPlategaData.pack({ priceId }), { icon_custom_emoji_id: '5447186509029452373' })
         .text('CryptoBot', sbpPlategaData.pack({ priceId }), { icon_custom_emoji_id: '5361914370068613491' })
         .text('Stars', starsData.pack({ priceId }), { icon_custom_emoji_id: '5321485469249198987' })
-        .combine(backToMainMenuKeyboard);
+        .combine(backKeyboard(allPlansData.pack({ planId: Number(price.plan_id) })));
 };
 
 

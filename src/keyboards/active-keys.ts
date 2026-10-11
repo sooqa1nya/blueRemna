@@ -1,6 +1,6 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
 import { backToMainMenuKeyboard, sendMainMenuKeyboard } from './main.js';
-import { copyLinkKeyboard, importHappKeyboard } from './other.js';
+import { backKeyboard, copyLinkKeyboard, importHappKeyboard } from './other.js';
 import { getLimitExtend } from '../database/settings.js';
 import { remnawave } from '../services/remnawave/index.js';
 import { connectHelpKeyboard } from './help.js';
@@ -39,7 +39,7 @@ export const extendPaymentMethodKeyboard = async (refBalance: number) => {
         .text('СБП', 'sbp_extend_payment', { icon_custom_emoji_id: '5447186509029452373' })
         .text('CryptoBot', 'cb_extend_payment', { icon_custom_emoji_id: '5361914370068613491' })
         .text('Stars', 'stars_extend_payment', { icon_custom_emoji_id: '5321485469249198987' })
-        .combine(backToMainMenuKeyboard);
+        .combine(backKeyboard('user_sub'));
 };
 
 // Проверка оплаты
@@ -51,7 +51,7 @@ export const extendPaymentInvoiceKeyboard = async (paymentId: number, invoiceUrl
         .row()
         .text('✅ Проверить оплату', extendCheckPaymentData.pack({ paymentId }), { style: 'success' })
         .row()
-        .combine(sendMainMenuKeyboard);
+        .combine(backKeyboard('extend_limit'));
 };
 
 // Список всех подключенных устройств

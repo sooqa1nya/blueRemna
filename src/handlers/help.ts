@@ -25,7 +25,7 @@ export const help = new Composer({ name: 'help' })
     `;
 
         await context.editText(text, {
-            reply_markup: helpKeyboard,
+            reply_markup: helpKeyboard(),
             link_preview_options: { is_disabled: true },
             parse_mode: 'Markdown'
         });

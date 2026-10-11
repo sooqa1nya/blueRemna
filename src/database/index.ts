@@ -38,6 +38,30 @@ export const initDatabase = async () => {
                 payload TEXT
             )
         `;
+
+        await sql`
+            CREATE TABLE IF NOT EXISTS sub_plans (
+                id SERIAL PRIMARY KEY,
+                active BOOLEAN NOT NULL DEFAULT TRUE,
+                name VARCHAR(32) NOT NULL,
+                tag VARCHAR(32) UNIQUE NOT NULL,
+                internal_squad VARCHAR(128),
+                info TEXT,
+                priority INTEGER DEFAULT 0
+            )
+        `;
+
+        await sql`
+            CREATE TABLE IF NOT EXISTS sub_prices (
+                id SERIAL PRIMARY KEY,
+                plan_id BIGINT NOT NULL REFERENCES sub_plans(id) ON DELETE CASCADE,
+                months INT NOT NULL,
+                days INT NOT NULL,
+                amount NUMERIC(10, 2) NOT NULL,
+                CONSTRAINT uq_plan_months UNIQUE (plan_id, months)
+            )
+        `;
+
         await sql`
             CREATE TABLE IF NOT EXISTS user_profiles (
                 id SERIAL PRIMARY KEY,
@@ -47,20 +71,40 @@ export const initDatabase = async () => {
                 is_limit_extended BOOLEAN DEFAULT FALSE
             )
         `;
+
+        await sql`
+            CREATE TABLE IF NOT EXISTS user_sub (
+                id BIGINT PRIMARY KEY,
+                rw_user_id INT,
+                username TEXT,
+                sub_plan_id BIGINT REFERENCES sub_plans(id) ON DELETE SET NULL,
+                is_limit_extended BOOLEAN DEFAULT FALSE
+            )
+        `;
+
+        await sql`
+            CREATE INDEX IF NOT EXISTS idx_user_sub_plan_id ON user_sub(sub_plan_id)
+        `;
+
         await sql`
             CREATE TABLE IF NOT EXISTS payments (
                 id SERIAL PRIMARY KEY,
                 user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+                sub_plan_id BIGINT REFERENCES sub_plans(id) ON DELETE SET NULL,
                 service VARCHAR(32),
                 payment_id TEXT,
                 payment_time TIMESTAMP DEFAULT NOW(),
                 amount NUMERIC(10, 2),
                 status VARCHAR(32) DEFAULT 'pending',
                 months INT,
-                sub_id INT,
                 payload TEXT
             )
         `;
+
+        await sql`
+            CREATE INDEX IF NOT EXISTS idx_payments_sub_plan_id ON payments(sub_plan_id)
+        `;
+
         await sql`
             CREATE TABLE IF NOT EXISTS settings (
                 id SERIAL PRIMARY KEY,
@@ -68,6 +112,7 @@ export const initDatabase = async () => {
                 data JSONB
             )
         `;
+
         await sql`
             INSERT INTO settings (key, data)
             VALUES
@@ -76,6 +121,7 @@ export const initDatabase = async () => {
                 ('global_sale', ${sql.json(globalSale)})
             ON CONFLICT (key) DO NOTHING
         `;
+
         await sql`
             CREATE TABLE IF NOT EXISTS operating_systems (
                 id SERIAL PRIMARY KEY,
@@ -84,6 +130,7 @@ export const initDatabase = async () => {
                 priority INTEGER DEFAULT 0
             )
         `;
+
         await sql`
             INSERT INTO operating_systems (name, priority)
             VALUES
@@ -92,8 +139,9 @@ export const initDatabase = async () => {
                 ('Windows', 20),
                 ('MacOS', 10),
                 ('Linux', 0)
-            ON CONFLICT (name) DO NOTHING;
+            ON CONFLICT (name) DO NOTHING
         `;
+
         await sql`
             CREATE TABLE IF NOT EXISTS vpn_clients (
                 id SERIAL PRIMARY KEY,
@@ -102,13 +150,6 @@ export const initDatabase = async () => {
                 link TEXT,
                 button_style VARCHAR(32),
                 priority INTEGER DEFAULT 0
-            )
-        `;
-        await sql`
-            CREATE TABLE IF NOT EXISTS sub_prices (
-                id SERIAL PRIMARY KEY,
-                months INT UNIQUE NOT NULL,
-                amount NUMERIC(10, 2)
             )
         `;
         console.log('✅ База данных инициализирована');

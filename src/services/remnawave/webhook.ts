@@ -5,7 +5,9 @@ import { urlKeyboard } from '../../keyboards/other.js';
 import { supportKeyboard } from '../../keyboards/main.js';
 import { findUser, setActive } from '../../database/users.js';
 import { extendSubKeyboard } from '../../keyboards/sub-payment.js';
-import { getUserSubRwId } from '../../database/user_sub.js';
+import { getUserSub, getUserSubRwId } from '../../database/user_sub.js';
+import { remnawave } from './index.js';
+import { getPlanById, getPlanByTag } from '../../database/sub_plans.js';
 
 
 type RemnawaveWebhookUserEventsDto = components['schemas']['RemnawaveWebhookUserEventsDto'];
@@ -15,6 +17,53 @@ type RemnawaveWebhookTorrentBlockerEventsDto = components['schemas']['RemnawaveW
 export type WebhookBody = RemnawaveWebhookUserEventsDto | RemnawaveWebhookCrmEventsDto | RemnawaveWebhookNodeEventsDto | RemnawaveWebhookTorrentBlockerEventsDto;
 type EventHandler = (body: any) => Promise<void>;
 
+
+const handleUserLimited = async (body: RemnawaveWebhookUserEventsDto) => {
+    if (!body.data.telegramId) return;
+
+    const [defaultSquad] = await getPlanByTag('default');
+
+    await remnawave.updateUser({
+        id: body.data.id,
+        trafficLimitStrategy: body.data.trafficLimitStrategy,
+        trafficLimitBytes: 51 * 1073741824,
+        activeInternalSquads: [defaultSquad.internal_squad]
+    });
+
+    const [sub] = await getUserSubRwId(body.data.id);
+    await bot.api.sendMessage({
+        chat_id: body.data.telegramId,
+        text: `⚠️ Достигнут лимит трафика у тарифа "Белые списки", сервера входящие в тариф отключены. Вы можете купить дополнительный пакет трафика в меню подписки или дождаться ежемесячного сброса.`,
+        parse_mode: 'HTML'
+    });
+};
+
+const handleUserTrafficReset = async (body: RemnawaveWebhookUserEventsDto) => {
+    if (!body.data.telegramId) return;
+
+    let internalSquads: Array<string> = [];
+    const [userSub] = await getUserSubRwId(body.data.id);
+    const [plan] = await getPlanById(Number(userSub.sub_plan_id));
+
+    internalSquads.push(plan.internal_squad);
+    if (plan.tag !== 'default') {
+        const [defaultSquad] = await getPlanByTag('default');
+        internalSquads.push(defaultSquad.internal_squad);
+    }
+
+    await remnawave.updateUser({
+        id: body.data.id,
+        trafficLimitStrategy: body.data.trafficLimitStrategy,
+        trafficLimitBytes: 50 * 1073741824,
+        activeInternalSquads: internalSquads
+    });
+
+    await bot.api.sendMessage({
+        chat_id: body.data.telegramId,
+        text: `✅ У вашей подписки был сброшен месячный лимит трафика.`,
+        parse_mode: 'HTML'
+    });
+};
 
 const handleUserExpired = async (body: RemnawaveWebhookUserEventsDto) => {
     if (!body.data.telegramId) return;
@@ -115,7 +164,9 @@ export const webhookHandlers: Record<string, Record<string, EventHandler>> = {
     user: {
         'user.not_connected': handleUserNotConnected,
         'user.expired': handleUserExpired,
-        'user.expiration': handleUserExpiration
+        'user.expiration': handleUserExpiration,
+        'user.limited': handleUserLimited,
+        'user.traffic_reset': handleUserTrafficReset
     },
     crm: {
         'crm.infra_billing_node_payment_in_48hrs': handleCrmBilling

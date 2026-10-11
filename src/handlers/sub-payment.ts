@@ -19,6 +19,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
             await context.editText('❌ У вас уже есть действующая подписка, вернитесь в главное меню и попробуйте снова', {
                 reply_markup: keyboard.backToMainMenuKeyboard
             });
+            return;
         }
 
         await context.editText(`📋 Выберите тарифный план`, {
@@ -31,12 +32,6 @@ export const subPayment = new Composer({ name: 'subPayment' })
     // Цены на подписку + информация о тарифном плане + ПРОДЛЕНИЕ подписки
     .callbackQuery(keyboard.allPlansData, async context => {
         const [userSub] = await getUserSub(context.from.id);
-        if (!userSub) {
-            await context.editText('❌ У вас нет действующей подписки, вернитесь в главное меню и попробуйте снова', {
-                reply_markup: keyboard.backToMainMenuKeyboard
-            });
-        }
-
         const [plan] = await getPlanById(context.queryData.planId);
 
         const text = `
@@ -46,7 +41,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
         `;
 
         await context.editText(text, {
-            reply_markup: await keyboard.pricesKeyboard(context.queryData.planId, context.dbuser!.sale),
+            reply_markup: await keyboard.pricesKeyboard(context.queryData.planId, context.dbuser!.sale, !!userSub),
             parse_mode: 'HTML'
         });
     })

@@ -12,7 +12,7 @@ export const mainMenuKeyboard = async (free_trial: boolean, userId: number) => {
         .addIf(!free_trial, InlineKeyboard.text('🎁 Пробный период', 'free_trial_info', { style: 'success' }))
         .row()
         .addIf(!userSub, InlineKeyboard.text('🛒 Купить подписку', 'sub_buy'))
-        .addIf(!!userSub, InlineKeyboard.text('🛒 Продлить подписку', allPlansData.pack({ planId: Number(userSub.sub_plan_id) })))
+        .addIf(!!userSub, InlineKeyboard.text('🛒 Продлить подписку', allPlansData.pack({ planId: Number(userSub?.sub_plan_id ?? 0) })))
         .row()
         .addIf(!!userSub, InlineKeyboard.text('💮 Моя подписка', 'user_sub'))
         .row()

@@ -2,10 +2,10 @@ import { Composer } from 'gramio';
 import { remnawave } from '../services/remnawave/index.js';
 import { getFreeTrial } from '../database/settings.js';
 import { useFreeTrial } from '../database/users.js';
-import { addProfile } from '../database/user_profiles.js';
 import { copyWebappMenuKeyboard } from '../keyboards/other.js';
 import { freeTrialInfoKeyboard } from '../keyboards/free-trial.js';
 import { backToMainMenuKeyboard } from '../keyboards/main.js';
+import { userSubUpdate } from '../utils/userSubUpdate.js';
 
 
 export const freeTrial = new Composer({ name: 'freeTrial' })
@@ -41,55 +41,17 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
             });
         }
 
-        const date = new Date();
-        const profile = `id${String(context.from.id).slice(0, 2)}${date.getTime()}`; // Создаем уникальный ID для профиля
-        const squads = await remnawave.getSquadForVPN();
-
-        if (!squads) {
-            await context.answerCallbackQuery('❌ Ошибка при добавлении в сквад. Обратитесь в поддержку.');
-            console.error('[free-trial]: ❌ Ошибка при добавлении в сквад: ' + squads);
-            await useFreeTrial(context.from.id, false);
-            return;
-        }
-
-        const days = await getFreeTrial();
-        date.setDate(date.getDate() + Number(days));
-        const user = await remnawave.createUser({
-            username: profile,
-            status: 'ACTIVE',
-            trafficLimitStrategy: 'NO_RESET',
-            expireAt: date.toISOString(),
-            telegramId: context.from.id,
-            hwidDeviceLimit: 5,
-            activeInternalSquads: [squads.internal],
-            externalSquadUuid: squads.external
-        });
-
-        if (!user) {
-            await context.answerCallbackQuery('❌ Ошибка при создании пользователя. Обратитесь в поддержку.');
-            console.error('[free-trial]: ❌ Ошибка при создании пользователя: ' + user);
-            await useFreeTrial(context.from.id, false);
-            return;
-        }
-
+        // Выдача сабки
         try {
-            await addProfile(
-                context.from.id,
-                user.response.id,
-                profile
-            );
-        } catch (error) {
-            await context.answerCallbackQuery('❌ Ошибка при добавлении профиля в БД. Обратитесь в поддержку.');
-            await remnawave.deleteUser(user.response.id);
-            console.error('[free-trial]: ❌ Ошибка при добавлении профиля в БД. UUID: ' + error);
-            await useFreeTrial(context.from.id, false);
-            return;
+            await userSubUpdate(context.from.id);
+        } catch (e) {
+            console.error('Ошибка sub-payment => userSubUpdate', e);
+            await context.answerCallbackQuery('❌ Ошибка выдачи подписки');
         }
 
+        await useFreeTrial(context.from.id, false);
         const text = `
 ✅ Ваша пробная подписка активирована
-
-⏳ Дата окончания: \`${date.toLocaleDateString('ru-RU')}\`
 
 ℹ️ Подключение
  _- Если у вас установлен Happ, нажмите кнопку "Подключить в Happ"
@@ -101,7 +63,7 @@ export const freeTrial = new Composer({ name: 'freeTrial' })
         await context.editText(text, {
             parse_mode: 'Markdown',
             link_preview_options: { is_disabled: true },
-            reply_markup: copyWebappMenuKeyboard('👤 Профиль', user.response.subscriptionUrl)
+            reply_markup: await copyWebappMenuKeyboard('👤 Профиль', context.from.id)
         });
 
         try {

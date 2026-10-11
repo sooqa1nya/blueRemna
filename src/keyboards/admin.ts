@@ -2,7 +2,6 @@ import { CallbackData, InlineKeyboard } from 'gramio';
 import { copyLinkKeyboard, emptyButtonKeyboard } from './other.js';
 import { getAllOs } from '../database/operating_systems.js';
 import { getVpnClientsByOs } from '../database/vpn_clients.js';
-import { getProfiles } from '../database/user_profiles.js';
 import { remnawave } from '../services/remnawave/index.js';
 
 
@@ -179,42 +178,42 @@ export const adminUserProfilesData = new CallbackData('a_user_profiles')
     .string('u') // user id
     .number('k'); // id sub profile
 export const aUserProfilesKeyboard = async (userId: string) => {
-    const userProfiles = await getProfiles(Number(userId));
+    // const userProfiles = await getProfiles(Number(userId));
 
-    const userWithStatus = await Promise.all(userProfiles.map(async x => {
-        const remoteUser = await remnawave.getUserByUserId(x.rw_user_id);
-        return {
-            profile: x,
-            status: remoteUser?.response?.status ?? 'UNKNOWN'
-        };
-    }));
+    // const userWithStatus = await Promise.all(userProfiles.map(async x => {
+    //     const remoteUser = await remnawave.getUserByUserId(x.rw_user_id);
+    //     return {
+    //         profile: x,
+    //         status: remoteUser?.response?.status ?? 'UNKNOWN'
+    //     };
+    // }));
 
-    const buttons = userWithStatus.map(({ profile, status }) => {
-        let statusPrefix = '';
-        switch (status) {
-            case 'ACTIVE':
-                statusPrefix = '🟢';
-                break;
-            case 'DISABLED':
-                statusPrefix = '🔴';
-                break;
-            case 'EXPIRED':
-                statusPrefix = '🟡';
-                break;
-            case 'LIMITED':
-                statusPrefix = '⚠️';
-                break;
-            default:
-                statusPrefix = '❔';
-        }
+    // const buttons = userWithStatus.map(({ profile, status }) => {
+    //     let statusPrefix = '';
+    //     switch (status) {
+    //         case 'ACTIVE':
+    //             statusPrefix = '🟢';
+    //             break;
+    //         case 'DISABLED':
+    //             statusPrefix = '🔴';
+    //             break;
+    //         case 'EXPIRED':
+    //             statusPrefix = '🟡';
+    //             break;
+    //         case 'LIMITED':
+    //             statusPrefix = '⚠️';
+    //             break;
+    //         default:
+    //             statusPrefix = '❔';
+    //     }
 
-        return InlineKeyboard.text(`${statusPrefix} ${profile.username}`, adminUserProfilesData.pack({ u: userId, k: profile.id }));
-    });
+    //     return InlineKeyboard.text(`${statusPrefix} ${profile.username}`, adminUserProfilesData.pack({ u: userId, k: profile.id }));
+    // });
 
-    return new InlineKeyboard()
-        .add(...buttons)
-        .combine(backAUserProfileKeyboard(userId))
-        .columns(1);
+    // return new InlineKeyboard()
+    //     .add(...buttons)
+    //     .combine(backAUserProfileKeyboard(userId))
+    //     .columns(1);
 };
 
 export const changeDeviceLimitData = new CallbackData('a_change_device_lim')

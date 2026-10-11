@@ -71,7 +71,7 @@ export interface ISubPlans {
     active: boolean;
     name: string;
     tag: string;
-    internalSquad: string;
+    internal_squad: string;
     info: string;
     priority: number;
 }

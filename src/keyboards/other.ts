@@ -21,7 +21,7 @@ export const copyAndMenuKeyboard = (url: string) => {
         .combine(backToMainMenuKeyboard);
 };
 
-export const copyWebappMenuKeyboard = async (text: string, userId: string) => {
+export const copyWebappMenuKeyboard = async (text: string, userId: string | number) => {
     const [userSub] = await getUserSub(userId);
     const user = await remnawave.getUserByUserId(userSub.rw_user_id);
 

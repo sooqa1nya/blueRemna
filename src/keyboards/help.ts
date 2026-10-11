@@ -7,10 +7,11 @@ import { getVpnClientsByOs } from '../database/vpn_clients.js';
 export const listClientsKeyboard = new InlineKeyboard()
     .text('Список приложений', 'list_clients', { style: 'success' });
 
-export const helpKeyboard = new InlineKeyboard()
+export const helpKeyboard = () => new InlineKeyboard()
     .combine(listClientsKeyboard)
     .combine(supportKeyboard)
     .combine(backToMainMenuKeyboard);
+
 
 export const vpnClientData = new CallbackData('vpn_client_os_id')
     .number('id'); // id os

@@ -4,24 +4,34 @@ import { createUserSub, getUserSub } from '../database/user_sub.js';
 import { remnawave } from '../services/remnawave/index.js';
 
 
-export const userSubUpdate = async (userId: string | number, paymentId: number) => {
+export const userSubUpdate = async (userId: string | number, paymentId?: number) => {
     try {
-        const [userSub] = await getUserSub(userId);
-        const [payment] = await getPayment(paymentId);
-
-        // Добавляем пользователю внутренние сквады
+        let subPlanId, days = 3;
         let internalSquads: Array<string> = [];
-        const [plan] = await getPlanById(Number(payment.sub_plan_id));
-        internalSquads.push(plan.internalSquad);
-        if (plan.tag !== 'default') {
-            const [defaultSquad] = await getPlanByTag('default');
-            internalSquads.push(defaultSquad.internalSquad);
+
+        if (paymentId) {
+            const [payment] = await getPayment(paymentId);
+            days = payment.months * 30;
+            subPlanId = Number(payment.sub_plan_id);
+        } else {
+            subPlanId = (await getPlanByTag('bs'))[0].id;
         }
 
+        // Добавляем пользователю внутренние сквады
+        const [plan] = await getPlanById(subPlanId);
+        internalSquads.push(plan.internal_squad);
+        if (plan.tag !== 'default') {
+            const [defaultSquad] = await getPlanByTag('default');
+            internalSquads.push(defaultSquad.internal_squad);
+        }
+
+        const [userSub] = await getUserSub(userId);
         const squads = await remnawave.getSquadForVPN();
 
         const currentDate = new Date();
-        const days = payment.months * 30;
+
+        const limitStrategy = internalSquads.length > 1 ? 'MONTH' : 'NO_RESET';
+        const limitBytes = internalSquads.length > 1 ? 50 * 1073741824 : 0;
 
         if (!userSub) {
             const profileUsername = `id${String(userId).slice(0, 2)}${currentDate.getTime()}`; // Создаем уникальный username для профиля
@@ -30,7 +40,8 @@ export const userSubUpdate = async (userId: string | number, paymentId: number) 
             const user = await remnawave.createUser({
                 username: profileUsername,
                 status: 'ACTIVE',
-                trafficLimitStrategy: 'NO_RESET',
+                trafficLimitStrategy: limitStrategy,
+                trafficLimitBytes: limitBytes,
                 expireAt: currentDate.toISOString(),
                 telegramId: Number(userId),
                 hwidDeviceLimit: 5,
@@ -42,7 +53,7 @@ export const userSubUpdate = async (userId: string | number, paymentId: number) 
                 Number(userId),
                 user!.response.id,
                 profileUsername,
-                payment.sub_plan_id
+                String(subPlanId)
             );
             return;
         }
@@ -55,7 +66,8 @@ export const userSubUpdate = async (userId: string | number, paymentId: number) 
 
         await remnawave.updateUser({
             id: userSub.rw_user_id,
-            trafficLimitStrategy: 'NO_RESET',
+            trafficLimitStrategy: limitStrategy,
+            trafficLimitBytes: limitBytes,
             expireAt: date.toISOString()
         });
     } catch (error) {
