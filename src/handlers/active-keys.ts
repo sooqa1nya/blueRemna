@@ -377,4 +377,10 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         } else {
             await context.answerCallbackQuery('❌ Устройства не существует');
         }
+    })
+
+    // Смена тарифного плана
+    .callbackQuery('change_plan', async context => {
+        await context.answerCallbackQuery();
+        await context.send('⏳ В разработке.. Для смены тарифного плана обратитесь в поддержку');
     });

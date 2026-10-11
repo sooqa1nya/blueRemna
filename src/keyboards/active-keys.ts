@@ -23,6 +23,8 @@ export const userKeyKeyboard = async (userId: string, subUrl: string, isDeviceLi
         .addIf(!isDeviceLimit, InlineKeyboard.text('🔼 Расширить лимит', 'extend_limit'))
         .text('📱 Мои устройства', 'user_hwid_devices')
         .row()
+        .text('Сменить тариф', 'change_plan')
+        .row()
         .text('🔄 Продлить', allPlansData.pack({ planId: Number(userSub1.sub_plan_id) }))
         .row()
         .combine(backToMainMenuKeyboard);
