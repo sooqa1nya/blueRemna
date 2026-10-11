@@ -8,6 +8,7 @@ import { getUserSub, setLimitExtended } from '../database/user_sub.js';
 import { platega } from '../services/platega/index.js';
 import { addPayment, completePaymentProcessing, getPayment, lockPaymentForProcessing, revertPaymentProcessing } from '../database/payment.js';
 import { cryptoBot } from '../services/crypto-bot/index.js';
+import { getPlanById } from '../database/sub_plans.js';
 
 
 export const activeKeys = new Composer({ name: 'activeKeys' })
@@ -382,5 +383,30 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
     // Смена тарифного плана
     .callbackQuery('change_plan', async context => {
         await context.answerCallbackQuery();
-        await context.send('⏳ В разработке.. Для смены тарифного плана обратитесь в поддержку');
+
+        await context.editText('📋 Выберите тарифный план', {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.selectChangePlanKeyboard()
+        });
+    })
+
+    .callbackQuery(keyboard.selectChangePlanData, async context => {
+        await context.answerCallbackQuery();
+        const [plan] = await getPlanById(context.queryData.planId);
+
+        const text = `
+<b>${plan.name}</b>
+
+<blockquote>${plan.info}</blockquote>
+`;
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            reply_markup: await keyboard.changePricesKeyboard(context.queryData.planId, context.dbuser!.sale)
+        });
+    })
+
+
+    .callbackQuery(keyboard.changePricesData, async context => {
+        await context.answerCallbackQuery();
+        await context.send('⏳ В разработке.. Для смены тарифного плана обратитесь в поддержку.\n ');
     });
