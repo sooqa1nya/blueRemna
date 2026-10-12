@@ -30,7 +30,7 @@ export const pricesKeyboard = async (planId: number, userSale: number, isSub?: b
     const keyboard = new InlineKeyboard();
     const prices = await getPricesByPlan(planId);
 
-    keyboard.text('Сменить тариф', 'change_plan', { style: 'primary' });
+    keyboard.text('Сменить тариф', 'change_plan', { style: 'primary' }).row();
 
     const updatedPrices = await Promise.all(
         prices.map(async (x) => ({
