@@ -30,3 +30,11 @@ export const setLimitExtended = async (userId: number, limitExtended: boolean) =
         WHERE id = ${userId}    
     `;
 };
+
+export const updateUserSubPlanID = async (userId: number, newPlanId: number) => {
+    await sql`
+        UPDATE user_sub
+        SET sub_plan_id = ${newPlanId}
+        WHERE id = ${userId}    
+    `;
+};

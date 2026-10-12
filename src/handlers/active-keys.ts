@@ -4,11 +4,13 @@ import { remnawave } from '../services/remnawave/index.js';
 import { getLimitExtend } from '../database/settings.js';
 import { addRefBalance } from '../utils/add-ref-balance.js';
 import { setRefBalance } from '../database/users.js';
-import { getUserSub, setLimitExtended } from '../database/user_sub.js';
+import { getUserSub, setLimitExtended, updateUserSubPlanID } from '../database/user_sub.js';
 import { platega } from '../services/platega/index.js';
 import { addPayment, completePaymentProcessing, getPayment, lockPaymentForProcessing, revertPaymentProcessing } from '../database/payment.js';
 import { cryptoBot } from '../services/crypto-bot/index.js';
-import { getPlanById } from '../database/sub_plans.js';
+import { getPlanById, getPlanByTag } from '../database/sub_plans.js';
+import { recalculateSubscription } from '../utils/recalculateSubscription.js';
+import { getMonthPrice } from '../database/sub_prices.js';
 
 
 export const activeKeys = new Composer({ name: 'activeKeys' })
@@ -27,16 +29,15 @@ export const activeKeys = new Composer({ name: 'activeKeys' })
         const expire = new Date(user.response.expireAt);
         const daysRemaining = Math.ceil((expire.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
+        const [plan] = await getPlanById(Number(userSub.sub_plan_id));
+
         const text = `
 👤 Подписка: <code>${userSub.username}</code>
     
+📋 Тариф: <code>${plan.name}</code>
 📆 Действует до: <code>${expire.toLocaleDateString('ru-RU')}</code>
 ⏳ Осталось: <code>${daysRemaining > 0 ? daysRemaining : '0'}д</code>
 ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>${user.response.hwidDeviceLimit}</code>\n` : ''}
-ℹ️ Подключение:
- • Нажмите зеленую кнопку чтобы скопировать ключ доступа
- • Добавьте его в любое поддерживаемое приложение
- • Список рекомендуемых приложений находится в разделе главного меню "Помощь"
 `;
 
         await context.editText(text, {
@@ -386,7 +387,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
 
         await context.editText('📋 Выберите тарифный план', {
             parse_mode: 'HTML',
-            reply_markup: await keyboard.selectChangePlanKeyboard()
+            reply_markup: await keyboard.selectChangePlanKeyboard(context.from.id)
         });
     })
 
@@ -397,16 +398,68 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
         const text = `
 <b>${plan.name}</b>
 
+⚠️ После смены тарифа будет пересчет количества оставшихся дней в большую или меньшую сторону, в зависимости от стоимости тарифов.
+
 <blockquote>${plan.info}</blockquote>
 `;
         await context.editText(text, {
             parse_mode: 'HTML',
-            reply_markup: await keyboard.changePricesKeyboard(context.queryData.planId, context.dbuser!.sale)
+            reply_markup: keyboard.applyChangePlanKeyboard(context.queryData.planId)
         });
     })
 
+    // Смена тарифного плана
+    .callbackQuery(keyboard.applyChangePlanData, async context => {
+        const [userSub] = await getUserSub(context.from.id);
+        const rwUser = await remnawave.getUserByUserId(userSub.rw_user_id);
 
-    .callbackQuery(keyboard.changePricesData, async context => {
-        await context.answerCallbackQuery();
-        await context.send('⏳ В разработке.. Для смены тарифного плана обратитесь в поддержку.\n ');
+        const [fromPrice] = await getMonthPrice(Number(userSub.sub_plan_id));
+        const [toPrice] = await getMonthPrice(context.queryData.planId);
+
+        const recalc = recalculateSubscription(
+            new Date(rwUser!.response.expireAt),
+            { price: Number(fromPrice.amount), durationDays: fromPrice.days },
+            { price: Number(toPrice.amount), durationDays: toPrice.days }
+        );
+
+        let internalSquads: Array<string> = [];
+
+        // Добавляем пользователю внутренние сквады
+        const [plan] = await getPlanById(context.queryData.planId);
+        internalSquads.push(plan.internal_squad);
+        if (plan.tag !== 'default') {
+            const [defaultSquad] = await getPlanByTag('default');
+            internalSquads.push(defaultSquad.internal_squad);
+        }
+
+        const limitStrategy = internalSquads.length > 1 ? 'MONTH' : 'NO_RESET';
+        const limitBytes = internalSquads.length > 1 ? 50 * 1073741824 : 0;
+
+        await remnawave.updateUser({
+            id: userSub.rw_user_id,
+            trafficLimitStrategy: limitStrategy,
+            trafficLimitBytes: limitBytes,
+            activeInternalSquads: internalSquads,
+            ...(recalc.deltaDays !== 0 && {
+                expireAt: recalc.newExpireDate.toISOString(),
+            })
+        });
+
+        await updateUserSubPlanID(context.from.id, context.queryData.planId);
+
+        const text = `
+✅ Тарифный план изменён
+
+Новая дата истечения: ${recalc.newExpireDate.toLocaleDateString('ru-RU')} (${recalc.deltaDays}д)
+        `;
+
+        await context.editText(text, {
+            parse_mode: 'HTML',
+            reply_markup: keyboard.backKeyboard('user_sub')
+        });
+    })
+
+    // Уведомление о текущем тарифном плане
+    .callbackQuery('current_plan_notify', async context => {
+        await context.answerCallbackQuery('🟢 Этот тарифный план уже используется');
     });

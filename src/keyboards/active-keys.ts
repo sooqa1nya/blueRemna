@@ -1,14 +1,11 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
-import { backToMainMenuKeyboard, sendMainMenuKeyboard } from './main.js';
+import { backToMainMenuKeyboard } from './main.js';
 import { backKeyboard, copyLinkKeyboard, importHappKeyboard } from './other.js';
 import { getLimitExtend } from '../database/settings.js';
 import { remnawave } from '../services/remnawave/index.js';
-import { connectHelpKeyboard } from './help.js';
 import { allPlansData } from './sub-payment.js';
 import { getUserSub } from '../database/user_sub.js';
-import { getSubPlans } from '../database/sub_plans.js';
-import { getPricesByPlan } from '../database/sub_prices.js';
-import { finalPrice } from '../utils/final-price.js';
+import { getPlanById, getSubPlans } from '../database/sub_plans.js';
 
 
 // Клавиатура подписки
@@ -98,12 +95,19 @@ export const userDeviceKeyboard = async (hwid: string,) => {
 // Выбор тарифного плана
 export const selectChangePlanData = new CallbackData('select_change_plan')
     .number('planId');
-export const selectChangePlanKeyboard = async () => {
+export const selectChangePlanKeyboard = async (userId: number) => {
     const keyboard = new InlineKeyboard();
     const plans = await getSubPlans();
 
+    const [userSub] = await getUserSub(userId);
+    const [currentPlan] = await getPlanById(Number(userSub.sub_plan_id));
+
     plans.forEach((x) => {
-        keyboard.text(x.name, selectChangePlanData.pack({ planId: x.id })).row();
+        if (x.id === currentPlan.id) {
+            keyboard.text(x.name, 'current_plan_notify', { style: 'success' }).row();
+            return;
+        }
+        keyboard.text(x.name, selectChangePlanData.pack({ planId: x.id }), { style: 'primary' }).row();
     });
 
     keyboard.combine(backKeyboard('user_sub'));
@@ -111,25 +115,10 @@ export const selectChangePlanKeyboard = async () => {
     return keyboard;
 };
 
-// Цены по тарифному плану (отображение со скидкой)
-export const changePricesData = new CallbackData('select_change_prices')
-    .number('priceId');
-export const changePricesKeyboard = async (planId: number, userSale: number) => {
-    const keyboard = new InlineKeyboard();
-    const prices = await getPricesByPlan(planId);
-
-    const updatedPrices = await Promise.all(
-        prices.map(async (x) => ({
-            ...x,
-            amount: await finalPrice(x.amount, userSale),
-        }))
-    );
-
-    updatedPrices.forEach(async (x) => {
-        keyboard.text(`${x.amount}₽ [${x.months} мес]`, changePricesData.pack({ priceId: x.id })).row();
-    });
-
-    keyboard.combine(backKeyboard('change_plan'));
-
-    return keyboard;
-};
+// Смена тарифного плана
+export const applyChangePlanData = new CallbackData('apply_change_plan')
+    .number('planId');
+export const applyChangePlanKeyboard = (planId: number) =>
+    new InlineKeyboard()
+        .text('Сменить тариф', applyChangePlanData.pack({ planId }))
+        .combine(backKeyboard('change_plan'));

@@ -1,4 +1,4 @@
-import { InlineKeyboard } from 'gramio';
+import { ButtonOptions, InlineKeyboard } from 'gramio';
 import { backToMainMenuKeyboard } from './main.js';
 import { connectHelpKeyboard } from './help.js';
 import { remnawave } from '../services/remnawave/index.js';
@@ -51,5 +51,5 @@ export const importHappKeyboard = (subUrl: string) => {
         .url('Подключить в Happ', happUrl, { style: 'success' });
 };
 
-export const backKeyboard = (callbackData: string) =>
-    new InlineKeyboard().text('◀️ Назад', callbackData);
+export const backKeyboard = (callbackData: string, customName?: string, options?: ButtonOptions) =>
+    new InlineKeyboard().text(customName ?? '◀️ Назад', callbackData, options);

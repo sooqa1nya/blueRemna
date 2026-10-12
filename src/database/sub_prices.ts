@@ -22,3 +22,13 @@ export const getPriceById = async (priceId: number) => {
         WHERE id = ${priceId}
     `;
 };
+
+export const getMonthPrice = async (planId: number) => {
+    return await sql<ISubPrices[]>`
+        SELECT * FROM sub_prices
+        WHERE
+            plan_id = ${planId} AND
+            months = 1
+    `;
+};
+
