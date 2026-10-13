@@ -1,5 +1,5 @@
 import { CallbackData, InlineKeyboard } from 'gramio';
-import { copyLinkKeyboard, emptyButtonKeyboard } from './other.js';
+import { backKeyboard, copyLinkKeyboard, emptyButtonKeyboard } from './other.js';
 import { getAllOs } from '../database/operating_systems.js';
 import { getVpnClientsByOs } from '../database/vpn_clients.js';
 import { remnawave } from '../services/remnawave/index.js';
@@ -77,7 +77,7 @@ export const aUserProfileKeyboard = (userId: string | number) => {
         .text('Реф. процент', aChangeUserRefProcData.pack({ i: String(userId) }))
         .row()
         .text('Скидка', aChangeUserSaleData.pack({ i: String(userId) }))
-        .text('Подписки', aUserSubData.pack({ i: String(userId) }))
+        .text('Подписка', aUserSubData.pack({ i: String(userId) }))
         .row()
         .combine(backAdminMenuKeyboard);
 };
@@ -174,99 +174,54 @@ export const changeStyleButtonKeyboard = async (osId: number, clientId: number) 
         .text('◀️ Назад', adminVpnClientData.pack({ os: osId, id: clientId }));
 };
 
-export const adminUserProfilesData = new CallbackData('a_user_profiles')
-    .string('u') // user id
-    .number('k'); // id sub profile
-export const aUserProfilesKeyboard = async (userId: string) => {
-    // const userProfiles = await getProfiles(Number(userId));
-
-    // const userWithStatus = await Promise.all(userProfiles.map(async x => {
-    //     const remoteUser = await remnawave.getUserByUserId(x.rw_user_id);
-    //     return {
-    //         profile: x,
-    //         status: remoteUser?.response?.status ?? 'UNKNOWN'
-    //     };
-    // }));
-
-    // const buttons = userWithStatus.map(({ profile, status }) => {
-    //     let statusPrefix = '';
-    //     switch (status) {
-    //         case 'ACTIVE':
-    //             statusPrefix = '🟢';
-    //             break;
-    //         case 'DISABLED':
-    //             statusPrefix = '🔴';
-    //             break;
-    //         case 'EXPIRED':
-    //             statusPrefix = '🟡';
-    //             break;
-    //         case 'LIMITED':
-    //             statusPrefix = '⚠️';
-    //             break;
-    //         default:
-    //             statusPrefix = '❔';
-    //     }
-
-    //     return InlineKeyboard.text(`${statusPrefix} ${profile.username}`, adminUserProfilesData.pack({ u: userId, k: profile.id }));
-    // });
-
-    // return new InlineKeyboard()
-    //     .add(...buttons)
-    //     .combine(backAUserProfileKeyboard(userId))
-    //     .columns(1);
-};
-
 export const changeDeviceLimitData = new CallbackData('a_change_device_lim')
-    .number('k'); // sub profile id
+    .string('userId');
 export const switchSubStatus = new CallbackData('a_switch_sub_status')
-    .number('k'); // sub profile id
+    .string('userId');
 export const switchDeviceLimitData = new CallbackData('a_switch_device_lim')
-    .number('k') // sub profile id
+    .string('userId')
     .boolean('l'); // device limit status 
 export const changeSubDurationData = new CallbackData('a_change_sub_dur')
-    .number('k'); // sub profile id
+    .string('userId');
 export const changeTgIdData = new CallbackData('a_change_tg')
-    .number('k'); // sub profile id
+    .string('userId');
 export const changeDescriptionData = new CallbackData('a_change_description')
-    .string('u') // user profile id
-    .number('k'); // sub profile id
-export const aUserSubKeybard = (userId: string | number, subProfileId: number, deviceLimit: boolean, subUrl: string) => {
+    .string('userId');
+export const aUserSubKeybard = (userId: string, deviceLimit: boolean, subUrl: string) => {
     return new InlineKeyboard()
-        .text('ACTIVE/DISABLED', switchSubStatus.pack({ k: subProfileId }), { style: 'danger' })
+        .text('ACTIVE/DISABLED', switchSubStatus.pack({ userId }), { style: 'danger' })
         .row()
         .combine(copyLinkKeyboard(subUrl))
         .webApp('👤 Профиль', subUrl, { style: 'primary' })
         .row()
-        .text('📆 Дни', changeSubDurationData.pack({ k: subProfileId }))
-        .text('📱 Лимит устройств', changeDeviceLimitData.pack({ k: subProfileId }))
+        .text('📆 Дни', changeSubDurationData.pack({ userId }))
+        .text('📱 Лимит устройств', changeDeviceLimitData.pack({ userId }))
         .row()
-        .text('📝 Описание', changeDescriptionData.pack({ u: String(userId), k: subProfileId }))
-        .text((deviceLimit ? '🔴' : '🟢') + ' Доп устройства', switchDeviceLimitData.pack({ k: subProfileId, l: deviceLimit }))
-        .row()
-        .text('◀️ Подписки', aUserSubData.pack({ i: String(userId) }))
+        .text('📝 Описание', changeDescriptionData.pack({ userId }))
+        .text((deviceLimit ? '🔴' : '🟢') + ' Доп устройства', switchDeviceLimitData.pack({ userId, l: deviceLimit }))
         .row()
         .text('◀️ Пользователь', backAUserProfileData.pack({ i: String(userId) }));
 };
 
 export const aChangeDaysData = new CallbackData('a_change_sub_days')
-    .number('k') // sub profile id
+    .string('userId') // sub profile id
     .number('d'); // +-days
-export const aChangeDaysKeyboard = (userId: string, subProfileId: number) => {
+export const aChangeDaysKeyboard = (userId: string) => {
     return new InlineKeyboard()
-        .text('➖ 1', aChangeDaysData.pack({ k: subProfileId, d: -1 }), { style: 'danger' })
-        .text('➕ 1', aChangeDaysData.pack({ k: subProfileId, d: 1 }), { style: 'success' })
+        .text('➖ 1', aChangeDaysData.pack({ userId, d: -1 }), { style: 'danger' })
+        .text('➕ 1', aChangeDaysData.pack({ userId, d: 1 }), { style: 'success' })
         .row()
-        .text('➖ 3', aChangeDaysData.pack({ k: subProfileId, d: -3 }), { style: 'danger' })
-        .text('➕ 3', aChangeDaysData.pack({ k: subProfileId, d: 3 }), { style: 'success' })
+        .text('➖ 3', aChangeDaysData.pack({ userId, d: -3 }), { style: 'danger' })
+        .text('➕ 3', aChangeDaysData.pack({ userId, d: 3 }), { style: 'success' })
         .row()
-        .text('➖ 7', aChangeDaysData.pack({ k: subProfileId, d: -7 }), { style: 'danger' })
-        .text('➕ 7', aChangeDaysData.pack({ k: subProfileId, d: 7 }), { style: 'success' })
+        .text('➖ 7', aChangeDaysData.pack({ userId, d: -7 }), { style: 'danger' })
+        .text('➕ 7', aChangeDaysData.pack({ userId, d: 7 }), { style: 'success' })
         .row()
-        .text('➖ 30', aChangeDaysData.pack({ k: subProfileId, d: -30 }), { style: 'danger' })
-        .text('➕ 30', aChangeDaysData.pack({ k: subProfileId, d: 30 }), { style: 'success' })
+        .text('➖ 30', aChangeDaysData.pack({ userId, d: -30 }), { style: 'danger' })
+        .text('➕ 30', aChangeDaysData.pack({ userId, d: 30 }), { style: 'success' })
         .row()
-        .text('➖ 90', aChangeDaysData.pack({ k: subProfileId, d: -90 }), { style: 'danger' })
-        .text('➕ 90', aChangeDaysData.pack({ k: subProfileId, d: 90 }), { style: 'success' })
+        .text('➖ 90', aChangeDaysData.pack({ userId, d: -90 }), { style: 'danger' })
+        .text('➕ 90', aChangeDaysData.pack({ userId, d: 90 }), { style: 'success' })
         .row()
-        .text('◀️ Назад', adminUserProfilesData.pack({ u: userId, k: subProfileId }));
+        .combine(backKeyboard(aUserSubData.pack({ i: userId })));
 };

@@ -36,7 +36,7 @@ export const bot = new Bot(process.env.BOT_TOKEN as string)
     .extend(help)
     .extend(aboutUs)
     .extend(starsPayment)
-    // .extend(admin)
+    .extend(admin)
     .extend(sceneCancel)
     .extend(emptyButton)
     .extend(inlineQuery);

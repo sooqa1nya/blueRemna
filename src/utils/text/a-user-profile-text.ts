@@ -1,4 +1,6 @@
 import { getUserPaidPayments } from '../../database/payment.js';
+import { getPlanById } from '../../database/sub_plans.js';
+import { getUserSub } from '../../database/user_sub.js';
 import { findPayloadCount, findUser } from '../../database/users.js';
 import { remnawave } from '../../services/remnawave/index.js';
 
@@ -7,15 +9,10 @@ export const aUserProfileText = async (userId: string | number) => {
     const regDate = new Date(user.register);
     const lastActivityDate = new Date(user.last_activity);
 
-    const userProfiles = (await remnawave.getUserByTelegramId(String(userId)))!.response.users;
-    let activeSub = 0;
-    if (userProfiles.length) {
-        for (const sub of userProfiles) {
-            if (sub.status == 'ACTIVE') {
-                activeSub++;
-            }
-        }
-    }
+
+    const [userSub] = await getUserSub(userId);
+    const rwProfile = await remnawave.getUserByUserId(userSub.rw_user_id);
+    const [plan] = await getPlanById(Number(userSub.sub_plan_id));
 
     const payments = await getUserPaidPayments(Number(userId));
     let paymentSum = 0;
@@ -41,8 +38,8 @@ Username: ${user.username ? `@${user.username}` : '<code>N/A</code>'}
 Последняя активность: <code>${lastActivityDate.toLocaleDateString('ru-RU')} ${lastActivityDate.toLocaleTimeString('ru-RU')}</code>
 
 Пробный период: <code>${user.trial_key ? 'Использован' : 'Не использован'}</code>
-Подписок: <code>${userProfiles.length}</code>
-Активных: <code>${activeSub}</code>
+Тариф: <code>${plan.name}</code>
+Статус: <code>${rwProfile?.response.status}</code>
 
 Скидка: <code>${user.sale}%</code>
 Транзакции: <code>${paymentSum}₽ (${payments.length})</code>
