@@ -103,7 +103,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
     })
 
     // Криптобот
-    .callbackQuery(keyboard.sbpPlategaData, async context => {
+    .callbackQuery(keyboard.cryptoBotData, async context => {
         try {
             const [price] = await getPriceById(context.queryData.priceId);
             const fPrice = Number(await finalPrice(price.amount, context.dbuser!.sale));
