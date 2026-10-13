@@ -10,7 +10,8 @@ import { addPayment, completePaymentProcessing, getPayment, lockPaymentForProces
 import { cryptoBot } from '../services/crypto-bot/index.js';
 import { getPlanById, getPlanByTag } from '../database/sub_plans.js';
 import { recalculateSubscription } from '../utils/recalculateSubscription.js';
-import { getMonthPrice } from '../database/sub_prices.js';
+import { getMonthPrice, getPricesByPlan } from '../database/sub_prices.js';
+import { finalPrice } from '../utils/final-price.js';
 
 
 export const activeKeys = new Composer({ name: 'activeKeys' })
@@ -394,13 +395,34 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
     .callbackQuery(keyboard.selectChangePlanData, async context => {
         await context.answerCallbackQuery();
         const [plan] = await getPlanById(context.queryData.planId);
+        const hosts = await remnawave.getHostsByTag(plan.tag);
+        const prices = await getPricesByPlan(context.queryData.planId);
+
+        let pricesText: string = '';
+        const updatedPrices = await Promise.all(
+            prices.map(async (x) => ({
+                ...x,
+                amount: await finalPrice(x.amount, context.dbuser?.sale ?? 0),
+            }))
+        );
+
+        for (let i = 0; i < updatedPrices.length; i++) {
+            const element = updatedPrices[i];
+            pricesText += `${element.amount}₽ [${element.months} мес]${updatedPrices.length - 1 !== i ? '\n' : ''}`;
+        }
 
         const text = `
 <b>${plan.name}</b>
 
-⚠️ После смены тарифа будет пересчет количества оставшихся дней в большую или меньшую сторону, в зависимости от стоимости тарифов.
-
 <blockquote>${plan.info}</blockquote>
+
+Стоимость тарифа:
+<blockquote>${pricesText}</blockquote>
+
+${hosts ? `Доступ к серверам:
+<blockquote>${hosts.join('\n')}</blockquote>` : ''}
+
+⚠️ После смены тарифа будет пересчет количества оставшихся дней в большую или меньшую сторону, в зависимости от стоимости тарифов.
 `;
         await context.editText(text, {
             parse_mode: 'HTML',

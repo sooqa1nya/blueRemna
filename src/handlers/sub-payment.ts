@@ -1,6 +1,6 @@
 import { Composer } from 'gramio';
 import * as keyboard from '../keyboards/index.js';
-import { finalPrice } from '../utils/final-price.js';
+import { calcSale, finalPrice } from '../utils/final-price.js';
 import { addRefBalance } from '../utils/add-ref-balance.js';
 import { setRefBalance } from '../database/users.js';
 import { getPlanById } from '../database/sub_plans.js';
@@ -10,6 +10,7 @@ import { addPayment, completePaymentProcessing, getPayment, lockPaymentForProces
 import { cryptoBot } from '../services/crypto-bot/index.js';
 import { userSubUpdate } from '../utils/userSubUpdate.js';
 import { getUserSub } from '../database/user_sub.js';
+import { remnawave } from '../services/remnawave/index.js';
 
 export const subPayment = new Composer({ name: 'subPayment' })
     // Тарифный план [Покупка подписки]
@@ -33,11 +34,16 @@ export const subPayment = new Composer({ name: 'subPayment' })
     .callbackQuery(keyboard.allPlansData, async context => {
         const [userSub] = await getUserSub(context.from.id);
         const [plan] = await getPlanById(context.queryData.planId);
+        const sale = await calcSale(context.dbuser?.sale ?? 0);
+        const hosts = await remnawave.getHostsByTag(plan.tag);
 
         const text = `
-<b>${plan.name}</b>
+<b>${plan.name} ${sale > 0 ? `• Скидка: <code>${sale}%</code>` : ''}</b>
 
 <blockquote>${plan.info}</blockquote>
+
+${hosts ? `Доступ к серверам:
+<blockquote>${hosts.join('\n')}</blockquote>` : ''}
         `;
 
         await context.editText(text, {

@@ -130,6 +130,16 @@ class RemnaWaveService {
         return data;
     };
 
+    public async getHostsByTag(tag: string) {
+        const res = await this.getHosts();
+        const hosts = res?.response.filter(x => x.tags.includes(tag.toUpperCase()) && !x.isDisabled && !x.isHidden).map(x => x.remark);
+        if (!hosts?.length) {
+            console.error('[getHostsByTag] Ошибка получения хостов для профиля. tag:', tag);
+            return undefined;
+        }
+        return hosts;
+    };
+
     public async getHostsForVPN() {
         const res = await this.getHosts();
         const hosts = res?.response.filter(x => x.sni && !x.isDisabled && !x.isHidden).map(x => x.remark);
