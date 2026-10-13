@@ -23,14 +23,6 @@ export const getPaymentId = async (paymentId: string) => {
     `;
 };
 
-export const changeStatus = async (id: number, status: 'pending' | 'process' | 'paid'): Promise<void> => {
-    await sql<IPayment[]>`
-        UPDATE payments
-        SET status = ${status}
-        WHERE id = ${id}
-    `;
-};
-
 export const lockPaymentForProcessing = async (id: number): Promise<boolean> => {
     const result = await sql<IPayment[]>`
         UPDATE payments
@@ -64,22 +56,6 @@ export const getPaymentPayload = async (payload: string) => {
             payload = ${payload} AND
             status = 'paid'
     `;
-};
-
-export const getPaid = async () => {
-    return await sql<IPayment[]>`
-        SELECT * FROM payments
-        WHERE status = 'paid'
-    `;
-};
-
-export const getPaidSubs = async () => {
-    const [result] = await sql`
-        SELECT SUM(amount) FROM payments
-        WHERE status = 'paid'
-    `;
-
-    return result.sum || 0;
 };
 
 export const getUserPaidPayments = async (userId: number) => {

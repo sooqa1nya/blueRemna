@@ -1,13 +1,6 @@
 import type { ISetting } from './types.js';
 import sql from './index.js';
 
-export const getKey = async (key: string) => {
-    return await sql<ISetting[]>`
-        SELECT * FROM settings
-        WHERE key = ${key}
-    `;
-};
-
 export const getFreeTrial = async () => {
     const [result] = await sql`
         SELECT data->>'duration' AS duration 

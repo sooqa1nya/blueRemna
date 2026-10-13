@@ -40,10 +40,6 @@ class CryptoBot {
             body: JSON.stringify(data)
         });
     }
-
-    public async getMe() {
-        return await this.request<any>('getMe');
-    }
 }
 
 export const cryptoBot = new CryptoBot(process.env.CRYPTO_BOT_TOKEN!);

@@ -1,12 +1,6 @@
 import sql from './index.js';
 import { ISubPrices } from './types.js';
 
-// УДАЛЕНИЕ
-export const getSubPrices = async () => {
-    return await sql<ISubPrices[]>`
-        SELECT * FROM sub_prices
-    `;
-};
 
 export const getPricesByPlan = async (planId: number) => {
     return await sql<ISubPrices[]>`

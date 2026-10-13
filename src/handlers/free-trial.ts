@@ -1,5 +1,4 @@
 import { Composer } from 'gramio';
-import { remnawave } from '../services/remnawave/index.js';
 import { getFreeTrial } from '../database/settings.js';
 import { useFreeTrial } from '../database/users.js';
 import { copyWebappMenuKeyboard } from '../keyboards/other.js';

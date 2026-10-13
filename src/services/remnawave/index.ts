@@ -3,8 +3,7 @@ import type { paths, components } from './types.js';
 
 
 class RemnaWaveService {
-    private squads: { internal: string; external: string; } | null = null;
-    private configProfile: string | null = null;
+    private externalSquad: string | null = null;
     private client: ReturnType<typeof createClient<paths>>;
 
     constructor(JWT: string, baseURL: string) {
@@ -107,51 +106,20 @@ class RemnaWaveService {
         return data;
     };
 
-    public async getSquadForVPN() {
-        if (this.squads) {
-            return this.squads;
+    public async getExternalSquad() {
+        if (this.externalSquad) {
+            return this.externalSquad;
         }
 
-        const res = await this.getInternalSquads();
-        const internal = res?.response.internalSquads.filter(x => x.name === process.env.REMNAWAVE_INTERNAL_SQUAD)[0]?.uuid;
-        const res2 = await this.getExternalSquads();
-        const external = res2?.response.externalSquads.filter(x => x.name === process.env.REMNAWAVE_EXTERNAL_SQUAD)[0]?.uuid;
-        if (!internal || !external) {
+        const external = await this.getExternalSquads();
+        if (!external) {
             console.error('Ошибка получения сквада');
             return undefined;
         }
 
-        this.squads = {
-            internal,
-            external
-        };
-        return this.squads;
+        this.externalSquad = external.response.externalSquads.filter(x => x.name === process.env.REMNAWAVE_EXTERNAL_SQUAD)[0]?.uuid;;
+        return this.externalSquad;
     };
-
-    public async getConfigProfiles() {
-        const { data, error } = await this.client.GET('/api/config-profiles', {});
-        if (error) {
-            console.error('RemnaWave API error:', error);
-            return undefined;
-        }
-        return data;
-    };
-
-    public async getConfigForVPN() {
-        if (this.configProfile) {
-            return this.configProfile;
-        }
-
-        const res = await this.getConfigProfiles();
-        const profile = res?.response.configProfiles.filter(x => x.name === process.env.REMNAWAVE_PROFILE)[0]?.uuid;
-        if (!profile) {
-            console.error('Ошибка получения конфига профиля');
-            return undefined;
-        }
-
-        this.configProfile = profile;
-        return profile;
-    }
 
     public async getHosts() {
         const { data, error } = await this.client.GET('/api/hosts', {});
@@ -163,11 +131,6 @@ class RemnaWaveService {
     };
 
     public async getHostsForVPN() {
-        // const profile = await this.getConfigForVPN();
-        // if (!profile) {
-        //     return undefined;
-        // }
-
         const res = await this.getHosts();
         const hosts = res?.response.filter(x => x.sni && !x.isDisabled && !x.isHidden).map(x => x.remark);
         if (!hosts?.length) {

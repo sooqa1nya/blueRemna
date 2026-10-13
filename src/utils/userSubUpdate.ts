@@ -26,7 +26,7 @@ export const userSubUpdate = async (userId: string | number, paymentId?: number,
         }
 
         const [userSub] = await getUserSub(userId);
-        const squads = await remnawave.getSquadForVPN();
+        const externalSquad = await remnawave.getExternalSquad();
 
         const currentDate = new Date();
 
@@ -46,7 +46,7 @@ export const userSubUpdate = async (userId: string | number, paymentId?: number,
                 telegramId: Number(userId),
                 hwidDeviceLimit: 5,
                 activeInternalSquads: internalSquads,
-                externalSquadUuid: squads!.external
+                externalSquadUuid: externalSquad
             });
 
             await createUserSub(

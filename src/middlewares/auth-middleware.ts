@@ -1,6 +1,6 @@
 import { Bot, Context } from 'gramio';
 import { policyKeyboard } from '../keyboards/index.js';
-import { updateUserActivity, upsertUser } from '../database/users.js';
+import { upsertUser } from '../database/users.js';
 
 export const authMiddleware = async (context: Context<Bot>, next: () => Promise<unknown>) => {
     if (context.is('message') || context.is('callback_query')) {
