@@ -142,7 +142,7 @@ ${user.response.hwidDeviceLimit ? `\n📱 Лимит устройств: <code>$
 
         const [payment] = await addPayment(
             context.from.id,
-            'Platega',
+            'CryptoBot',
             invoice.result.invoice_id.toString(),
             price,
             0,

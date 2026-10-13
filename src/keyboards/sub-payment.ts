@@ -55,7 +55,7 @@ export const pricesKeyboard = async (planId: number, userSale: number, isSub?: b
 // Меню выбора платежной системы для оплаты
 export const sbpPlategaData = new CallbackData('payment_platega')
     .number('priceId');
-export const cryptobotData = new CallbackData('payment_cb')
+export const cryptoBotData = new CallbackData('payment_cb')
     .number('priceId');
 export const starsData = new CallbackData('payment_stars')
     .number('priceId');
@@ -68,7 +68,7 @@ export const paymentServiceKeyboard = async (priceId: number, refBalance: string
         .columns(1)
         .addIf(Number(refBalance) >= Number(await finalPrice(price.amount, Number(refBalance))), InlineKeyboard.text('Баланс бота', paymentRefBalanceData.pack({ priceId }), { icon_custom_emoji_id: '5357080225463149588' }))
         .text('СБП', sbpPlategaData.pack({ priceId }), { icon_custom_emoji_id: '5447186509029452373' })
-        .text('CryptoBot', sbpPlategaData.pack({ priceId }), { icon_custom_emoji_id: '5361914370068613491' })
+        .text('CryptoBot', cryptoBotData.pack({ priceId }), { icon_custom_emoji_id: '5361914370068613491' })
         .text('Stars', starsData.pack({ priceId }), { icon_custom_emoji_id: '5321485469249198987' })
         .combine(backKeyboard(allPlansData.pack({ planId: Number(price.plan_id) })));
 };

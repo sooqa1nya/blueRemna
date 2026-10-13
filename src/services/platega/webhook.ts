@@ -84,7 +84,7 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
         } else {
             // Выдача сабки
             try {
-                await userSubUpdate(payment.user_id, Number(payment.sub_plan_id));
+                await userSubUpdate(payment.user_id, Number(payment.id));
             } catch (e) {
                 console.error('Ошибка sub-payment => userSubUpdate', e);
                 await bot.api.sendMessage({

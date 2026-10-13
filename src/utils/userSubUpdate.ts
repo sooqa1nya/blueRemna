@@ -4,9 +4,9 @@ import { createUserSub, getUserSub } from '../database/user_sub.js';
 import { remnawave } from '../services/remnawave/index.js';
 
 
-export const userSubUpdate = async (userId: string | number, paymentId?: number) => {
+export const userSubUpdate = async (userId: string | number, paymentId?: number, days: number = 3) => {
     try {
-        let subPlanId, days = 3;
+        let subPlanId;
         let internalSquads: Array<string> = [];
 
         if (paymentId) {

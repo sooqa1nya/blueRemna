@@ -184,7 +184,7 @@ export const subPayment = new Composer({ name: 'subPayment' })
         } catch { }
 
         try {
-            await userSubUpdate(context.from.id, Number(price.plan_id));
+            await userSubUpdate(context.from.id, undefined, Number(price.days));
         } catch (e) {
             console.error('Ошибка sub-payment => userSubUpdate', e);
             await context.answerCallbackQuery('❌ Ошибка выдачи подписки');
