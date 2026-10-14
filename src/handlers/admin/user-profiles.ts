@@ -60,9 +60,12 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
 
     .callbackQuery(aUserSubData, async context => {
         const [userSub] = await getUserSub(context.queryData.i);
+        if (!userSub) {
+            return await context.answerCallbackQuery('❌ У пользователя нет активной подписки');
+        }
         const rw = await remnawave.getUserByUserId(userSub.rw_user_id);
         if (!rw) {
-            return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
+            return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке remnawave');
         }
         const sub = rw.response;
 
@@ -78,7 +81,7 @@ export const userProfilesAdmin = new Composer({ name: 'admin-user-profiles' })
         const [userSub] = await getUserSub(context.queryData.userId);
         const rw = await remnawave.getUserByUserId(userSub.rw_user_id);
         if (!rw) {
-            return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке');
+            return await context.answerCallbackQuery('❌ Ошибка получения информации о подписке remnawave');
         }
         const sub = rw.response;
         await context.editReplyMarkup(aUserSubKeybard(userSub.id, userSub.is_limit_extended, sub.subscriptionUrl));
