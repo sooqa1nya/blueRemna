@@ -117,7 +117,7 @@ ${hosts ? `Доступ к серверам:
             const invoice = await cryptoBot.createInvoice({
                 currency_type: 'fiat',
                 fiat: 'RUB',
-                amount: price.toString(),
+                amount: fPrice.toString(),
                 expires_in: 1800
             });
 
