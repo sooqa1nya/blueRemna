@@ -1,5 +1,6 @@
 import createClient from "openapi-fetch";
 import type { paths, components } from './types.js';
+import { getSubPlans } from '../../database/sub_plans.js';
 
 
 class RemnaWaveService {
@@ -141,13 +142,18 @@ class RemnaWaveService {
     };
 
     public async getHostsForVPN() {
-        const res = await this.getHosts();
-        const hosts = res?.response.filter(x => x.sni && !x.isDisabled && !x.isHidden).map(x => x.remark);
-        if (!hosts?.length) {
-            console.error('Ошибка получения хостов для профиля');
-            return undefined;
+        const subPlans = await getSubPlans();
+
+        let allTags: string[] = [];
+
+        for (const plan of subPlans) {
+            const hosts = await this.getHostsByTag(plan.tag);
+            if (hosts) {
+                allTags.push(...hosts);
+            }
         }
-        return hosts;
+
+        return allTags;
     }
 
     public async getUserHwidDevices(userId: number) {
