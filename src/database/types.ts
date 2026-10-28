@@ -38,7 +38,7 @@ export interface IPayment {
     payment_id: string;
     payment_time: Date;
     amount: string;
-    status: 'pending' | 'process' | 'paid';
+    status: 'pending' | 'process' | 'paid' | 'chargebacked' | 'partially_refunded' | 'disputed';
     months: number;
     sub_plan_id: string;
     payload: string | null;

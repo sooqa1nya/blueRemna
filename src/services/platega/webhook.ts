@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
-import { CallbackPayload } from './types.js';
-import { completePaymentProcessing, getPaymentId, lockPaymentForProcessing } from '../../database/payment.js';
+import { CallbackPayload, PaymentStatus } from './types.js';
+import { completePaymentProcessing, getPaymentId, lockPaymentForProcessing, updatePaymentStatus } from '../../database/payment.js';
 import { remnawave } from '../remnawave/index.js';
 import { bot } from '../../bot.js';
 import { copyWebappMenuKeyboard } from '../../keyboards/other.js';
@@ -15,15 +15,27 @@ import { userSubUpdate } from '../../utils/userSubUpdate.js';
 export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
     server.post('/platega', async (request: FastifyRequest<{ Body: CallbackPayload; }>, reply: FastifyReply) => {
         const body = request.body;
+        const [payment] = await getPaymentId(body.id);
 
-        if (body.status !== "CONFIRMED") {
+        if (body.status == PaymentStatus.DISPUTED) {
+            await updatePaymentStatus(payment.id, 'disputed');
+            await reply.code(200).send({ status: 'ok' });
+            return;
+        } else if (body.status == PaymentStatus.CHARGEBACKED) {
+            await updatePaymentStatus(payment.id, 'chargebacked');
+            await reply.code(200).send({ status: 'ok' });
+            return;
+        } else if (body.status == PaymentStatus.PARTIALLY_REFUNDED) {
+            await updatePaymentStatus(payment.id, 'partially_refunded');
+            await reply.code(200).send({ status: 'ok' });
+            return;
+        } else if (body.status !== PaymentStatus.CONFIRMED) {
             await reply.code(200).send({ status: 'ok' });
             return;
         }
 
-        const [payment] = await getPaymentId(body.id);
 
-        if (payment.status == 'paid') {
+        if (payment.status !== 'pending') {
             await reply.code(200).send({ status: 'ok' });
             return;
         }

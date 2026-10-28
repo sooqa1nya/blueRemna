@@ -2,7 +2,7 @@
 /**
  * Статус платежа
  */
-enum PaymentStatus {
+export enum PaymentStatus {
     /** Ожидает оплаты — Транзакция ожидает поступления платежа от пользователя */
     PENDING = 'PENDING',
     /** Отменен — Транзакция отменена пользователем или системой */
@@ -11,6 +11,10 @@ enum PaymentStatus {
     CONFIRMED = 'CONFIRMED',
     /** Chargeback — Спорная транзакция, требующая разбирательства */
     CHARGEBACKED = 'CHARGEBACKED',
+    /** По платежу прошёл частичный возврат. Платёж остаётся зачисленным на остаток суммы. */
+    PARTIALLY_REFUNDED = 'PARTIALLY_REFUNDED',
+    /** Платёж поставлен на проверку. Деньги по нему зарезервированы до решения: вывести их нельзя, но и списания со счёта ещё не было. */
+    DISPUTED = 'DISPUTED'
 }
 
 /**
@@ -105,20 +109,53 @@ export interface TransactionStatusResponse {
 /**
  * Callback-статус (подмножество PaymentStatus, приходящее в callback)
  */
-export type CallbackStatus = PaymentStatus.CONFIRMED | PaymentStatus.CANCELED;
+export type CallbackStatus = PaymentStatus.CONFIRMED | PaymentStatus.CANCELED | PaymentStatus.CHARGEBACKED | PaymentStatus.PARTIALLY_REFUNDED | PaymentStatus.DISPUTED;
 
 /**
  * Тело callback-уведомления
  */
 export interface CallbackPayload {
-    /** ID транзакции */
+    /** ID транзакции / подписки (uuid). Всегда. Для платежей — идентификатор платежа, для статусов подписки — идентификатор подписки */
     id: string;
-    /** Сумма */
+
+    /** Сумма платежа в валюте платежа. Всегда */
     amount: number;
-    /** Валюта */
+
+    /** Валюта. Всегда */
     currency: string;
-    /** Статус транзакции в callback */
-    status: CallbackStatus;
-    /** ID метода оплаты */
-    paymentMethod: PaymentMethodInt;
+
+    /** Статус транзакции / подписки. Всегда. См. страницы статусов */
+    status: CallbackStatus | string;
+
+    /** Код метода оплаты. Всегда для платежей */
+    paymentMethod?: PaymentMethodInt;
+
+    /** То, что вы передали при создании платежа; пустая строка, если не передавали. Всегда */
+    payload: string;
+
+    /** Только если платёж создан по платёжной ссылке */
+    paymentLinkId?: string;
+
+    /** Только для платежей по подписке и статусов подписки */
+    subscriptionId?: string;
+
+    /** Только когда следующее списание определено (ISO date-time) */
+    nextChargeAt?: string;
+
+    // --- поля возвратов ---
+
+    /** Только по возвратам */
+    refundId?: string;
+
+    /** Сумма конкретной операции возврата */
+    refundAmount?: number;
+
+    /** Сколько возвращено по платежу всего */
+    refundedAmount?: number;
+
+    /** Сколько ещё можно вернуть */
+    refundableAmount?: number;
+
+    /** Succeeded или Declined */
+    refundStatus?: 'Succeeded' | 'Declined' | string;
 }

@@ -23,6 +23,14 @@ export const getPaymentId = async (paymentId: string) => {
     `;
 };
 
+export const updatePaymentStatus = async (id: number, status: IPayment["status"]) => {
+    await sql<IPayment[]>`
+        UPDATE payments
+        SET status = ${status}
+        WHERE id = ${id}
+    `;
+};
+
 export const lockPaymentForProcessing = async (id: number): Promise<boolean> => {
     const result = await sql<IPayment[]>`
         UPDATE payments
