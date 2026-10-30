@@ -46,14 +46,6 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
             return;
         }
 
-        try {
-            await bot.api.sendMessage({
-                chat_id: process.env.LOG_CHAT_ID!,
-                text: `💳 Покупка подписки\n\n- Пользователь: <code>${payment.user_id}</code>\n- Сервис: <code>${payment.service}</code>\n- Срок: <code>${payment.months} мес.</code>\n- Цена: <code>${payment.amount}₽</code>`,
-                parse_mode: 'HTML'
-            });
-        } catch { }
-
         // Бонуска
         try {
             const refUser = await findUser(payment.user_id);
@@ -94,6 +86,14 @@ export const plWh: FastifyPluginAsync = async (server: FastifyInstance) => {
                 reply_markup: backToMainMenuKeyboard
             });
         } else {
+            try {
+                await bot.api.sendMessage({
+                    chat_id: process.env.LOG_CHAT_ID!,
+                    text: `💳 Покупка подписки\n\n- Пользователь: <code>${payment.user_id}</code>\n- Сервис: <code>${payment.service}</code>\n- Срок: <code>${payment.months} мес.</code>\n- Цена: <code>${payment.amount}₽</code>`,
+                    parse_mode: 'HTML'
+                });
+            } catch { }
+
             // Выдача сабки
             try {
                 await userSubUpdate(payment.user_id, Number(payment.id));
