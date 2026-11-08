@@ -36,7 +36,7 @@ export const starsPayment = new Composer({ name: 'starsPayment' })
 
         if (!payload.e) {
             try {
-                await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Stars</code>\n- Срок: <code>${priceById!.months} мес.</code>\n- Цена: <code>${context.successfulPayment.totalAmount} Stars</code>}`, {
+                await context.send(`💳 Покупка подписки\n\n- Пользователь: <code>${context.from.id}</code>\n- Сервис: <code>Stars</code>\n- Срок: <code>${priceById!.months} мес.</code>\n- Цена: <code>${context.successfulPayment.totalAmount} Stars</code>`, {
                     chat_id: process.env.LOG_CHAT_ID!,
                     parse_mode: 'HTML'
                 });
