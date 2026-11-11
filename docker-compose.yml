@@ -25,7 +25,7 @@ services:
       - vpnNetwork
       - remnawave-network
     ports:
-      - "6663:6663"
+      - "127.0.0.1:6663:6663"
     depends_on:
       - db
 
