@@ -2051,6 +2051,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/hosts/actions/clone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Clone host */
+        post: operations["HostsController_cloneHost"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/hosts/actions/reorder": {
         parameters: {
             query?: never;
@@ -6721,6 +6738,7 @@ export interface components {
                     to: string;
                 })[];
             };
+            includeInSrrRules?: string[];
             internalSquads?: {
                 /** @enum {string} */
                 mode: "EXCLUDE" | "ALLOW_ONLY";
@@ -7127,6 +7145,7 @@ export interface components {
                         to: string;
                     })[];
                 };
+                includeInSrrRules: string[];
                 internalSquads: {
                     /** @enum {string} */
                     mode: "EXCLUDE" | "ALLOW_ONLY";
@@ -7526,6 +7545,7 @@ export interface components {
                     to: string;
                 })[];
             };
+            includeInSrrRules?: string[];
             internalSquads?: {
                 /** @enum {string} */
                 mode: "EXCLUDE" | "ALLOW_ONLY";
@@ -7932,12 +7952,17 @@ export interface components {
                         to: string;
                     })[];
                 };
+                includeInSrrRules: string[];
                 internalSquads: {
                     /** @enum {string} */
                     mode: "EXCLUDE" | "ALLOW_ONLY";
                     squads: string[];
                 };
             }[];
+        };
+        CloneHostBodyDto: {
+            /** Format: uuid */
+            cloneFromUuid: string;
         };
         ReorderHostsBodyDto: {
             hosts: {
@@ -8350,6 +8375,7 @@ export interface components {
                     to: string;
                 })[];
             };
+            includeInSrrRules?: string[];
             internalSquads?: {
                 /** @enum {string} */
                 mode: "EXCLUDE" | "ALLOW_ONLY";
@@ -10334,7 +10360,7 @@ export interface components {
              * @description Human-readable error message.
              * @enum {string}
              */
-            message: "Server error" | "Login error" | "Create API token error" | "Delete API token error" | "Find all API tokens error" | "Get public key error" | "Enable node error" | "Error updating configuration" | "Error retrieving configuration" | "Delete many inbounds error" | "Create many inbounds error" | "Find all inbounds error" | "Failed to create user" | "User creation successful, but inbound creation failed. User not created." | "User creation successful, but failed to get created user with inbounds." | "Get all users error" | "Get user by error" | "Revoke user subscription error" | "Disable user error" | "Enable user error" | "Create node error" | "Restart node error" | "Get config with users error" | "Delete user error" | "Update node error" | "Update user error" | "Increment used traffic error" | "Get all nodes error" | "Get one node error" | "Delete node error" | "Create host error" | "Delete host error" | "Get user stats error" | "Update user with inbounds error" | "Get all hosts error" | "Reorder hosts error" | "Update host error" | "Create config error" | "Get nodes usage by range error" | "Reset user traffic error" | "Reorder nodes error" | "Get all inbounds error" | "Bulk delete users by status error" | "Update inbound error" | "Update exceeded traffic users error" | "Create admin error" | "Get auth status error" | "Disable node error" | "Get one host error" | "Get subscription settings error" | "Update subscription settings error" | "Add inbound to users error" | "Remove inbound from users error" | "Add inbound to nodes error" | "Remove inbound from nodes error" | "Delete hosts error" | "Bulk enable hosts error" | "Bulk disable hosts error" | "Bulk delete users by user IDs error" | "Bulk revoke users subscription error" | "Bulk reset user traffic error" | "Bulk update users error" | "Bulk add inbounds to users error" | "Bulk update all users error" | "Keypair creation error" | "Get user usage by range error" | "Keypair not found. Restart app." | "Activate all inbounds error" | "Create hwid user device error" | "Check hwid exists error" | "Get user hwid devices error" | "Delete hwid user device error" | "Upsert hwid user device error" | "Get all tags error" | "Getting all subscriptions error" | "Trigger threshold notification error" | "Bulk delete by status error" | "Clean old usage records error" | "Vacuum table error" | "Get config profiles error" | "Get config profile by UUID error" | "Create config profile error" | "Get inbounds by profile UUID error" | "Get internal squads error" | "Get internal squad by UUID error" | "Create internal squad error" | "Update internal squad error" | "Delete internal squad error" | "Create user with internal squad error" | "Get user accessible nodes error" | "Get infra providers error" | "Get infra provider by UUID error" | "Delete infra provider by UUID error" | "Create infra provider error" | "Update infra provider error" | "Create infra billing history record error" | "Get infra billing history records error" | "Delete infra billing history record by UUID error" | "Get billing nodes error" | "Update infra billing node error" | "Create infra billing node error" | "Delete infra billing node by UUID error" | "Get billing nodes for notifications error" | "Add users to internal squad error" | "Internal squad bulk actions error" | "Remove users from internal squad error" | "Delete config profile by UUID error" | "Update config profile error" | "OAuth2 authorize error" | "Sync active profile error" | "Get all host tags error" | "Get internal squad accessible nodes error" | "Delete hwid user devices error" | "Create user subscription request history error" | "Get user subscription request history error" | "Get all hwid devices error" | "Get hwid devices stats error" | "Get user subscription request history stats error" | "Get snippets error" | "Delete snippet by name error" | "Update snippet error" | "Get all subscription templates error" | "Get subscription template by UUID error" | "Update subscription template error" | "Delete subscription template error" | "Create subscription template error" | "Get external squads error" | "Create external squad error" | "Update external squad error" | "Delete external squad error" | "Add users to external squad error" | "Remove users from external squad error" | "Get external squad by UUID error" | "Get Remnawave settings error" | "Update Remnawave settings error" | "Generate passkey registration options error" | "Verify passkey registration error" | "Get active passkeys error" | "Delete passkey error" | "Get computed config profile by UUID error" | "Reset node traffic error" | "Update passkey error" | "Generic reorder error" | "Bulk extend expiration date error" | "Get subscription page config by UUID error" | "Get all subscription page configs error" | "Update subscription page config error" | "Delete subscription page config error" | "Create subscription page config error" | "Job creation failed" | "Get all node plugins error" | "Get node plugin by UUID error" | "Update node plugin error" | "Create node plugin error" | "Get torrent blocker reports error" | "Update hosts error" | "Get internal squad usage error" | "Add many users to internal squad error" | "Remove many users from internal squad error" | "Get stats digest error" | "Sync snippet error" | "Get all node integrations error" | "Get node integration by UUID error" | "Create node integration error" | "Update node integration error" | "Delete node integration error" | "Get all shared lists error" | "Get shared list by name error" | "Create shared list error" | "Update shared list error" | "Delete shared list error" | "Create SSH ticket error" | "Get tags error" | "Set tags error";
+            message: "Server error" | "Login error" | "Create API token error" | "Delete API token error" | "Find all API tokens error" | "Get public key error" | "Enable node error" | "Error updating configuration" | "Error retrieving configuration" | "Delete many inbounds error" | "Create many inbounds error" | "Find all inbounds error" | "Failed to create user" | "User creation successful, but inbound creation failed. User not created." | "User creation successful, but failed to get created user with inbounds." | "Get all users error" | "Get user by error" | "Revoke user subscription error" | "Disable user error" | "Enable user error" | "Create node error" | "Restart node error" | "Get config with users error" | "Delete user error" | "Update node error" | "Update user error" | "Increment used traffic error" | "Get all nodes error" | "Get one node error" | "Delete node error" | "Create host error" | "Delete host error" | "Get user stats error" | "Update user with inbounds error" | "Get all hosts error" | "Reorder hosts error" | "Update host error" | "Create config error" | "Get nodes usage by range error" | "Reset user traffic error" | "Reorder nodes error" | "Get all inbounds error" | "Bulk delete users by status error" | "Update inbound error" | "Update exceeded traffic users error" | "Create admin error" | "Get auth status error" | "Disable node error" | "Get one host error" | "Get subscription settings error" | "Update subscription settings error" | "Add inbound to users error" | "Remove inbound from users error" | "Add inbound to nodes error" | "Remove inbound from nodes error" | "Delete hosts error" | "Bulk enable hosts error" | "Bulk disable hosts error" | "Bulk delete users by user IDs error" | "Bulk revoke users subscription error" | "Bulk reset user traffic error" | "Bulk update users error" | "Bulk add inbounds to users error" | "Bulk update all users error" | "Keypair creation error" | "Get user usage by range error" | "Keypair not found. Restart app." | "Activate all inbounds error" | "Create hwid user device error" | "Check hwid exists error" | "Get user hwid devices error" | "Delete hwid user device error" | "Upsert hwid user device error" | "Get all tags error" | "Getting all subscriptions error" | "Trigger threshold notification error" | "Bulk delete by status error" | "Clean old usage records error" | "Vacuum table error" | "Get config profiles error" | "Get config profile by UUID error" | "Create config profile error" | "Get inbounds by profile UUID error" | "Get internal squads error" | "Get internal squad by UUID error" | "Create internal squad error" | "Update internal squad error" | "Delete internal squad error" | "Create user with internal squad error" | "Get user accessible nodes error" | "Get infra providers error" | "Get infra provider by UUID error" | "Delete infra provider by UUID error" | "Create infra provider error" | "Update infra provider error" | "Create infra billing history record error" | "Get infra billing history records error" | "Delete infra billing history record by UUID error" | "Get billing nodes error" | "Update infra billing node error" | "Create infra billing node error" | "Delete infra billing node by UUID error" | "Get billing nodes for notifications error" | "Add users to internal squad error" | "Internal squad bulk actions error" | "Remove users from internal squad error" | "Delete config profile by UUID error" | "Update config profile error" | "OAuth2 authorize error" | "Sync active profile error" | "Get all host tags error" | "Get internal squad accessible nodes error" | "Delete hwid user devices error" | "Create user subscription request history error" | "Get user subscription request history error" | "Get all hwid devices error" | "Get hwid devices stats error" | "Get user subscription request history stats error" | "Get snippets error" | "Delete snippet by name error" | "Update snippet error" | "Get all subscription templates error" | "Get subscription template by UUID error" | "Update subscription template error" | "Delete subscription template error" | "Create subscription template error" | "Get external squads error" | "Create external squad error" | "Update external squad error" | "Delete external squad error" | "Add users to external squad error" | "Remove users from external squad error" | "Get external squad by UUID error" | "Get Remnawave settings error" | "Update Remnawave settings error" | "Generate passkey registration options error" | "Verify passkey registration error" | "Get active passkeys error" | "Delete passkey error" | "Get computed config profile by UUID error" | "Reset node traffic error" | "Update passkey error" | "Generic reorder error" | "Bulk extend expiration date error" | "Get subscription page config by UUID error" | "Get all subscription page configs error" | "Update subscription page config error" | "Delete subscription page config error" | "Create subscription page config error" | "Job creation failed" | "Get all node plugins error" | "Get node plugin by UUID error" | "Update node plugin error" | "Create node plugin error" | "Get torrent blocker reports error" | "Update hosts error" | "Get internal squad usage error" | "Add many users to internal squad error" | "Remove many users from internal squad error" | "Get stats digest error" | "Sync snippet error" | "Get all node integrations error" | "Get node integration by UUID error" | "Create node integration error" | "Update node integration error" | "Delete node integration error" | "Get all shared lists error" | "Get shared list by name error" | "Create shared list error" | "Update shared list error" | "Delete shared list error" | "Create SSH ticket error" | "Get tags error" | "Set tags error" | "Clone host error";
             /**
              * @description Error code. Possible values:
              *
@@ -10512,9 +10538,10 @@ export interface components {
              *     - `A254` — Create SSH ticket error
              *     - `A256` — Get tags error
              *     - `A257` — Set tags error
+             *     - `A258` — Clone host error
              * @enum {string}
              */
-            errorCode: "A001" | "A002" | "A005" | "A006" | "A008" | "A009" | "A010" | "A013" | "A014" | "A015" | "A016" | "A017" | "A018" | "A022" | "A023" | "A024" | "A026" | "A027" | "A028" | "A031" | "A032" | "A035" | "A036" | "A037" | "A038" | "A039" | "A040" | "A041" | "A042" | "A043" | "A044" | "A047" | "A048" | "A049" | "A050" | "A051" | "A052" | "A053" | "A055" | "A056" | "A057" | "A058" | "A059" | "A060" | "A064" | "A066" | "A067" | "A069" | "A070" | "A072" | "A073" | "A074" | "A075" | "A077" | "A078" | "A079" | "A080" | "A081" | "A084" | "A085" | "A086" | "A087" | "A088" | "A089" | "A090" | "A091" | "A092" | "A093" | "A096" | "A097" | "A100" | "A101" | "A102" | "A103" | "A104" | "A105" | "A106" | "A107" | "A108" | "A109" | "A110" | "A112" | "A115" | "A116" | "A117" | "A119" | "A121" | "A122" | "A123" | "A125" | "A126" | "A127" | "A129" | "A130" | "A131" | "A132" | "A133" | "A134" | "A135" | "A136" | "A137" | "A138" | "A139" | "A140" | "A141" | "A142" | "A143" | "A146" | "A148" | "A150" | "A151" | "A154" | "A155" | "A156" | "A157" | "A158" | "A159" | "A160" | "A161" | "A163" | "A165" | "A168" | "A169" | "A171" | "A177" | "A179" | "A181" | "A183" | "A184" | "A185" | "A186" | "A187" | "A188" | "A192" | "A193" | "A196" | "A197" | "A198" | "A199" | "A200" | "A201" | "A202" | "A203" | "A205" | "A207" | "A208" | "A211" | "A213" | "A214" | "A217" | "A219" | "A221" | "A224" | "A225" | "A227" | "A228" | "A232" | "A233" | "A234" | "A236" | "A237" | "A239" | "A240" | "A241" | "A242" | "A243" | "A247" | "A248" | "A249" | "A250" | "A251" | "A254" | "A256" | "A257";
+            errorCode: "A001" | "A002" | "A005" | "A006" | "A008" | "A009" | "A010" | "A013" | "A014" | "A015" | "A016" | "A017" | "A018" | "A022" | "A023" | "A024" | "A026" | "A027" | "A028" | "A031" | "A032" | "A035" | "A036" | "A037" | "A038" | "A039" | "A040" | "A041" | "A042" | "A043" | "A044" | "A047" | "A048" | "A049" | "A050" | "A051" | "A052" | "A053" | "A055" | "A056" | "A057" | "A058" | "A059" | "A060" | "A064" | "A066" | "A067" | "A069" | "A070" | "A072" | "A073" | "A074" | "A075" | "A077" | "A078" | "A079" | "A080" | "A081" | "A084" | "A085" | "A086" | "A087" | "A088" | "A089" | "A090" | "A091" | "A092" | "A093" | "A096" | "A097" | "A100" | "A101" | "A102" | "A103" | "A104" | "A105" | "A106" | "A107" | "A108" | "A109" | "A110" | "A112" | "A115" | "A116" | "A117" | "A119" | "A121" | "A122" | "A123" | "A125" | "A126" | "A127" | "A129" | "A130" | "A131" | "A132" | "A133" | "A134" | "A135" | "A136" | "A137" | "A138" | "A139" | "A140" | "A141" | "A142" | "A143" | "A146" | "A148" | "A150" | "A151" | "A154" | "A155" | "A156" | "A157" | "A158" | "A159" | "A160" | "A161" | "A163" | "A165" | "A168" | "A169" | "A171" | "A177" | "A179" | "A181" | "A183" | "A184" | "A185" | "A186" | "A187" | "A188" | "A192" | "A193" | "A196" | "A197" | "A198" | "A199" | "A200" | "A201" | "A202" | "A203" | "A205" | "A207" | "A208" | "A211" | "A213" | "A214" | "A217" | "A219" | "A221" | "A224" | "A225" | "A227" | "A228" | "A232" | "A233" | "A234" | "A236" | "A237" | "A239" | "A240" | "A241" | "A242" | "A243" | "A247" | "A248" | "A249" | "A250" | "A251" | "A254" | "A256" | "A257" | "A258";
         };
         RemnawaveValidationErrorDto: {
             /** @description Human-readable error message. */
@@ -18622,6 +18649,57 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad request / Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveBadRequestErrorDto"] | components["schemas"]["RemnawaveValidationErrorDto"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveNotFoundErrorDto"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemnawaveInternalServerErrorDto"];
+                };
+            };
+        };
+    };
+    HostsController_cloneHost: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CloneHostBodyDto"];
+            };
+        };
+        responses: {
+            /** @description Resource created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HostResponseDto"];
+                };
             };
             /** @description Bad request / Validation error */
             400: {

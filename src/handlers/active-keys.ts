@@ -451,8 +451,6 @@ ${hosts ? `Доступ к серверам:
         let otherPlans = rwUser!.response.activeInternalSquads
             .filter(x => !dbPlans.some(plan => plan.internal_squad.includes(x.uuid)))
             .map(x => x.uuid);
-
-        console.log(otherPlans);
         internalSquads.push(...otherPlans);
 
         // Добавляем пользователю внутренние сквады
