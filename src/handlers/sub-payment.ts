@@ -176,7 +176,7 @@ ${hosts ? `Доступ к серверам:
     // Реф. баланс бота
     .callbackQuery(keyboard.paymentRefBalanceData, async context => {
         const [price] = await getPriceById(context.queryData.priceId);
-        const fPrice = Number(await finalPrice(String(price.amount), context.dbuser!.sale, true));
+        const fPrice = Number(await finalPrice(String(price.amount), context.dbuser!.sale));
 
         if (!context.dbuser || Number(context.dbuser.ref_balance) < fPrice) {
             return context.answerCallbackQuery('❌ Недостаточно средств');
