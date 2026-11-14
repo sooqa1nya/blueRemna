@@ -16,11 +16,11 @@ services:
     networks:
       - vpnNetwork
   vpn:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: sooqa1nya/remna:latest
     container_name: vpn-bot
     restart: unless-stopped
+    env_file:
+      - .env
     networks:
       - vpnNetwork
       - remnawave-network
