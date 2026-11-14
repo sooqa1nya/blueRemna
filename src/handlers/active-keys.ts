@@ -8,7 +8,7 @@ import { getUserSub, setLimitExtended, updateUserSubPlanID } from '../database/u
 import { platega } from '../services/platega/index.js';
 import { addPayment, completePaymentProcessing, getPayment, lockPaymentForProcessing, revertPaymentProcessing } from '../database/payment.js';
 import { cryptoBot } from '../services/crypto-bot/index.js';
-import { getPlanById, getPlanByTag } from '../database/sub_plans.js';
+import { getPlanById, getPlanByTag, getSubPlans } from '../database/sub_plans.js';
 import { recalculateSubscription } from '../utils/recalculateSubscription.js';
 import { getMonthPrice, getPricesByPlan } from '../database/sub_prices.js';
 import { finalPrice } from '../utils/final-price.js';
@@ -445,6 +445,15 @@ ${hosts ? `Доступ к серверам:
         );
 
         let internalSquads: Array<string> = [];
+
+        // Сохраняем кастомные внутренние сквады
+        const dbPlans = await getSubPlans();
+        let otherPlans = rwUser!.response.activeInternalSquads
+            .filter(x => !dbPlans.some(plan => plan.internal_squad.includes(x.uuid)))
+            .map(x => x.uuid);
+
+        console.log(otherPlans);
+        internalSquads.push(...otherPlans);
 
         // Добавляем пользователю внутренние сквады
         const [plan] = await getPlanById(context.queryData.planId);
